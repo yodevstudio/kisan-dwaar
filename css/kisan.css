@@ -1,0 +1,176 @@
+/* KISAN DWAAR — design system. Vanilla CSS, zero dependencies, no build
+   step. Six tokens below, one job each — colour is never the only channel;
+   every coloured state also carries an icon and a word in the markup that
+   uses these classes, not in this file. */
+
+:root {
+  --ink: #14181F;
+  --field: #1F4D3D;
+  --paper: #F6F2E9;
+  --verdict: #1B7F4B;
+  --attention: #C8791A;
+  --halt: #B03A2E;
+
+  /* Inter listed first: browsers fall back per-glyph, so any Latin letter
+     or digit inside Hindi text renders in Inter as CONTEXT.md specifies
+     ("Noto Sans Devanagari for Hindi, Inter for numerals and Latin"),
+     while Devanagari codepoints — which Inter has no glyphs for — fall
+     through to Noto Sans Devanagari automatically. No unicode-range hack
+     needed. */
+  --font-devanagari: "Inter", "Noto Sans Devanagari", "Nirmala UI", "Noto Sans", sans-serif;
+  --font-latin: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --touch-target: 64px;
+}
+
+/* ===== Self-hosted type =====
+   assets/fonts/ has no woff2 files committed yet — only this port's CSS.
+   These @font-face rules point at the paths the design system expects; a
+   missing file just fails the font fetch and falls through to the system
+   stack already listed in --font-devanagari / --font-latin, so nothing
+   breaks in the meantime. Do not point these at a CDN — self-hosted only. */
+@font-face {
+  font-family: "Noto Sans Devanagari";
+  src: url("../assets/fonts/NotoSansDevanagari-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Sans Devanagari";
+  src: url("../assets/fonts/NotoSansDevanagari-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Base 20px, floor 18px. Every rule below sizes at or above the base in
+     rem, so the 18px floor holds by construction — nothing in this file
+     scales text down far enough to cross it. */
+  font-size: 20px;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-latin);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Devanagari text gets its own line-height floor (>=1.6) and font stack —
+   apply :lang(hi) on any ancestor with hi content, or .hi directly. */
+:lang(hi), .hi {
+  font-family: var(--font-devanagari);
+  line-height: 1.6;
+}
+
+h1, h2, h3, .answer-headline {
+  color: var(--field);
+  font-weight: 700;
+  margin: 0 0 0.5em;
+}
+
+/* The one headline style named explicitly in CONTEXT.md: the citizen's
+   answer, set apart from ordinary headings. */
+.answer-headline {
+  font-size: 32px;
+  line-height: 1.3;
+}
+
+a { color: var(--field); }
+
+/* ===== Semantic state colours =====
+   One job each per CONTEXT.md. Never the sole signal — the caller pairs
+   every use with an icon and a word; these classes color text/background
+   only and must never be relied on alone to convey a verdict.
+
+   --verdict and --attention measure 4.49:1 and 3.03:1 against --paper —
+   below the 4.5:1 WCAG AA floor for regular-weight text, though both clear
+   the 3:1 floor WCAG allows for bold text at 18.66px or larger. font-weight
+   is forced to 700 here for exactly that reason: at this system's 20px
+   base size, that's what keeps these four classes AA-compliant without
+   touching the hex values CONTEXT.md fixes. Do not use --attention (3.03:1
+   — a thin margin even at bold weight) or --verdict as a regular-weight
+   text colour anywhere, and do not drop the font-weight below 700 on these
+   classes. */
+.state-verdict { color: var(--verdict); font-weight: 700; }
+.state-attention { color: var(--attention); font-weight: 700; }
+.state-halt { color: var(--halt); }
+.bg-verdict { background: var(--verdict); color: var(--paper); font-weight: 700; }
+.bg-attention { background: var(--attention); color: var(--paper); font-weight: 700; }
+.bg-halt { background: var(--halt); color: var(--paper); }
+
+/* ===== Touch targets =====
+   Every interactive element clears 64px on the shorter axis, so a shaking
+   hand, a work glove, or a cracked screen doesn't cost a mis-tap. */
+button, .button, input, select, textarea, a.tappable {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 0.75em 1.25em;
+  font-size: 1rem;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 2px solid var(--field);
+}
+
+button, .button {
+  background: var(--field);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+/* ===== Focus =====
+   Visible on every interactive element, never suppressed with outline:none. */
+:focus-visible {
+  outline: 3px solid var(--attention);
+  outline-offset: 2px;
+}
+
+/* ===== Motion =====
+   Honoured, not merely reduced — nothing animates by default once the
+   citizen's device says they've asked for less. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== Small-screen / high-zoom floor =====
+   Usable one-handed at 360px and at 200% browser zoom: no fixed widths
+   wider than the viewport, content reflows rather than truncating or
+   clipping, nothing traps scroll. */
+.container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+img, svg { max-width: 100%; height: auto; }
+
+/* Audio-pairing every text block (CONTEXT.md's type floor) is a behaviour
+   this stylesheet cannot provide on its own — it belongs to speech.js and
+   the markup that wires a play control to each block, not to CSS. */
