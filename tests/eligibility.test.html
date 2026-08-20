@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eligibility engine — test harness</title>
+<style>
+  :root {
+    --ink: #14181F;
+    --field: #1F4D3D;
+    --paper: #F6F2E9;
+    --verdict: #1B7F4B;
+    --halt: #B03A2E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  h1 { color: var(--field); font-size: 22px; margin: 0 0 4px; }
+  #summary { font-weight: 700; margin: 12px 0; font-size: 18px; }
+  #summary.pass { color: var(--verdict); }
+  #summary.fail { color: var(--halt); }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li {
+    padding: 8px 12px;
+    border-left: 4px solid transparent;
+    margin-bottom: 4px;
+    font-family: "Consolas", monospace;
+    font-size: 14px;
+  }
+  li.pass { border-left-color: var(--verdict); }
+  li.fail { border-left-color: var(--halt); background: rgba(176, 58, 46, 0.08); }
+  .label { font-weight: 700; }
+  .pass .label { color: var(--verdict); }
+  .fail .label { color: var(--halt); }
+  .error { display: block; margin-top: 4px; color: var(--halt); white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Eligibility engine — test harness</h1>
+  <p>eligibility.js · assemble.js · normalise.js · router.js · amount-policy.js — run against synthetic fixtures, not <code>data/schemes.json</code> (no scheme records exist yet).</p>
+  <div id="summary">Running…</div>
+  <ul id="results"></ul>
+
+<script type="module">
+import { evaluate, evaluateAll } from '../js/eligibility.js';
+import {
+  assemble,
+  assertNoUnsourcedNumber,
+  explainGap,
+  findNearMissGap,
+} from '../js/assemble.js';
+import { normalise } from '../js/normalise.js';
+import { route } from '../js/router.js';
+import { findAmountPolicyViolations } from '../js/amount-policy.js';
+
+const results = [];
+
+async function test(name, fn) {
+  try {
+    await fn();
+    results.push({ name, pass: true });
+  } catch (err) {
+    results.push({ name, pass: false, error: err.message });
+  }
+}
+
+function assertEqual(actual, expected, msg) {
+  const a = JSON.stringify(actual);
+  const e = JSON.stringify(expected);
+  if (a !== e) throw new Error(`${msg || 'assertEqual'}: expected ${e}, got ${a}`);
+}
+
+function assertTrue(cond, msg) {
+  if (!cond) throw new Error(msg || 'assertTrue failed');
+}
+
+function assertThrows(fn, msg) {
+  try {
+    fn();
+  } catch (e) {
+    return;
+  }
+  throw new Error(msg || 'expected function to throw');
+}
+
+// ===== eligibility.js =====
+
+await test('evaluate: all_of satisfied -> ELIGIBLE', () => {
+  const scheme = { eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 18 }], any_of: [], none_of: [] } };
+  assertEqual(evaluate({ age: 25 }, scheme).verdict, 'ELIGIBLE');
+});
+
+await test('evaluate: missing slot -> NEED_MORE_INFO, names the missing slot', () => {
+  const scheme = { eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 18 }], any_of: [], none_of: [] } };
+  const r = evaluate({}, scheme);
+  assertEqual(r.verdict, 'NEED_MORE_INFO');
+  assertEqual(r.missing_slots, ['age']);
+});
+
+await test('evaluate: failed condition -> NOT_ELIGIBLE', () => {
+  const scheme = { eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 18 }], any_of: [], none_of: [] } };
+  assertEqual(evaluate({ age: 10 }, scheme).verdict, 'NOT_ELIGIBLE');
+});
+
+await test('evaluate: none_of exclusion blocks eligibility', () => {
+  const scheme = { eligibility: { all_of: [], any_of: [], none_of: [{ slot: 'category', op: 'in', value: ['APL'] }] } };
+  assertEqual(evaluate({ category: 'APL' }, scheme).verdict, 'NOT_ELIGIBLE');
+});
+
+await test('evaluate: wildcard (*) condition is always satisfied', () => {
+  const scheme = { eligibility: { all_of: [{ slot: 'gender', op: 'eq', value: '*' }], any_of: [], none_of: [] } };
+  assertEqual(evaluate({}, scheme).verdict, 'ELIGIBLE');
+});
+
+await test('evaluate: a range slot straddling a threshold is unknown, never guessed', () => {
+  const scheme = { eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 60 }], any_of: [], none_of: [] } };
+  assertEqual(evaluate({ age: { min: 55, max: 74 } }, scheme).verdict, 'NEED_MORE_INFO');
+});
+
+await test('evaluate: gender-dependent age thresholds via any_of branch groups', () => {
+  const scheme = {
+    eligibility: {
+      all_of: [],
+      any_of: [
+        [{ slot: 'gender', op: 'eq', value: 'female' }, { slot: 'age', op: 'gte', value: 55 }],
+        [{ slot: 'gender', op: 'eq', value: 'male' }, { slot: 'age', op: 'gte', value: 58 }],
+      ],
+      none_of: [],
+    },
+  };
+  assertEqual(evaluate({ gender: 'female', age: 56 }, scheme).verdict, 'ELIGIBLE');
+  assertEqual(evaluate({ gender: 'male', age: 56 }, scheme).verdict, 'NOT_ELIGIBLE');
+});
+
+await test('evaluateAll: batches evaluate() across a scheme list', () => {
+  const schemes = [
+    { scheme_id: 'A', eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 18 }], any_of: [], none_of: [] } },
+    { scheme_id: 'B', eligibility: { all_of: [{ slot: 'age', op: 'lte', value: 10 }], any_of: [], none_of: [] } },
+  ];
+  const out = evaluateAll({ age: 25 }, schemes);
+  assertEqual(out.map((r) => r.evaluation.verdict), ['ELIGIBLE', 'NOT_ELIGIBLE']);
+});
+
+// ===== normalise.js (against the real, ported data/lexicon.json) =====
+
+await test('normalise: dialect phrase maps to standard Hindi', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const out = normalise('बुढ़ापा री पिंडोळी चाहिए', lexicon);
+  assertTrue(out.normalised.includes('वृद्धावस्था पेंशन'), `got: ${out.normalised}`);
+});
+
+await test('normalise: longest matching key wins over a shorter key it contains', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const out = normalise('तारबंदी चाहिए', lexicon);
+  assertTrue(out.normalised.includes('तारबंदी योजना'), `got: ${out.normalised}`);
+});
+
+// ===== router.js =====
+
+const testSchemes = [
+  { scheme_id: 'RJ_TARBANDI', name_hi: 'तारबंदी योजना', keywords_hi: ['तारबंदी', 'फेंसिंग'] },
+  { scheme_id: 'RJ_KCC', name_hi: 'किसान क्रेडिट कार्ड', keywords_hi: ['ऋण', 'लोन'] },
+];
+
+await test('route: named scheme match returns a single confident scheme_id', () => {
+  const r = route('मुझे तारबंदी योजना चाहिए', testSchemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_TARBANDI']);
+});
+
+await test('route: a discovery phrase with no confident match returns discover intent', () => {
+  const r = route('मेरे लायक कोई योजना बताओ', testSchemes);
+  assertEqual(r.intent, 'discover');
+});
+
+await test('route: a named scheme wins over an embedded discovery phrase', () => {
+  const r = route('तारबंदी के बारे में क्या मिल सकता है', testSchemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_TARBANDI']);
+});
+
+await test('route: unmatched text returns unknown with zero confidence', () => {
+  const r = route('आज मौसम कैसा है', testSchemes);
+  assertEqual(r.intent, 'unknown');
+  assertEqual(r.confidence, 0);
+});
+
+await test('route: extracts age, gender and district slots from free text', () => {
+  const r = route('मैं 45 साल की महिला हूं, जयपुर में रहती हूं', []);
+  assertEqual(r.slots.age, 45);
+  assertEqual(r.slots.gender, 'female');
+  assertEqual(r.slots.district, 'जयपुर');
+});
+
+// ===== assemble.js =====
+
+await test('assemble: ELIGIBLE verdict fills the template with sourced benefit text', () => {
+  const scheme = {
+    scheme_id: 'RJ_TEST_01',
+    name_hi: 'परीक्षण योजना',
+    source_url: 'https://example.gov.in/test',
+    last_verified: '2026-01-01',
+    benefit: { amount_inr: null, amount_text_hi: 'निःशुल्क बीज उपलब्ध' },
+    documents: ['जमाबंदी'],
+    response_templates_hi: { eligible: '{{scheme_name_hi}} — {{benefit_text}}' },
+    eligibility: { all_of: [], any_of: [], none_of: [] },
+  };
+  const out = assemble('ELIGIBLE', scheme, evaluate({}, scheme));
+  assertTrue(out.text_hi.includes('निःशुल्क बीज उपलब्ध'), `got: ${out.text_hi}`);
+  assertTrue(out.text_hi.includes('परीक्षण योजना'), `got: ${out.text_hi}`);
+});
+
+await test('assemble: NEED_MORE_INFO names the missing slot in Hindi, not raw snake_case', () => {
+  const scheme = {
+    scheme_id: 'RJ_TEST_02',
+    name_hi: 'परीक्षण योजना',
+    source_url: 'https://example.gov.in/test',
+    response_templates_hi: { need_info: '{{scheme_name_hi}}: {{missing}}' },
+    eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 18 }], any_of: [], none_of: [] },
+  };
+  const out = assemble('NEED_MORE_INFO', scheme, evaluate({}, scheme));
+  assertTrue(out.text_hi.includes('आयु'), `got: ${out.text_hi}`);
+  assertTrue(!out.text_hi.includes('age'), `raw slot id leaked: ${out.text_hi}`);
+});
+
+await test('assertNoUnsourcedNumber: throws on a figure absent from the allowlist (guard-throw)', () => {
+  const scheme = { scheme_id: 'RJ_TEST_03', name_hi: 'परीक्षण', benefit: { amount_inr: 5000 }, eligibility: {} };
+  assertThrows(() => assertNoUnsourcedNumber({ text_hi: 'आपको ₹99999 मिलेगा', speech_hi: '' }, scheme));
+});
+
+await test('assertNoUnsourcedNumber: passes when every figure is on the allowlist', () => {
+  const scheme = { scheme_id: 'RJ_TEST_04', name_hi: 'परीक्षण', benefit: { amount_inr: 5000 }, eligibility: {} };
+  assertTrue(assertNoUnsourcedNumber({ text_hi: 'आपको ₹5000 मिलेगा', speech_hi: '' }, scheme));
+});
+
+await test('explainGap: age shortfall phrased as "eligible at", every digit traceable', () => {
+  const scheme = {
+    scheme_id: 'RJ_TEST_05',
+    name_hi: 'परीक्षण',
+    benefit: {},
+    eligibility: { all_of: [{ slot: 'age', op: 'gte', value: 60 }], any_of: [], none_of: [] },
+  };
+  const evaluation = evaluate({ age: 50 }, scheme);
+  const sentence = explainGap(evaluation.gaps[0], scheme);
+  assertTrue(sentence.includes('50') && sentence.includes('60'), `got: ${sentence}`);
+});
+
+await test('findNearMissGap: identifies the single gap that would flip the verdict', () => {
+  const scheme = {
+    scheme_id: 'RJ_TEST_06',
+    eligibility: {
+      all_of: [{ slot: 'age', op: 'gte', value: 60 }, { slot: 'category', op: 'in', value: ['BPL'] }],
+      any_of: [],
+      none_of: [],
+    },
+  };
+  const slots = { age: 55, category: 'BPL' };
+  const gap = findNearMissGap(slots, scheme, evaluate(slots, scheme));
+  assertTrue(gap && gap.slot === 'age', `got: ${JSON.stringify(gap)}`);
+});
+
+// ===== amount-policy.js =====
+
+await test('findAmountPolicyViolations: flags a rupee figure with no rate_policy', () => {
+  const schemes = [{ scheme_id: 'RJ_BAD', benefit: { amount_inr: null, amount_text_hi: 'लगभग रु. 5000 तक अनुदान' } }];
+  assertEqual(findAmountPolicyViolations(schemes), ['RJ_BAD']);
+});
+
+await test('findAmountPolicyViolations: a stated rate_policy clears the same figure', () => {
+  const schemes = [{
+    scheme_id: 'RJ_OK',
+    benefit: { amount_inr: null, amount_text_hi: 'लगभग रु. 5000 तक अनुदान', rate_policy: 'RATE_VARIES_BY_DISTRICT' },
+  }];
+  assertEqual(findAmountPolicyViolations(schemes), []);
+});
+
+// ===== render =====
+
+const list = document.getElementById('results');
+for (const r of results) {
+  const li = document.createElement('li');
+  li.className = r.pass ? 'pass' : 'fail';
+  const label = document.createElement('span');
+  label.className = 'label';
+  label.textContent = r.pass ? 'PASS' : 'FAIL';
+  li.appendChild(label);
+  li.appendChild(document.createTextNode(' — ' + r.name));
+  if (!r.pass) {
+    const err = document.createElement('span');
+    err.className = 'error';
+    err.textContent = r.error;
+    li.appendChild(err);
+  }
+  list.appendChild(li);
+}
+
+const failed = results.filter((r) => !r.pass).length;
+const summary = document.getElementById('summary');
+summary.textContent = `${results.length - failed} / ${results.length} passed`;
+summary.className = failed === 0 ? 'pass' : 'fail';
+</script>
+</body>
+</html>
