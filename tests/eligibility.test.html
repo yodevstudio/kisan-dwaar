@@ -44,7 +44,7 @@
 </head>
 <body>
   <h1>Eligibility engine — test harness</h1>
-  <p>eligibility.js · assemble.js · normalise.js · router.js · amount-policy.js — run against synthetic fixtures, not <code>data/schemes.json</code> (no scheme records exist yet).</p>
+  <p>eligibility.js · assemble.js · normalise.js · router.js · amount-policy.js · explainer.js — unit tests run against synthetic fixtures; a separate pass at the bottom runs every real <code>data/schemes.json</code> record through the engine as a regression check.</p>
   <div id="summary">Running…</div>
   <ul id="results"></ul>
 
@@ -59,6 +59,7 @@ import {
 import { normalise } from '../js/normalise.js';
 import { route } from '../js/router.js';
 import { findAmountPolicyViolations } from '../js/amount-policy.js';
+import { explain, assertDerivedFromSourced } from '../js/explainer.js';
 
 const results = [];
 
@@ -279,6 +280,135 @@ await test('findAmountPolicyViolations: a stated rate_policy clears the same fig
     benefit: { amount_inr: null, amount_text_hi: 'लगभग रु. 5000 तक अनुदान', rate_policy: 'RATE_VARIES_BY_DISTRICT' },
   }];
   assertEqual(findAmountPolicyViolations(schemes), []);
+});
+
+// ===== explainer.js =====
+// Fixture matches docs/DATA_SPEC.md §3.3's worked pipeline example exactly,
+// so the numbers here can be checked against that document by eye.
+
+const pipelineScheme = {
+  scheme_id: 'RJ_IRRIGATION_PIPELINE',
+  subsidy_rule: {
+    rule_id: 'PIPELINE_HDPE_PVC',
+    applies_when: [{ slot: 'pipe_diameter_mm', op: 'gte', value: 63 }],
+    inputs: [
+      { slot: 'pipe_material', type: 'single', options: ['hdpe', 'pvc'], required: true, prompt_hi: 'पाइप किस चीज़ का है?' },
+      { slot: 'pipe_metres', type: 'number', unit_hi: 'मीटर', required: true, prompt_hi: 'कितने मीटर पाइप चाहिए?' },
+      { slot: 'quoted_cost_inr', type: 'number', unit_hi: 'रुपये', required: false, prompt_hi: 'डीलर का कोटेशन कितने का है? (न हो तो छोड़ दें)' },
+    ],
+    unit_caps: { pipe_metres: { max: 800, label_hi: 'अधिकतम 800 मीटर तक अनुदान देय' } },
+    terms: [
+      {
+        id: 'pct', label_hi: 'इकाई लागत का 50%', type: 'percent_of_cost', percent: 50,
+        cost_basis: { kind: 'citizen_quotation', slot: 'quoted_cost_inr' },
+      },
+      {
+        id: 'cap', label_hi: 'अधिकतम दर सीमा', type: 'per_unit_cap',
+        rates: { hdpe: 50, pvc: 35 }, rate_selector_slot: 'pipe_material', unit_slot: 'pipe_metres', unit_hi: 'प्रति मीटर',
+      },
+    ],
+    combine: 'min',
+    on_missing_input: 'report_computable_terms_only',
+    source_quote_hi: '63 मि.मी. या इससे अधिक व्यास के पाइप खरीदने पर इकाई लागत का 50 प्रतिशत या अधिकतम रू. 50/प्रति मीटर एचडीपीई पाईप पर या रू. 35/प्रति मीटर पीवीसी पाईप पर, जो भी आनुपातिक रुप से कम हो, अनुदान देय है।',
+    source_url: 'https://rajkisan.rajasthan.gov.in/WebsiteNew/pipeline.html',
+    last_verified: '2026-08-22',
+  },
+};
+
+await test('explain: pipeline case with a quotation matches the worked example exactly (₹30,000 via the cap)', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 600, quoted_cost_inr: 90000 };
+  const out = explain(pipelineScheme, slots);
+  assertEqual(out.status, 'OK');
+  assertEqual(out.terms.find((t) => t.id === 'pct').value.value, 45000);
+  assertEqual(out.terms.find((t) => t.id === 'cap').value.value, 30000);
+  assertEqual(out.result.value, 30000);
+  assertTrue(assertDerivedFromSourced(out, pipelineScheme, slots));
+});
+
+await test('explain: same case without a quotation reports ₹30,000 as an upper bound, not a false-precision result', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 600 };
+  const out = explain(pipelineScheme, slots);
+  assertEqual(out.status, 'PARTIAL');
+  assertEqual(out.result, null);
+  assertEqual(out.bound.type, 'upper');
+  assertEqual(out.bound.value.value, 30000);
+  assertEqual(out.missing_slots, ['quoted_cost_inr']);
+  assertTrue(assertDerivedFromSourced(out, pipelineScheme, slots));
+});
+
+await test('explain: a unit_caps ceiling binds when the citizen states more than the cap', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 1000, quoted_cost_inr: 90000 };
+  const out = explain(pipelineScheme, slots);
+  // pipe_metres capped at 800 before the per-metre term reads it: 50 * 800 = 40000
+  assertEqual(out.terms.find((t) => t.id === 'cap').value.value, 40000);
+  assertTrue(assertDerivedFromSourced(out, pipelineScheme, slots));
+});
+
+await test('explain: applies_when unsatisfied reports NOT_APPLICABLE, never a figure', () => {
+  const out = explain(pipelineScheme, { pipe_diameter_mm: 40, pipe_material: 'hdpe', pipe_metres: 600, quoted_cost_inr: 90000 });
+  assertEqual(out.status, 'NOT_APPLICABLE');
+  assertEqual(out.result, null);
+});
+
+await test('explain: a scheme with no subsidy_rule reports NO_RULE', () => {
+  const out = explain({ scheme_id: 'RJ_NO_RULE' }, {});
+  assertEqual(out.status, 'NO_RULE');
+});
+
+// The three guard-throws — one per provenance kind, each independently
+// caught. A number surviving here would mean a citizen could be shown a
+// figure the scheme record and the citizen's own answers don't actually
+// support.
+await test('assertDerivedFromSourced: throws when a "rule" node is corrupted (guard-throw 1 of 3)', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 600, quoted_cost_inr: 90000 };
+  const out = explain(pipelineScheme, slots);
+  const corrupted = JSON.parse(JSON.stringify(out));
+  corrupted.terms.find((t) => t.id === 'cap').value.from.operands[0].value = 999; // claims a rate the rule never published
+  assertThrows(() => assertDerivedFromSourced(corrupted, pipelineScheme, slots));
+});
+
+await test('assertDerivedFromSourced: throws when an "input" node is corrupted (guard-throw 2 of 3)', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 600, quoted_cost_inr: 90000 };
+  const out = explain(pipelineScheme, slots);
+  const corrupted = JSON.parse(JSON.stringify(out));
+  corrupted.terms.find((t) => t.id === 'pct').value.from.operands[1].value = 500000; // claims a quotation the citizen never gave
+  assertThrows(() => assertDerivedFromSourced(corrupted, pipelineScheme, slots));
+});
+
+await test('assertDerivedFromSourced: throws when a "derived" (corrupted-final-value) node is corrupted (guard-throw 3 of 3)', () => {
+  const slots = { pipe_diameter_mm: 75, pipe_material: 'hdpe', pipe_metres: 600, quoted_cost_inr: 90000 };
+  const out = explain(pipelineScheme, slots);
+  const corrupted = JSON.parse(JSON.stringify(out));
+  corrupted.result.value = 25000; // the ₹30,000 result, restated as a different figure
+  assertThrows(() => assertDerivedFromSourced(corrupted, pipelineScheme, slots));
+});
+
+// ===== regression: every real data/schemes.json record =====
+// Not a re-check of scheme content (that's tools/validate-data.mjs's job)
+// — this only proves the engine doesn't throw on any real record, for any
+// of a few representative citizen profiles, and that assemble() never
+// trips its own guard against real data.
+
+await test('regression: every data/schemes.json record evaluates and assembles cleanly for several profiles', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  assertTrue(schemes.length > 0, 'data/schemes.json has no records');
+
+  const profiles = [
+    {},
+    { occupation: 'farmer', age: 40, gender: 'male', landholding_hectares: { min: 1.01, max: 2 } },
+    { occupation: 'farmer', age: 60, gender: 'female', landholding_category: 'small', has_regular_income_source: false },
+  ];
+
+  for (const scheme of schemes) {
+    for (const slots of profiles) {
+      const evaluation = evaluate(slots, scheme);
+      assertTrue(['ELIGIBLE', 'NOT_ELIGIBLE', 'NEED_MORE_INFO'].includes(evaluation.verdict), `${scheme.scheme_id}: bad verdict ${evaluation.verdict}`);
+      assemble(evaluation.verdict, scheme, evaluation); // throws via assertNoUnsourcedNumber if any figure is unsourced
+      const explanation = explain(scheme, slots);
+      assertTrue(['NO_RULE', 'NOT_APPLICABLE', 'NEED_MORE_INFO', 'PARTIAL', 'OK'].includes(explanation.status), `${scheme.scheme_id}: bad explainer status ${explanation.status}`);
+      assertDerivedFromSourced(explanation, scheme, slots);
+    }
+  }
 });
 
 // ===== render =====
