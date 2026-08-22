@@ -4,48 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>किसान द्वार — KISAN DWAAR</title>
-<style>
-  :root {
-    --ink: #14181F;
-    --field: #1F4D3D;
-    --paper: #F6F2E9;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
-    font-size: 20px;
-    line-height: 1.6;
-    text-align: center;
-    padding: 24px;
-  }
-  h1 {
-    color: var(--field);
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0 0 8px;
-  }
-  p {
-    max-width: 32rem;
-    margin: 0 0 8px;
-  }
-  .disclosure {
-    margin-top: 32px;
-    font-size: 14px;
-    opacity: 0.75;
-  }
-</style>
+<link rel="stylesheet" href="css/kisan.css">
 </head>
 <body>
-  <h1>किसान द्वार</h1>
-  <p>राजस्थान की कृषि योजनाओं का डिजिटल फ्रंट डोर — निर्माणाधीन।</p>
-  <p class="disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+  <header class="site-header">
+    <h1 class="hi">किसान द्वार</h1>
+    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+  </header>
+
+  <main class="container">
+    <div id="chat" class="chat" role="log" aria-live="polite" aria-label="बातचीत"></div>
+
+    <div class="chips">
+      <button id="discover-btn" type="button" class="button hi">सभी योजनाएं देखें</button>
+    </div>
+
+    <form id="composer" class="composer">
+      <label for="query-input" class="hi" style="position:absolute;left:-9999px;">अपना सवाल टाइप करें</label>
+      <input id="query-input" class="hi" type="text" placeholder="अपना सवाल टाइप करें…">
+      <button type="submit" class="button hi">भेजें</button>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

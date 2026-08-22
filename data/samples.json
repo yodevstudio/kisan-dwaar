@@ -1,14 +1,12 @@
 {
-  "version": "2026.08.15",
-  "note": "Fallback tappable sample queries shown when the mic is unavailable or permission is denied. Each phrase reuses vocabulary already verified in data/schemes.json (name_hi / keywords_hi) — no new scheme claims. P3: 'म्हने कांई-कांई मिल सकै?' is kept inside the first FALLBACK_SAMPLE_COUNT (4, js/app.js) so the discovery flow is reachable in one tap from a cold load, not just the mic.",
+  "version": "2026.08.22-1",
+  "note": "Tappable sample queries shown on a cold load, one tap from the discovery flow. Each phrase reuses vocabulary already verified in data/schemes.json (name_hi / keywords_hi) against the 12-scheme agriculture dataset — no new scheme claims. Re-selected 2026-08-22 for the agriculture pivot: the previous set (pension/social-security phrasing from the reference dataset) no longer matches any scheme in this dataset and would have routed to 'unknown' for a citizen tapping them. Every entry here was verified against js/router.js + data/schemes.json before being added — see the K5 session notes. First FALLBACK_SAMPLE_COUNT (4, js/app.js) always includes at least one discovery-phrase example so the full-catalogue flow is reachable in one tap, not just via a named scheme.",
   "samples": [
-    { "query_hi": "बुढ़ापा री पिंडोळी चाहिए" },
-    { "query_hi": "पालनहार योजना क्या है" },
-    { "query_hi": "विधवा पेंशन कैसे मिलेगी" },
-    { "query_hi": "म्हने कांई-कांई मिल सकै?" },
     { "query_hi": "तारबंदी योजना चाहिए" },
-    { "query_hi": "बेरोजगारी भत्ता चाहिए" },
-    { "query_hi": "स्वास्थ्य बीमा के बारे में बताओ" },
-    { "query_hi": "विकलांग पेंशन चाहिए" }
+    { "query_hi": "ड्रिप सिंचाई अनुदान चाहिए" },
+    { "query_hi": "मेरे लिए कौन सी योजना है?" },
+    { "query_hi": "किसान क्रेडिट कार्ड कैसे बनाएं" },
+    { "query_hi": "फसल बीमा के बारे में बताओ" },
+    { "query_hi": "खेत तलाई अनुदान चाहिए" }
   ]
 }
