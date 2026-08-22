@@ -1,6 +1,6 @@
 {
-  "version": "2026.08.14-2",
-  "note": "Question catalogue. Every slot referenced by any eligibility condition in schemes.json MUST have an entry here, or the discovery flow can never resolve it. 'पता नहीं' (value null) leaves the slot unset -> NEED_MORE_INFO, never a guessed value.",
+  "version": "2026.08.22-1",
+  "note": "Question catalogue. Every slot referenced by any eligibility condition in schemes.json MUST have an entry here, or the discovery flow can never resolve it. 'पता नहीं' (value null) leaves the slot unset -> NEED_MORE_INFO, never a guessed value. type:'number' slots (added 2026-08-22 for subsidy_rule.inputs, per docs/DATA_SPEC.md §3) are explainer-only follow-up questions — exact citizen-typed figures for arithmetic, not part of core_sequence's tap-to-answer bands, and carry no options list since a computed percentage/multiplication needs a precise value, not a range.",
   "core_sequence": [
     "age",
     "gender",
@@ -1497,6 +1497,24 @@
           "label_hi": "पता नहीं"
         }
       ]
+    },
+    {
+      "slot": "fencing_metres",
+      "question_hi": "कितने रनिंग मीटर तारबंदी करनी है?",
+      "type": "number",
+      "unit_hi": "मीटर"
+    },
+    {
+      "slot": "quoted_cost_inr",
+      "question_hi": "सामग्री/उपकरण या आपूर्तिकर्ता का अनुमानित कोटेशन कितने का है?",
+      "type": "number",
+      "unit_hi": "रुपये"
+    },
+    {
+      "slot": "drip_area_hectares",
+      "question_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?",
+      "type": "number",
+      "unit_hi": "हेक्टेयर"
     }
   ]
 }
