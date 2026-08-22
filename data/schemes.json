@@ -1,0 +1,633 @@
+[
+  {
+    "scheme_id": "RJ_TARBANDI",
+    "name_hi": "राजस्थान तारबंदी योजना",
+    "name_en": "Rajasthan Tarbandi Yojana",
+    "keywords_hi": ["तारबंदी", "बाड़ लगाना", "आवारा पशु", "नीलगाय"],
+    "department": "Agriculture",
+    "dataset_version": "2026.08.22-2",
+    "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
+    "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+    "source_type": "html_page",
+    "last_verified": "2026-08-22",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-20",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" }
+      ],
+      "any_of": [
+        { "slot": "landholding_hectares", "op": "gte", "value": 0.5 },
+        [ { "slot": "group_farmer_count", "op": "gte", "value": 3 }, { "slot": "group_landholding_hectares", "op": "gte", "value": 5 } ]
+      ],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "subsidy",
+      "amount_inr": null,
+      "amount_text_hi": "तारबंदी लागत का 50% या अधिकतम ₹40,000, जो भी कम हो — प्रति कृषक 400 रनिंग मीटर तक अनुदान। योजना सामुदायिक आधार पर है, जिसमें न्यूनतम 5 हेक्टेयर भूमि व 3 किसानों का समूह आवश्यक बताया गया है।",
+      "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
+      "note": "राशि किसान की वास्तविक तारबंदी लागत (कोटेशन) व मीटर सीमा पर निर्भर करती है, इसलिए सटीक गणना subsidy_rule में दी गई है, एक बंधी राशि के रूप में नहीं। पिछले रिकॉर्ड में दर्ज '50%-70%, ₹40,000-56,000' की श्रेणी-आधारित सीमा rajkisan.rajasthan.gov.in के वर्तमान पेज पर अब प्रकाशित नहीं है — पुरानी 70% श्रेणी अब हट चुकी है, यह पुष्टि 2026-08-22 को पेज व्यक्तिगत रूप से खोलकर की गई (देखें subsidy_rule.source_page_note)। वर्तमान में प्रकाशित एकमात्र दर फ्लैट 50% / अधिकतम ₹40,000 है।"
+    },
+    "subsidy_rule": {
+      "rule_id": "TARBANDI_STANDARD",
+      "inputs": [
+        {
+          "slot": "fencing_metres",
+          "type": "number",
+          "unit_hi": "मीटर",
+          "required": true,
+          "prompt_hi": "कितने रनिंग मीटर तारबंदी करनी है?"
+        },
+        {
+          "slot": "quoted_cost_inr",
+          "type": "number",
+          "unit_hi": "रुपये",
+          "required": false,
+          "prompt_hi": "तार व सामग्री की अनुमानित/कोटेशन लागत कितनी है? (न हो तो छोड़ दें)"
+        }
+      ],
+      "unit_caps": {
+        "fencing_metres": {
+          "max": 400,
+          "label_hi": "प्रति कृषक अधिकतम 400 रनिंग मीटर तक ही अनुदान देय"
+        }
+      },
+      "terms": [
+        {
+          "id": "pct",
+          "label_hi": "इकाई लागत का 50%",
+          "type": "percent_of_cost",
+          "percent": 50,
+          "cost_basis": { "kind": "citizen_quotation", "slot": "quoted_cost_inr" }
+        },
+        {
+          "id": "cap",
+          "label_hi": "अधिकतम अनुदान सीमा",
+          "type": "flat_cap",
+          "amount_inr": 40000
+        }
+      ],
+      "combine": "min",
+      "on_missing_input": "report_computable_terms_only",
+      "source_quote_hi": "तारबंदी हेतु पेरीफरी (परिधि) कृषकों को लागत का 50 प्रतिशत अथवा अधिकतम राशि रू- 40,000/- जो भी कम हो, प्रति कृषक 400 रनिंग मीटर तक अनुदान अनुज्ञेय है। सभी श्रेणी के कृषकों को लक्षित कर सामुदायिक आधार पर, जिसमें कम से कम 5 हैक्टेयर कृषि भूमि तथा 3 कृषकों का समूह होना आवश्यक है।",
+      "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
+      "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — flat 50% / max ₹40,000 confirmed as currently published, with no category-based percentage variation. The previous dataset's 50-70% / ₹40,000-56,000 range is no longer published on the current page.",
+      "last_verified": "2026-08-22"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं हो)", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक खाते संबंधित विवरण", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" }
+    ],
+    "apply_via": ["emitra"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_DRIP_SPRINKLER",
+    "name_hi": "सूक्ष्म सिंचाई (ड्रिप/स्प्रिंकलर) अनुदान योजना",
+    "name_en": "Micro-Irrigation (Drip/Sprinkler) Subsidy Scheme",
+    "keywords_hi": ["ड्रिप सिंचाई", "स्प्रिंकलर", "सूक्ष्म सिंचाई अनुदान", "टपक सिंचाई"],
+    "department": "Agriculture Department (Horticulture Division), Rajasthan / कृषि विभाग (उद्यान शाखा)",
+    "dataset_version": "2026.08.22-2",
+    "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
+    "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+    "source_type": "html_page",
+    "last_verified": "2026-08-22",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-20",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" },
+        { "slot": "landholding_hectares", "op": "gte", "value": 0.2 }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "subsidy",
+      "amount_inr": null,
+      "amount_text_hi": "सामान्य किसानों को लागत का 50% अनुदान; लघु व सीमांत किसानों को 70% अनुदान — सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक कवर। पृष्ठ पर कोई रुपये की सीमा (ceiling) प्रकाशित नहीं है, केवल प्रतिशत।",
+      "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
+      "note": "अनुदान प्रतिशत किसान की श्रेणी (सामान्य बनाम लघु/सीमांत) पर निर्भर है और लागत किसान के कोटेशन पर आधारित है, इसलिए सटीक गणना subsidy_rule में दी गई है, बंधी राशि के रूप में नहीं। rajkisan.rajasthan.gov.in पर कोई प्रकाशित इकाई लागत (₹/हेक्टेयर) नहीं मिली, इसलिए प्रतिशत-पद केवल किसान के आपूर्तिकर्ता कोटेशन (quoted_cost_inr) से ही गणनीय है — कोटेशन न होने पर स्थिति PARTIAL रहेगी। योजना केवल चालू वित्तीय वर्ष के लिए वैध रहती है, दरें वर्ष-दर-वर्ष बदल सकती हैं।"
+    },
+    "subsidy_rule": {
+      "rule_id": "DRIP_SPRINKLER_CATEGORY_PCT",
+      "inputs": [
+        {
+          "slot": "landholding_category",
+          "type": "single",
+          "options": ["other", "small", "marginal"],
+          "required": true,
+          "prompt_hi": "आपकी श्रेणी क्या है — सामान्य, लघु या सीमांत किसान?"
+        },
+        {
+          "slot": "drip_area_hectares",
+          "type": "number",
+          "unit_hi": "हेक्टेयर",
+          "required": true,
+          "prompt_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?"
+        },
+        {
+          "slot": "quoted_cost_inr",
+          "type": "number",
+          "unit_hi": "रुपये",
+          "required": false,
+          "prompt_hi": "आपूर्तिकर्ता का कोटेशन कितने का है? (न हो तो छोड़ दें)"
+        }
+      ],
+      "unit_caps": {
+        "drip_area_hectares": {
+          "max": 5,
+          "label_hi": "सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक ही अनुदान देय — इससे अधिक क्षेत्र की लागत अनुदान में नहीं जुड़ेगी"
+        }
+      },
+      "terms": [
+        {
+          "id": "pct",
+          "label_hi": "इकाई लागत का अनुदान (श्रेणी अनुसार)",
+          "type": "percent_of_cost",
+          "percent_by": { "other": 50, "small": 70, "marginal": 70 },
+          "percent_selector_slot": "landholding_category",
+          "cost_basis": { "kind": "citizen_quotation", "slot": "quoted_cost_inr" }
+        }
+      ],
+      "combine": "min",
+      "on_missing_input": "report_computable_terms_only",
+      "source_quote_hi": "सामान्य कृषकों को 50 प्रतिशत तथा लघु, सीमान्त कृषकों को 70 प्रतिशत अनुदान देय है। समस्त श्रैणी के कृषकों को ड्रिप संयंत्र पर अधिकतम 5 हैक्टेयर क्षेत्रफल तक अनुदान देय है। कम से कम 0.2 हैक्टेयर सिंचित कृषि योग्य भूमि हो।",
+      "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
+      "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — 50% (general category) / 70% (small and marginal) confirmed as currently published, capped at 5 hectares per farmer for all categories, no published per-hectare rupee ceiling. The general-category key is stored as \"other\" to match the value data/slots.json's existing landholding_category slot already uses for this category, rather than adding a duplicate option.",
+      "last_verified": "2026-08-22"
+    },
+    "documents": [
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं)", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" },
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "IRRIGATION_SOURCE_CERT", "label_hi": "सिंचाई स्रोत प्रमाण पत्र", "icon": "certificate", "where_to_get_hi": "कृषि पर्यवेक्षक / पटवारी", "sample_image": "assets/docs/irrigation_source_cert.svg" },
+      { "doc_id": "SOIL_WATER_TEST", "label_hi": "मृदा एवं जल परीक्षण रिपोर्ट", "icon": "document", "where_to_get_hi": "कृषि विभाग प्रयोगशाला", "sample_image": "assets/docs/soil_water_test.svg" },
+      { "doc_id": "SUPPLIER_QUOTATION", "label_hi": "आपूर्तिकर्ता का कोटेशन", "icon": "document", "where_to_get_hi": "अधिकृत डीलर", "sample_image": "assets/docs/supplier_quotation.svg" }
+    ],
+    "apply_via": ["emitra"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_FARM_POND",
+    "name_hi": "खेत तलाई अनुदान योजना",
+    "name_en": "Farm Pond (Khet Talai) Subsidy Scheme",
+    "keywords_hi": ["खेत तलाई", "फार्म पौंड", "वर्षा जल संग्रहण खेत"],
+    "department": "Agriculture Department (Agriculture Extension Division), Rajasthan / कृषि विभाग (कृषि विस्तार शाखा)",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/farmpound.html",
+    "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" },
+        { "slot": "landholding_hectares", "op": "gte", "value": 0.3 }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "subsidy",
+      "amount_inr": null,
+      "amount_text_hi": "निर्माण लागत का 60% अनुदान — सामान्य (मिट्टी) तलाई हेतु अधिकतम ₹63,000, प्लास्टिक लाइनिंग वाली तलाई हेतु अधिकतम ₹90,000 (जो भी कम हो), न्यूनतम क्षमता 400 घन मीटर आवश्यक — सभी श्रेणी के किसानों के लिए समान दर",
+      "rate_policy": "VARIES_BY_MATERIAL_DO_NOT_COLLAPSE",
+      "note": "राशि तलाई के प्रकार (सामान्य/प्लास्टिक लाइनिंग) पर निर्भर है, इसलिए दोनों सीमाएँ amount_text_hi में स्पष्ट रखी हैं।"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड / जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं)", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" }
+    ],
+    "apply_via": ["emitra", "sso_portal"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_PMKISAN",
+    "name_hi": "प्रधानमंत्री किसान सम्मान निधि योजना",
+    "name_en": "PM Kisan Samman Nidhi Yojana",
+    "keywords_hi": ["पीएम किसान", "किसान सम्मान निधि", "किसान सालाना 6000"],
+    "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://pmkisan.gov.in/",
+    "source_url_secondary": "https://rajkisan.rajasthan.gov.in/",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" },
+        { "slot": "landholding_hectares", "op": "gte", "value": 1 }
+      ],
+      "any_of": [],
+      "none_of": [
+        { "slot": "employment_sector", "op": "in", "value": ["government", "constitutional_post", "elected_official"] },
+        { "slot": "is_income_tax_payer", "op": "eq", "value": true },
+        { "slot": "occupation", "op": "in", "value": ["doctor", "engineer", "lawyer", "ca", "architect"] },
+        { "slot": "pension_monthly_inr", "op": "gte", "value": 10000 }
+      ]
+    },
+    "benefit": {
+      "type": "staged_cash",
+      "amount_inr": 6000,
+      "amount_text_hi": "₹6,000 प्रति वर्ष, तीन बराबर किश्तों (₹2,000 प्रत्येक) में सीधे बैंक खाते में — केंद्र सरकार की 100% वित्तपोषित योजना। इसके अतिरिक्त राजस्थान सरकार की मुख्यमंत्री किसान सम्मान निधि योजना के तहत राज्यस्तर पर ₹2,000-3,000 प्रति वर्ष अतिरिक्त सहायता की घोषणा हुई है (कुल ~₹9,000 तक) — यह राज्य-टॉप-अप राशि केवल समाचार स्रोतों से मिली है, आधिकारिक कृषि विभाग पेज से पुष्टि नहीं हो सकी, अतः अलग से मैन्युअली सत्यापित करें",
+      "rate_policy": "CENTRAL_SCHEME_RATE_SEE_SOURCE",
+      "note": "मूल ₹6,000/वर्ष राशि आधिकारिक pmkisan.gov.in व PIB दस्तावेज़ से पूर्णतः सत्यापित है। राज्य टॉप-अप राशि (मुख्यमंत्री किसान सम्मान निधि योजना) पत्रिका व Zee Business समाचारों में है परंतु आधिकारिक rajkisan.rajasthan.gov.in पेज पर सीधे नहीं मिली — इसलिए amount_inr में केवल केंद्रीय राशि (सत्यापित) रखी है।"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड (बैंक खाते से लिंक)", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक खाते की पासबुक", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" }
+    ],
+    "apply_via": ["emitra", "sso_portal"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_PMFBY",
+    "name_hi": "प्रधानमंत्री फसल बीमा योजना",
+    "name_en": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+    "keywords_hi": ["फसल बीमा", "फसल खराब", "बीमा योजना किसान", "पीएमएफबीवाई"],
+    "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department & empanelled insurance companies",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://pmfby.gov.in/compendium/General/1_2_3_merged.pdf",
+    "source_url_secondary": "https://rajkisan.rajasthan.gov.in/",
+    "source_type": "text_pdf",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" }
+      ],
+      "any_of": [
+        { "slot": "farmer_loan_status", "op": "eq", "value": "loanee" },
+        { "slot": "farmer_loan_status", "op": "eq", "value": "non_loanee" }
+      ],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "insurance",
+      "amount_inr": null,
+      "amount_text_hi": "किसान का प्रीमियम अंश फसल के अनुसार तय है — खरीफ फसलों पर बीमित राशि का 2%, रबी फसलों पर 1.5%, वाणिज्यिक/बागवानी फसलों पर 5%; शेष प्रीमियम केंद्र व राज्य सरकार वहन करती है (सिंचित जिलों में 25% व असिंचित में 30% तक सरकार की सीमा)। दावा राशि फसल के नुकसान के आकलन पर निर्भर है, इसलिए एक स्थिर amount_inr नहीं दिया जा सकता",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "PMFBY 2.0 (खरीफ 2020 से) के तहत ऋणी (loanee) किसानों के लिए भी नामांकन अब स्वैच्छिक है, पहले अनिवार्य था। बीमित राशि व दावा फसल-वार व मौसम-वार तय होती है, इसलिए एक बंधी राशि देना भ्रामक होगा।"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी / बुवाई प्रमाण पत्र", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक खाते की पासबुक", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" },
+      { "doc_id": "SOWING_CERT", "label_hi": "बुवाई प्रमाण पत्र (स्व-घोषणा)", "icon": "certificate", "where_to_get_hi": "पटवारी / ई-मित्र", "sample_image": "assets/docs/sowing_cert.svg" }
+    ],
+    "apply_via": ["emitra", "bank_branch"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र या बैंक शाखा पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_KCC",
+    "name_hi": "किसान क्रेडिट कार्ड योजना",
+    "name_en": "Kisan Credit Card (KCC) Scheme",
+    "keywords_hi": ["किसान क्रेडिट कार्ड", "केसीसी", "फसली ऋण", "कृषि ऋण"],
+    "department": "Reserve Bank of India / NABARD (national credit scheme, delivered via nationalised banks, RRBs and cooperative banks in Rajasthan)",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://www.rbi.org.in/commonman/english/scripts/Notification.aspx?Id=2311",
+    "source_url_secondary": "https://www.newsonair.gov.in/10-lakh-crore-rupees-loan-given-under-kisan-credit-card-benefitting-7-72-crore-farmers",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [],
+      "any_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" },
+        { "slot": "occupation", "op": "in", "value": ["tenant_farmer", "oral_lessee", "sharecropper"] },
+        { "slot": "group_type", "op": "in", "value": ["shg", "jlg"] }
+      ],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "credit_line",
+      "amount_inr": null,
+      "amount_text_hi": "फसली ऋण सीमा भूमि के क्षेत्रफल व फसल की 'scale of finance' पर आधारित; सीमांत किसानों (1 हेक्टेयर से कम) के लिए फ्लेक्सी-केसीसी के तहत ₹10,000 से ₹50,000 तक। ₹3 लाख तक के अल्पकालिक फसली ऋण पर सरकार की ब्याज सहायता (1.5% सबवेंशन) से प्रभावी दर 7% वार्षिक, समय पर भुगतान करने पर अतिरिक्त 3% प्रोत्साहन छूट से प्रभावी दर घटकर 4% वार्षिक",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "यह एक ऋण/क्रेडिट योजना है, नकद अनुदान नहीं — सीमा भूमि जोत व फसल पर निर्भर होने से एक स्थिर amount_inr देना भ्रामक होगा। बैंक KCC की वैधता अवधि व नवीनीकरण स्वयं तय करते हैं।"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल / भूमि स्वामित्व प्रमाण", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" },
+      { "doc_id": "PASSPORT_PHOTO", "label_hi": "पासपोर्ट साइज़ फोटो", "icon": "document", "where_to_get_hi": "फोटो स्टूडियो", "sample_image": "assets/docs/passport_photo.svg" }
+    ],
+    "apply_via": ["bank_branch"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी बैंक शाखा (राष्ट्रीयकृत/सहकारी/ग्रामीण बैंक) पर जाकर आवेदन करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी बैंक शाखा से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
+    "name_hi": "वृद्धजन कृषक सम्मान पेंशन योजना",
+    "name_en": "Vridhjan Krishak Samman Pension Yojana (Old-Age Farmer Honour Pension)",
+    "keywords_hi": ["किसान पेंशन", "वृद्ध किसान पेंशन", "कृषक सम्मान पेंशन", "बुढ़ापा किसान पेंशन"],
+    "department": "Social Justice & Empowerment Department, Rajasthan",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://ssp.rajasthan.gov.in/",
+    "source_url_secondary": "https://www.amarujala.com/rajasthan/rajasthan-government-issued-rules-for-social-protection-old-age-farmer-honor-pension-scheme",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "occupation", "op": "eq", "value": "farmer" },
+        { "slot": "landholding_category", "op": "in", "value": ["small", "marginal"] },
+        { "slot": "has_regular_income_source", "op": "eq", "value": false }
+      ],
+      "any_of": [
+        [ { "slot": "gender", "op": "eq", "value": "female" }, { "slot": "age", "op": "gte", "value": 55 } ],
+        [ { "slot": "gender", "op": "eq", "value": "male" }, { "slot": "age", "op": "gte", "value": 58 } ]
+      ],
+      "none_of": [
+        { "slot": "other_social_security_pension_recipient", "op": "eq", "value": true }
+      ]
+    },
+    "benefit": {
+      "type": "monthly_cash",
+      "amount_inr": null,
+      "amount_text_hi": "55-74 वर्ष (महिला) / 58-74 वर्ष (पुरुष) आयु वर्ग में ₹750 प्रतिमाह; 75 वर्ष व अधिक आयु में ₹1,000 प्रतिमाह — 1 मार्च 2019 से प्रभावी",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "यह योजना सामान्य वृद्धावस्था पेंशन (RJ_RAJSSP_OLD_AGE) जैसी ही राशि-संरचना उपयोग करती है परंतु विशेष रूप से लघु/सीमांत किसानों के लिए है जिनकी नियमित आय का कोई स्रोत नहीं है — दोनों योजनाओं का एक साथ लाभ नहीं मिलता। राशि 2019 की घोषणा पर आधारित है, तब से संशोधित हो सकती है।"
+    },
+    "documents": [
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "AGE_CERT", "label_hi": "आयु प्रमाण पत्र", "icon": "certificate", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/age_cert.svg" },
+      { "doc_id": "LAND_RECORD", "label_hi": "जमाबंदी की नकल (लघु/सीमांत किसान श्रेणी हेतु)", "icon": "document", "where_to_get_hi": "तहसील (राजस्व विभाग)", "sample_image": "assets/docs/land_record.svg" }
+    ],
+    "apply_via": ["emitra"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
+    "name_hi": "विकसित भारत - ग्राम रोजगार एवं आजीविका मिशन (ग्रामीण) अधिनियम, 2025 (पूर्व में मनरेगा)",
+    "name_en": "Viksit Bharat - Guarantee for Rozgar and Ajeevika Mission (Gramin) Act, 2025 (VB-G RAM G) - successor to MGNREGA",
+    "keywords_hi": ["मनरेगा", "ग्रामीण रोजगार गारंटी", "जॉब कार्ड", "नरेगा"],
+    "department": "Union Ministry of Rural Development (Centrally Sponsored Scheme, 60:40 Centre-State), implemented in Rajasthan via Panchayati Raj & Rural Development Dept",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://www.scconline.com/blog/post/2026/07/06/state-wise-wage-rates-revised-under-vb-g-ram-g-act/",
+    "source_url_secondary": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2279660&reg=3&lang=1",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 30,
+    "next_review_due": "2026-09-13",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "residence_type", "op": "eq", "value": "rural" },
+        { "slot": "willing_to_do_unskilled_manual_work", "op": "eq", "value": true },
+        { "slot": "age", "op": "gte", "value": 18 }
+      ],
+      "any_of": [],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "wage_employment_guarantee",
+      "amount_inr": 300,
+      "amount_text_hi": "प्रति परिवार वार्षिक 125 दिन गारंटीशुदा रोजगार (पहले मनरेगा में 100 दिन था); राजस्थान में अकुशल श्रम की मजदूरी दर ₹300/दिन — 1 जुलाई 2026 से प्रभावी नई राष्ट्रीय आधार दर (30 जून 2026 की अधिसूचना अनुसार, यह पुरानी 26 फरवरी 2013 की अधिसूचना का स्थान लेती है); 15 दिन तक कार्य न मिलने पर बेरोज़गारी भत्ता अनिवार्य",
+      "rate_policy": "REVISED_PERIODICALLY_DO_NOT_STATE",
+      "note": "**महत्वपूर्ण**: यह योजना पूर्व मनरेगा (MGNREGA, 2005) का स्थान लेने वाला बिल्कुल नया कानून है — राष्ट्रपति की स्वीकृति 22 दिसंबर 2025 को मिली, 1 जुलाई 2026 से प्रभावी (आज की तारीख 14 अगस्त 2026 से मात्र 6 सप्ताह पहले)। पुराना नाम/ब्रांडिंग (मनरेगा/नरेगा) आम बोलचाल में अभी भी प्रचलित रहेगा, इसलिए keywords में दोनों रखे गए हैं। साप्ताहिक/पाक्षिक मजदूरी भुगतान, GPS व बायोमेट्रिक निगरानी नई विशेषताएं हैं।"
+    },
+    "documents": [
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "JOB_CARD", "label_hi": "जॉब कार्ड (ग्राम पंचायत से पंजीकरण पर जारी)", "icon": "id-card", "where_to_get_hi": "ग्राम पंचायत", "sample_image": "assets/docs/job_card.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक खाते की पासबुक (आधार लिंक्ड)", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" }
+    ],
+    "apply_via": ["gram_panchayat"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। ग्राम पंचायत में जॉब कार्ड हेतु पंजीयन करवाएं।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। ग्राम पंचायत से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_PMAY_GRAMIN",
+    "name_hi": "प्रधानमंत्री आवास योजना - ग्रामीण",
+    "name_en": "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)",
+    "keywords_hi": ["पीएम आवास ग्रामीण", "आवास योजना गांव", "पक्का घर योजना"],
+    "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/nov/doc20241119437801.pdf",
+    "source_url_secondary": "https://rural.nic.in/en/press-release/applications-under-new-phase-pradhan-mantri-awas-yojana-gramin",
+    "source_type": "text_pdf",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "owns_pucca_house", "op": "eq", "value": false }
+      ],
+      "any_of": [],
+      "none_of": [
+        { "slot": "kcc_limit_inr", "op": "gte", "value": 50000 },
+        { "slot": "employment_sector", "op": "eq", "value": "government" },
+        { "slot": "monthly_income", "op": "gte", "value": 15001 },
+        { "slot": "is_income_tax_payer", "op": "eq", "value": true },
+        { "slot": "owns_non_agri_enterprise", "op": "eq", "value": true },
+        { "slot": "irrigated_land_acres", "op": "gte", "value": 3.5 }
+      ]
+    },
+    "benefit": {
+      "type": "one_time_cash",
+      "amount_inr": 120000,
+      "amount_text_hi": "मैदानी क्षेत्रों में ₹1.20 लाख; पूर्वोत्तर राज्यों व पहाड़ी/दुर्गम क्षेत्रों (हिमाचल, उत्तराखंड, जम्मू-कश्मीर, लद्दाख) में ₹1.30 लाख — इकाई सहायता (राजस्थान मैदानी राज्य होने से सामान्यतः ₹1.20 लाख लागू)। इसके अतिरिक्त शौचालय निर्माण हेतु ₹12,000 तक व मनरेगा के तहत 95 दिन अकुशल श्रम रोजगार (₹90.95/दिन मजदूरी दर) का प्रावधान",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "राजस्थान एक मैदानी राज्य है, इसलिए सामान्यतः ₹1.20 लाख की दर लागू होती है — पहाड़ी दर केवल उल्लेखित विशेष राज्यों के लिए है। पात्रता SECC 2011 डेटा के स्वतः-बहिष्करण मानदंडों (KCC सीमा, सरकारी नौकरी, आयकर, सिंचित भूमि आदि) पर आधारित है।"
+    },
+    "documents": [
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड (सभी परिवार सदस्यों का)", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "MGNREGA_JOB_CARD", "label_hi": "मनरेगा जॉब कार्ड (यदि उपलब्ध हो)", "icon": "id-card", "where_to_get_hi": "ग्राम पंचायत", "sample_image": "assets/docs/mgnrega_job_card.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक खाते की पासबुक (आधार लिंक्ड)", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" }
+    ],
+    "apply_via": ["gram_panchayat"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग सकते हैं। {{benefit_text}}। सूची में नाम की पुष्टि ग्राम पंचायत या पटवारी से करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। ग्राम पंचायत से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_AYUSHMAN",
+    "name_hi": "मुख्यमंत्री आयुष्मान आरोग्य योजना",
+    "name_en": "Mukhyamantri Ayushman Arogya Yojana",
+    "keywords_hi": ["स्वास्थ्य बीमा", "चिरंजीवी", "अस्पताल का खर्चा", "इलाज"],
+    "department": "Medical & Health",
+    "dataset_version": "2026.08.14-1",
+    "source_url": "https://maayojana.rajasthan.gov.in/",
+    "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [],
+      "any_of": [
+        { "slot": "health_cover_category", "op": "in", "value": ["nfsa", "secc_2011", "small_marginal_farmer", "contract_worker", "covid_exgratia_recipient", "other"] }
+      ],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "insurance",
+      "amount_inr": null,
+      "amount_text_hi": "₹25 लाख तक का कैशलेस स्वास्थ्य बीमा और ₹10 लाख तक का दुर्घटना बीमा प्रति परिवार — NFSA, SECC 2011, लघु/सीमांत कृषक, संविदा कर्मी व कोविड-19 अनुग्रह राशि प्राप्तकर्ता श्रेणी के लिए निःशुल्क; अन्य श्रेणी के लिए ₹850 वार्षिक प्रीमियम पर उपलब्ध",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "कवरेज लगभग सार्वभौमिक है (निःशुल्क या ₹850 प्रीमियम पर), इसलिए 'district: *' जैसी खोखली शर्त की जगह अब श्रेणी पूछी जाती है — इससे इंजन वास्तव में कुछ तय करता है, केवल हर किसी को स्वीकृत नहीं करता, और उत्तर बताता है कि निःशुल्क है या प्रीमियम लगेगा"
+    },
+    "documents": [
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "RATION_CARD", "label_hi": "राशन कार्ड (NFSA के लिए)", "icon": "id-card", "where_to_get_hi": "ई-मित्र / रसद विभाग", "sample_image": "assets/docs/ration_card.svg" }
+    ],
+    "apply_via": ["emitra", "sso_portal"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_NFSA",
+    "name_hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम (राशन/खाद्य सुरक्षा योजना)",
+    "name_en": "National Food Security Act (NFSA) - Food Security / Ration Scheme",
+    "keywords_hi": ["राशन कार्ड", "खाद्य सुरक्षा योजना", "मुफ्त गेहूं चावल", "अंत्योदय"],
+    "department": "Union Ministry of Consumer Affairs, Food & Public Distribution (Central Act), implemented in Rajasthan via Food Department (food.raj.nic.in)",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=1897933&reg=48&lang=2",
+    "source_url_secondary": "https://department.rajasthan.gov.in/scheme/detail/203",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [],
+      "any_of": [
+        { "slot": "ration_card_category", "op": "eq", "value": "aay" },
+        { "slot": "ration_card_category", "op": "eq", "value": "priority_household" }
+      ],
+      "none_of": []
+    },
+    "benefit": {
+      "type": "monthly_in_kind",
+      "amount_inr": null,
+      "amount_text_hi": "अंत्योदय अन्न योजना (AAY) - सबसे निर्धन परिवार: प्रति परिवार 35 किलो अनाज प्रतिमाह; प्राथमिकता परिवार (Priority Household): प्रति व्यक्ति 5 किलो प्रतिमाह — 1 जनवरी 2024 से अगले 5 वर्षों (दिसंबर 2029 तक) के लिए पूर्णतः निःशुल्क (पहले न्यूनतम मूल्य पर मिलता था)",
+      "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
+      "note": "यह अनाज (गेहूं/चावल) के रूप में लाभ है, नकद नहीं, इसलिए amount_inr लागू नहीं। पात्र परिवारों की पहचान राज्य सरकार द्वारा निरंतर अद्यतन डेटाबेस से होती है। ग्रामीण क्षेत्र की 75% व शहरी क्षेत्र की 50% जनसंख्या तक कवरेज का प्रावधान राष्ट्रीय स्तर पर है — राजस्थान-विशिष्ट कवरेज आँकड़ा इस सत्र में सत्यापित नहीं हो सका।"
+    },
+    "documents": [
+      { "doc_id": "JAN_AADHAAR", "label_hi": "जन आधार कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र", "sample_image": "assets/docs/jan_aadhaar.svg" },
+      { "doc_id": "RATION_CARD", "label_hi": "राशन कार्ड", "icon": "id-card", "where_to_get_hi": "ई-मित्र / रसद विभाग", "sample_image": "assets/docs/ration_card.svg" },
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड (सभी परिवार सदस्यों का, e-KYC हेतु)", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" }
+    ],
+    "apply_via": ["emitra"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी उचित मूल्य दुकान या ई-मित्र से राशन कार्ड की स्थिति जांचें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+    }
+  },
+  {
+    "scheme_id": "RJ_UJJWALA",
+    "name_hi": "प्रधानमंत्री उज्ज्वला योजना 2.0",
+    "name_en": "Pradhan Mantri Ujjwala Yojana 2.0 (PMUY)",
+    "keywords_hi": ["उज्ज्वला योजना", "मुफ्त गैस कनेक्शन", "एलपीजी कनेक्शन गरीब महिला"],
+    "department": "Union Ministry of Petroleum & Natural Gas (Central Sector Scheme), delivered via Oil Marketing Companies (Indane, Bharat Gas, HP Gas) in Rajasthan",
+    "dataset_version": "2026.08.14-3",
+    "source_url": "https://www.pmuy.gov.in/ujjwala2.html",
+    "source_url_secondary": "https://mopng.gov.in/en/page/46",
+    "source_type": "html_page",
+    "last_verified": "2026-08-14",
+    "verification_interval_days": 90,
+    "next_review_due": "2026-11-12",
+    "verified_by": "manual",
+    "eligibility": {
+      "all_of": [
+        { "slot": "gender", "op": "eq", "value": "female" },
+        { "slot": "age", "op": "gte", "value": 18 },
+        { "slot": "household_poor_declaration", "op": "eq", "value": true }
+      ],
+      "any_of": [],
+      "none_of": [
+        { "slot": "household_has_lpg_connection", "op": "eq", "value": true }
+      ]
+    },
+    "benefit": {
+      "type": "one_time_subsidy",
+      "amount_inr": 2200,
+      "amount_text_hi": "₹2,200 प्रति कनेक्शन की वित्तीय सहायता (शुरुआत में ₹1,600 थी, बाद में बढ़ाकर ₹2,200 की गई); नए PMUY लाभार्थियों को पहला रिफिल व चूल्हा (स्टोव) भी निःशुल्क",
+      "rate_policy": "CENTRAL_SCHEME_RATE_SEE_SOURCE",
+      "note": "प्रवासी आवेदकों के लिए विशेष स्व-घोषणा प्रपत्र (Annexure I) की सुविधा है, जिसमें स्थायी निवास प्रमाण की सामान्य शर्त में छूट मिलती है। परिवार में किसी भी तेल कंपनी से पहले से LPG कनेक्शन न होना अनिवार्य शर्त है।"
+    },
+    "documents": [
+      { "doc_id": "AADHAAR", "label_hi": "आधार कार्ड (आवेदक महिला व वयस्क परिवार सदस्यों का)", "icon": "id-card", "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र", "sample_image": "assets/docs/aadhaar.svg" },
+      { "doc_id": "RATION_CARD", "label_hi": "राशन कार्ड या परिवार संरचना प्रमाणित करने वाला दस्तावेज़", "icon": "id-card", "where_to_get_hi": "ई-मित्र / रसद विभाग", "sample_image": "assets/docs/ration_card.svg" },
+      { "doc_id": "DEPRIVATION_DECLARATION", "label_hi": "गरीब परिवार होने का स्व-घोषणा पत्र (Deprivation Declaration)", "icon": "document", "where_to_get_hi": "गैस एजेंसी / ई-मित्र", "sample_image": "assets/docs/deprivation_declaration.svg" },
+      { "doc_id": "BANK_PASSBOOK", "label_hi": "बैंक पासबुक / रद्द चेक", "icon": "bank", "where_to_get_hi": "बैंक शाखा", "sample_image": "assets/docs/bank_passbook.svg" }
+    ],
+    "apply_via": ["gas_agency"],
+    "response_templates_hi": {
+      "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रही हैं। {{benefit_text}}। नज़दीकी गैस एजेंसी (इंडेन/भारत गैस/एचपी गैस) पर आवेदन करें।",
+      "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+      "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+      "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी गैस एजेंसी से पूछें।"
+    }
+  }
+]

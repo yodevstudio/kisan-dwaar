@@ -383,6 +383,62 @@ await test('assertDerivedFromSourced: throws when a "derived" (corrupted-final-v
   assertThrows(() => assertDerivedFromSourced(corrupted, pipelineScheme, slots));
 });
 
+// ===== explainer.js against the two live subsidy_rule records =====
+// data/schemes.json now carries real, human-verified subsidy_rule blocks
+// for RJ_TARBANDI and RJ_DRIP_SPRINKLER (verified 2026-08-22). These fetch
+// the actual file rather than a synthetic fixture, so a future edit to
+// either record's numbers is caught here.
+
+await test('explain: RJ_TARBANDI (real record) — 50% of cost, capped at ₹40,000', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const scheme = schemes.find((s) => s.scheme_id === 'RJ_TARBANDI');
+  const slots = { occupation: 'farmer', landholding_hectares: 1, fencing_metres: 300, quoted_cost_inr: 50000 };
+  const out = explain(scheme, slots);
+  assertEqual(out.status, 'OK');
+  assertEqual(out.terms.find((t) => t.id === 'pct').value.value, 25000); // 50% of 50,000
+  assertEqual(out.terms.find((t) => t.id === 'cap').value.value, 40000); // flat cap
+  assertEqual(out.result.value, 25000); // min(25000, 40000) — the percent term binds here
+  assertDerivedFromSourced(out, scheme, slots);
+});
+
+await test('explain: RJ_TARBANDI (real record) — the flat cap binds when cost is high', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const scheme = schemes.find((s) => s.scheme_id === 'RJ_TARBANDI');
+  const slots = { occupation: 'farmer', landholding_hectares: 1, fencing_metres: 300, quoted_cost_inr: 200000 };
+  const out = explain(scheme, slots);
+  assertEqual(out.result.value, 40000); // 50% of 200,000 = 100,000, capped at 40,000
+  assertDerivedFromSourced(out, scheme, slots);
+});
+
+await test('explain: RJ_DRIP_SPRINKLER (real record) — category-based percentage, "other" selects 50%', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const scheme = schemes.find((s) => s.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const slots = { occupation: 'farmer', landholding_hectares: 1, landholding_category: 'other', drip_area_hectares: 2, quoted_cost_inr: 100000 };
+  const out = explain(scheme, slots);
+  assertEqual(out.status, 'OK');
+  assertEqual(out.result.value, 50000); // 50% of 100,000
+  assertDerivedFromSourced(out, scheme, slots);
+});
+
+await test('explain: RJ_DRIP_SPRINKLER (real record) — "small"/"marginal" selects 70%', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const scheme = schemes.find((s) => s.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const slots = { occupation: 'farmer', landholding_hectares: 1, landholding_category: 'marginal', drip_area_hectares: 2, quoted_cost_inr: 100000 };
+  const out = explain(scheme, slots);
+  assertEqual(out.result.value, 70000); // 70% of 100,000
+  assertDerivedFromSourced(out, scheme, slots);
+});
+
+await test('explain: RJ_DRIP_SPRINKLER (real record) — missing quotation reports PARTIAL, not a guessed figure', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const scheme = schemes.find((s) => s.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const slots = { occupation: 'farmer', landholding_hectares: 1, landholding_category: 'small', drip_area_hectares: 2 };
+  const out = explain(scheme, slots);
+  assertEqual(out.status, 'NEED_MORE_INFO');
+  assertEqual(out.result, null);
+  assertTrue(out.missing_slots.includes('quoted_cost_inr'));
+});
+
 // ===== regression: every real data/schemes.json record =====
 // Not a re-check of scheme content (that's tools/validate-data.mjs's job)
 // — this only proves the engine doesn't throw on any real record, for any
