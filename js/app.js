@@ -230,25 +230,105 @@ async function resolveScheme(scheme) {
   renderVerdictCard(scheme, evaluation, output);
 }
 
+function formatInr(n) {
+  return `₹${n.toLocaleString('en-IN')}`;
+}
+
+// Renders the "आपने बताया: X · Y · Z" opening line from docs/DATA_SPEC.md
+// §3.3's worked example — every value the citizen actually gave for this
+// rule's own inputs, echoed back exactly as they gave it.
+function describeStatedInputs(rule, slots) {
+  const parts = [];
+  for (const input of rule.inputs) {
+    const value = slots[input.slot];
+    if (value === undefined) continue;
+    if (Array.isArray(input.options)) {
+      const catalogDef = findSlotDef(input.slot);
+      const known = catalogDef && catalogDef.options && catalogDef.options.find((o) => o.value === value);
+      parts.push(known ? known.label_hi : String(value));
+    } else {
+      const shown = typeof value === 'number' ? value.toLocaleString('en-IN') : String(value);
+      parts.push(input.unit_hi ? `${shown} ${input.unit_hi}` : shown);
+    }
+  }
+  return parts.join(' · ');
+}
+
+// One arithmetic line per term, in the same "X = Y" shape as the worked
+// example — not just the answer, the working. Falls through to a plain
+// "= ₹Z" for any derivation shape not explicitly recognised, since term
+// types get added over time (docs/DATA_SPEC.md §3.1) and a term this
+// module doesn't yet know how to narrate should still show its number
+// rather than nothing.
+function formatTermMath(node) {
+  const amount = formatInr(node.value);
+  if (node.from.kind === 'rule') return `= ${amount} (तय सीमा)`;
+  if (node.from.kind === 'derived') {
+    const [a, b] = node.from.operands;
+    if (node.from.op === 'percent_of') {
+      return `${formatInr(b.value)} का ${a.value}% = ${amount}`;
+    }
+    if (node.from.op === 'multiply') {
+      return `${formatInr(a.value)} × ${b.value} = ${amount}`;
+    }
+  }
+  return `= ${amount}`;
+}
+
+function combinePhrase(combineMode) {
+  if (combineMode === 'min') return 'नियम कहता है: जो भी कम हो, वही देय।';
+  if (combineMode === 'max') return 'नियम कहता है: जो भी ज़्यादा हो, वही देय।';
+  return 'नियम कहता है: सभी शर्तों को जोड़कर देय राशि तय होती है।';
+}
+
+// Which term's figure the combined result/bound actually came from — the
+// worked example's "← शर्त 2 (अधिकतम दर सीमा) लागू हुई" annotation. Only
+// meaningful for min/max (sum uses every computable term, not one winner).
+function findBindingTerm(terms, combineMode, value) {
+  if (combineMode === 'sum') return null;
+  const computable = terms.filter((t) => t.value !== null);
+  if (computable.length < 2) return null;
+  return computable.find((t) => t.value.value === value) || null;
+}
+
 function renderExplainerResult(scheme, output) {
+  const rule = scheme.subsidy_rule;
   const card = el('div', 'card explainer-card hi');
   card.appendChild(el('div', 'answer-headline', 'अनुदान की गणना'));
 
-  output.terms.forEach((term) => {
-    const row = el('div', 'term-row');
-    row.appendChild(el('span', 'term-label', term.label_hi));
-    row.appendChild(el('span', 'term-value', term.value ? `₹${term.value.value.toLocaleString('en-IN')}` : 'जानकारी चाहिए'));
-    card.appendChild(row);
+  const stated = describeStatedInputs(rule, state.slots);
+  if (stated) card.appendChild(el('p', 'stated-inputs', `आपने बताया: ${stated}`));
+
+  output.terms.forEach((term, i) => {
+    card.appendChild(el('p', 'term-heading', `शर्त ${i + 1} — ${term.label_hi}`));
+    if (term.value) {
+      card.appendChild(el('p', 'term-math', formatTermMath(term.value)));
+    } else {
+      const missingInputs = term.missing.map((slot) => rule.inputs.find((inp) => inp.slot === slot)).filter(Boolean);
+      const warn = el('p', 'term-warning', `⚠ ${missingInputs.map((inp) => inp.prompt_hi).join(' · ') || 'जानकारी चाहिए'}`);
+      card.appendChild(warn);
+      if (missingInputs.length) {
+        const btn = el('button', 'chip hi', 'अभी बताएं');
+        btn.type = 'button';
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          for (const input of missingInputs) await askExplainerInput(input);
+          runExplainer(scheme);
+        });
+        card.appendChild(btn);
+      }
+    }
   });
 
   if (output.status === 'OK') {
-    card.appendChild(el('p', 'result-line', `आपको मिलेगा: ₹${output.result.value.toLocaleString('en-IN')}`));
+    card.appendChild(el('p', 'result-note', combinePhrase(rule.combine)));
+    const binding = findBindingTerm(output.terms, rule.combine, output.result.value);
+    const suffix = binding ? ` ← ${binding.label_hi} लागू हुई` : '';
+    card.appendChild(el('p', 'result-line', `आपको मिलेगा: ${formatInr(output.result.value)}${suffix}`));
   } else if (output.status === 'PARTIAL' && output.bound) {
     const phrase = output.bound.type === 'upper' ? 'आपको अधिकतम मिल सकता है' : 'आपको कम से कम मिलेगा';
-    card.appendChild(el('p', 'result-line', `${phrase}: ₹${output.bound.value.value.toLocaleString('en-IN')}`));
-    if (output.missing_slots.length) {
-      card.appendChild(el('p', 'result-note', 'सही राशि के लिए और जानकारी चाहिए।'));
-    }
+    card.appendChild(el('p', 'result-line', `${phrase}: ${formatInr(output.bound.value.value)}`));
+    card.appendChild(el('p', 'result-note', 'सही राशि ऊपर बताई गई जानकारी दिए बिना नहीं बताई जा सकती।'));
   } else if (output.status === 'NEED_MORE_INFO') {
     card.appendChild(el('p', 'result-note', 'राशि बताने के लिए अभी पर्याप्त जानकारी नहीं है।'));
   } else if (output.status === 'NOT_APPLICABLE') {
@@ -257,6 +337,9 @@ function renderExplainerResult(scheme, output) {
 
   if (output.citation && output.citation.source_url) {
     card.appendChild(el('p', 'citation', `स्रोत: ${output.citation.source_url} · जाँचा गया: ${output.citation.last_verified}`));
+    if (rule.source_quote_hi) {
+      card.appendChild(el('p', 'source-quote', `"${rule.source_quote_hi}"`));
+    }
   }
 
   chatEl.appendChild(card);
@@ -267,6 +350,7 @@ async function runExplainer(scheme) {
   const rule = scheme.subsidy_rule;
   for (const input of rule.inputs) {
     if (state.slots[input.slot] !== undefined) continue;
+    if (!input.required) continue; // optional inputs (e.g. a quotation) stay unasked until the citizen opts in via "अभी बताएं"
     await askExplainerInput(input);
   }
   const output = explain(scheme, state.slots);

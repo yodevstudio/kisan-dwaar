@@ -332,12 +332,38 @@ img, svg { max-width: 100%; height: auto; }
   border: 2px solid var(--field);
 }
 
-.term-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(20, 24, 31, 0.1);
+.stated-inputs {
+  font-style: italic;
+  opacity: 0.85;
+  margin: 4px 0 16px;
+}
+
+.term-heading {
+  font-weight: 700;
+  margin: 16px 0 4px;
+}
+
+.term-heading:first-of-type { margin-top: 4px; }
+
+.term-math {
+  margin: 0 0 4px;
+  padding-left: 12px;
+}
+
+.term-warning {
+  margin: 0 0 8px;
+  padding-left: 12px;
+  color: var(--halt);
+  font-weight: 700;
+}
+
+.source-quote {
+  font-size: 14px;
+  font-style: italic;
+  opacity: 0.8;
+  border-left: 3px solid var(--field);
+  padding-left: 10px;
+  margin-top: 6px;
 }
 
 .result-line {
