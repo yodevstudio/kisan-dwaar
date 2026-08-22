@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S1 session — verification</title>
+<link rel="stylesheet" href="../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">S1 — सेशन जाँच</h1>
+    <span class="badge hi">डेव उपकरण, नागरिक पृष्ठ नहीं</span>
+  </header>
+
+  <main class="container">
+    <p class="hi">यह पृष्ठ services/session.js की जाँच के लिए है — docs/BUILD_GUIDE_V2.md के S1 गेट की तरह: login, session persist, refresh, logout सब काम करें। यह `pages/` की 10-पृष्ठ नागरिक सूची का हिस्सा नहीं है; वह K15/S4 का काम है।</p>
+
+    <div id="status" class="card hi"><p>जाँच हो रही है…</p></div>
+
+    <div class="chips">
+      <button id="login-btn" type="button" class="button hi">Google से लॉग-इन करें</button>
+      <button id="logout-btn" type="button" class="button hi" style="display:none;">लॉग-आउट करें</button>
+    </div>
+
+    <p class="hi result-note">रिफ्रेश करके देखें कि सेशन बना रहता है या नहीं।</p>
+  </main>
+
+  <script type="module" src="./session-demo.js"></script>
+</body>
+</html>
