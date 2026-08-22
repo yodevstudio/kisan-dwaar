@@ -1,10 +1,27 @@
 rules_version = '2';
 
-// Deny-by-default. Opened per-user, per-path only inside S2.
+// Deny-by-default (Z4). S2 opens exactly one path, narrowly, below.
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       allow read, write: if false;
+    }
+
+    // S2: document uploads. This is the actual gate, not the client's
+    // pre-flight checker (services/upload.js) — a client that skips the
+    // UI entirely and calls the Storage REST API directly still can't
+    // write another citizen's path, an oversized file, or a disallowed
+    // type, because none of that is enforced here in JS the client
+    // controls. Path shape: /uploads/{uid}/{docId}/{fileName}.
+    match /uploads/{uid}/{docId}/{fileName} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*|application/pdf');
+
+      allow delete: if request.auth != null && request.auth.uid == uid;
     }
   }
 }
