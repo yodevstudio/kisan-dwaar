@@ -390,3 +390,16 @@ img, svg { max-width: 100%; height: auto; }
 .composer input[type="text"] {
   flex: 1;
 }
+
+/* ===== K20: feedback widget ===== */
+.feedback-widget {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(20, 24, 31, 0.15);
+}
+
+.feedback-prompt {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}

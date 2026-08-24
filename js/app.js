@@ -10,6 +10,40 @@ import { explain, assertDerivedFromSourced } from './explainer.js';
 // explainer.js exactly as K1/K4 built and tested them. This module adds
 // no scoring, no eligibility logic and no arithmetic of its own.
 
+// S3: analytics is loaded dynamically, not with a static import, and
+// deliberately not awaited before the discovery flow starts. A static
+// import is a hard dependency — if services/telemetry.js or the Firebase
+// CDN it pulls in ever failed to load, the whole module (this file,
+// including eligibility and the explainer) would fail to load with it.
+// A citizen must be able to answer six questions and get a verdict with
+// analytics entirely unreachable (CONTEXT.md constraint 1), so track()
+// below is a no-op until (and unless) this resolves.
+let telemetryModule = null;
+import('../services/telemetry.js')
+  .then((m) => { telemetryModule = m; })
+  .catch((err) => console.warn('telemetry unavailable (non-fatal, discovery unaffected):', err));
+
+function track(fnName, ...args) {
+  if (telemetryModule) telemetryModule[fnName](...args);
+}
+
+// K20: reason chips shown after a thumb is picked — no free-text field
+// anywhere in this widget, so a citizen can never type an identifier into
+// an analytics event by accident (docs/ANALYTICS.md §3's never-collected
+// list depends on this staying true).
+const FEEDBACK_REASONS = {
+  up: [
+    { value: 'correct', label_hi: 'सही जानकारी' },
+    { value: 'easy', label_hi: 'आसान समझ आया' },
+    { value: 'fast', label_hi: 'जल्दी मिला' },
+  ],
+  down: [
+    { value: 'wrong', label_hi: 'गलत लगा' },
+    { value: 'confusing', label_hi: 'समझ नहीं आया' },
+    { value: 'incomplete', label_hi: 'जानकारी अधूरी' },
+  ],
+};
+
 // Kept as a named constant per data/samples.json's own note, which
 // references it by this exact name — the first N samples are guaranteed
 // reachable in one tap from a cold load, before the citizen has typed
@@ -136,11 +170,13 @@ function askCatalogSlot(slotName) {
     if (options) {
       addChips(options, (value) => {
         state.slots[slotName] = value;
+        track('trackQuestionAnswered', slotName);
         resolve(value);
       });
     } else {
       addNumberPrompt(def.unit_hi, true, (value) => {
         if (value !== undefined) state.slots[slotName] = value;
+        track('trackQuestionAnswered', slotName);
         resolve(value);
       });
     }
@@ -165,15 +201,55 @@ function askExplainerInput(input) {
       });
       addChips(options, (value) => {
         state.slots[input.slot] = value;
+        track('trackQuestionAnswered', input.slot);
         resolve(value);
       });
     } else {
       addNumberPrompt(input.unit_hi, !!input.required, (value) => {
         if (value !== undefined) state.slots[input.slot] = value;
+        track('trackQuestionAnswered', input.slot);
         resolve(value);
       });
     }
   });
+}
+
+// K20: thumbs + reason chip, feeding S3's feedback_vote counter.
+function renderFeedbackWidget() {
+  const wrap = el('div', 'feedback-widget');
+  const promptRow = el('div', 'feedback-prompt hi', 'क्या यह जवाब मददगार था?');
+  const thumbsRow = el('div', 'chips');
+  wrap.appendChild(promptRow);
+  wrap.appendChild(thumbsRow);
+
+  function showReasons(direction) {
+    thumbsRow.remove();
+    promptRow.textContent = direction === 'up' ? 'क्या अच्छा लगा?' : 'क्या समस्या हुई?';
+    const reasonsRow = el('div', 'chips');
+    FEEDBACK_REASONS[direction].forEach((reason) => {
+      const btn = el('button', 'chip hi', reason.label_hi);
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        reasonsRow.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+        track('trackFeedbackVote', direction, reason.value);
+        promptRow.textContent = 'धन्यवाद!';
+        reasonsRow.remove();
+      });
+      reasonsRow.appendChild(btn);
+    });
+    wrap.appendChild(reasonsRow);
+  }
+
+  const upBtn = el('button', 'chip hi', '👍');
+  const downBtn = el('button', 'chip hi', '👎');
+  upBtn.type = 'button';
+  downBtn.type = 'button';
+  upBtn.addEventListener('click', () => showReasons('up'));
+  downBtn.addEventListener('click', () => showReasons('down'));
+  thumbsRow.appendChild(upBtn);
+  thumbsRow.appendChild(downBtn);
+
+  return wrap;
 }
 
 function verdictIcon(verdict) {
@@ -183,6 +259,8 @@ function verdictIcon(verdict) {
 }
 
 function renderVerdictCard(scheme, evaluation, output) {
+  track('trackVerdictIssued', evaluation.verdict);
+  track('trackSchemeSurfaced', scheme.scheme_id);
   const { icon, word, cls } = verdictIcon(evaluation.verdict);
   const card = el('div', `card ${cls} hi`);
   const head = el('div', 'card-head');
@@ -211,6 +289,8 @@ function renderVerdictCard(scheme, evaluation, output) {
     btn.addEventListener('click', () => { btn.disabled = true; runExplainer(scheme); });
     card.appendChild(btn);
   }
+
+  card.appendChild(renderFeedbackWidget());
 
   chatEl.appendChild(card);
   scrollToBottom();
@@ -397,7 +477,10 @@ async function runDiscovery() {
   if (needInfo.length > 0) {
     addBotBubble('इनके लिए थोड़ी और जानकारी चाहिए — किसी एक का नाम टाइप करके पूछें:');
     const list = el('ul', 'doc-list hi');
-    needInfo.forEach(({ scheme }) => list.appendChild(el('li', '', scheme.name_hi)));
+    needInfo.forEach(({ scheme }) => {
+      track('trackSchemeSurfaced', scheme.scheme_id);
+      list.appendChild(el('li', '', scheme.name_hi));
+    });
     chatEl.appendChild(list);
     scrollToBottom();
   }
@@ -448,6 +531,8 @@ async function init() {
   state.schemes = schemes;
   state.slotsDoc = slotsDoc;
   state.lexicon = lexicon;
+
+  track('trackPageView', location.pathname);
 
   addBotBubble('नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।');
   renderSampleChips(samplesDoc.samples || []);

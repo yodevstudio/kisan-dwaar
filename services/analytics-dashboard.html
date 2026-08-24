@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S3 — किसान द्वार एनालिटिक्स</title>
+<link rel="stylesheet" href="../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">एनालिटिक्स डैशबोर्ड</h1>
+    <span class="badge hi">🔒 कोई पहचान संग्रहीत नहीं</span>
+  </header>
+
+  <main class="container">
+    <p class="hi">वास्तविक उपयोग से लिए गए आँकड़े — <code>data/schemes.json</code> जैसी बनावटी सूची नहीं। पूरी माप-पद्धति: <a href="../docs/ANALYTICS.md">docs/ANALYTICS.md</a></p>
+
+    <section id="counts" class="card hi"><p>लोड हो रहा है…</p></section>
+
+    <section class="card bg-verdict hi">
+      <div class="card-head"><span class="card-icon">🔒</span><span class="card-word">कभी संग्रहीत नहीं किया जाता</span></div>
+      <ul class="doc-list">
+        <li>कोई नाम, फ़ोन नंबर या ईमेल</li>
+        <li>कोई जन आधार / आधार / SSO पहचानकर्ता या टोकन</li>
+        <li>IP पता — कच्चा, हैश किया हुआ, या छोटा किया हुआ, किसी भी रूप में नहीं</li>
+        <li>डिवाइस फ़िंगरप्रिंट (यूज़र एजेंट, स्क्रीन रिज़ॉल्यूशन, आदि)</li>
+        <li>सटीक स्थान — केवल यह कि "district" सवाल पूछा गया, कभी उसका उत्तर नहीं</li>
+        <li>नागरिक द्वारा टाइप या चुना गया कोई भी मान — केवल यह कि कौन सा सवाल पूछा गया</li>
+        <li>सेशन से आगे बना रहने वाला कोई पहचानकर्ता — हर टैब में नया, कभी भेजा नहीं जाता</li>
+        <li>Referrer URL या कोई ट्रैकिंग पैरामीटर</li>
+        <li>S1 (लॉग-इन) या S2 (अपलोड) की कोई पहचान — analytics पूरी तरह अलग तंत्र है</li>
+      </ul>
+    </section>
+
+    <p class="hi result-note">जाँचें: DevTools → Network खोलें, कोई भी सवाल जवाब दें, भेजे गए request का payload देखें — ऊपर की सूची में से कुछ भी वहाँ नहीं मिलेगा।</p>
+  </main>
+
+  <script type="module" src="./analytics-dashboard.js"></script>
+</body>
+</html>
