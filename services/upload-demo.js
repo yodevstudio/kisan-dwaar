@@ -1,5 +1,6 @@
 import { onSessionChange, login } from './session.js';
 import { preflightCheck, uploadDocument } from './upload.js';
+import { UPLOAD_RETENTION_DAYS, UPLOAD_MAX_FILE_BYTES, UPLOAD_ALLOWED_TYPES_HI } from '../js/policy.js';
 
 const consentCheck = document.getElementById('consent-check');
 const sessionStatusEl = document.getElementById('session-status');
@@ -8,6 +9,12 @@ const fileInput = document.getElementById('file-input');
 const preflightResultEl = document.getElementById('preflight-result');
 const uploadBtn = document.getElementById('upload-btn');
 const uploadResultEl = document.getElementById('upload-result');
+const retentionLineEl = document.getElementById('retention-line');
+const fileHintLineEl = document.getElementById('file-hint-line');
+
+const maxMb = Math.round(UPLOAD_MAX_FILE_BYTES / (1024 * 1024));
+retentionLineEl.innerHTML = `<strong>प्रतिधारण अवधि:</strong> अपलोड की गई फ़ाइलें ${UPLOAD_RETENTION_DAYS} दिन बाद स्वतः हटा दी जाती हैं। (यह डिफ़ॉल्ट नीति है — असली तैनाती से पहले विभाग की वास्तविक नीति से पुष्टि करें।)`;
+fileHintLineEl.textContent = `फ़ाइल चुनें (${UPLOAD_ALLOWED_TYPES_HI}, अधिकतम ${maxMb}MB):`;
 
 let currentSession = null;
 let currentFile = null;

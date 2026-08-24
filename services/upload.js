@@ -14,6 +14,7 @@
 
 import { app } from './firebase-app.js';
 import { getSession } from './session.js';
+import { UPLOAD_MAX_FILE_BYTES } from '../js/policy.js';
 import { getStorage, ref, uploadBytes } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
@@ -22,8 +23,10 @@ const db = getFirestore(app);
 
 // Mirrors storage.rules' own limits exactly — both need to agree, since a
 // pre-flight pass that the rules then reject would be a confusing failure
-// mode right after telling the citizen everything looked fine.
-export const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB — a default; see K12/D10 for the operator-facing policy call
+// mode right after telling the citizen everything looked fine. Sourced from
+// js/policy.js (K12) so the disclosure panel's claim and this file's actual
+// enforcement can never quietly drift apart.
+export const MAX_FILE_BYTES = UPLOAD_MAX_FILE_BYTES;
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const MAX_PDF_PAGES = 10;
 

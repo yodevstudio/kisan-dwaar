@@ -522,3 +522,28 @@ img, svg { max-width: 100%; height: auto; }
   opacity: 0.6;
   color: var(--ink);
 }
+
+/* ===== K12: disclosure panel =====
+   Native <details>/<summary> — expand/collapse with zero JS, keyboard-
+   operable and screen-reader-friendly by default. */
+.disclosure-panel {
+  margin: 24px 0;
+  border: 2px solid var(--field);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.disclosure-panel summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--field);
+  padding: 8px 0;
+}
+
+.disclosure-body h3 {
+  color: var(--field);
+  font-size: 1.05rem;
+  margin: 16px 0 4px;
+}
+
+.disclosure-body h3:first-child { margin-top: 8px; }

@@ -25,6 +25,8 @@
       <input id="query-input" class="hi" type="text" placeholder="अपना सवाल टाइप करें…">
       <button type="submit" class="button hi">भेजें</button>
     </form>
+
+    <div id="disclosure-panel"></div>
   </main>
 
   <footer class="site-footer">
@@ -35,8 +37,10 @@
   <script type="module" src="js/app.js"></script>
   <script type="module">
     import { renderNav, renderFooterStaffLink } from './js/nav.js';
+    import { renderDisclosurePanel } from './js/disclosure.js';
     renderNav();
     renderFooterStaffLink();
+    renderDisclosurePanel();
   </script>
 </body>
 </html>
