@@ -40,6 +40,36 @@ service cloud.firestore {
                     && request.resource.data.date == resource.data.date;
       allow delete: if false;
     }
+
+    // S5: the CMS. Any authenticated user, not a specific admin role —
+    // this project has no custom-claims/role system (that would need a
+    // deployed Cloud Function to assign roles, which nothing here does),
+    // so "logged in" is the only gate today. Real staff-only access
+    // control is a documented gap, not a silent one — see D10/SECURITY.md.
+    //
+    // Drafts are a shared workspace, not per-user: any authenticated
+    // co-author can pick up or edit any scheme's draft, since a rule
+    // often needs a second pair of eyes before publish.
+    match /cms_drafts/{schemeId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // "Published" here means "finalised inside the CMS," never "live to
+    // citizens" — the static core reads data/schemes.json, a git-tracked
+    // file, never Firestore (CONTEXT.md constraint 1). Publishing from
+    // the CMS produces registry-valid JSON a human still commits by hand;
+    // this is where that JSON and its version history live in the
+    // meantime. Versions are append-only, same discipline as S2's
+    // upload audit trail.
+    match /cms_published/{schemeId} {
+      allow read, write: if request.auth != null;
+
+      match /versions/{versionId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null;
+        allow update, delete: if false;
+      }
+    }
   }
 }
 

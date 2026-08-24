@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>नियम-लेखन उपकरण — किसान द्वार CMS</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">नियम-लेखन उपकरण (S5)</h1>
+    <span class="badge hi">🔒 सेवा-स्तर · admin/ केवल</span>
+  </header>
+
+  <main class="container cms-layout">
+    <div id="session-gate" class="card hi"><p>सेशन जाँच हो रही है…</p></div>
+
+    <div id="cms-body" style="display:none;">
+      <div class="card hi">
+        <label class="hi" for="scheme-id-input">योजना ID (scheme_id) — मौजूदा लोड करने या नई शुरू करने के लिए</label>
+        <div class="chips">
+          <input type="text" id="scheme-id-input" class="hi" placeholder="RJ_EXAMPLE_SCHEME">
+          <button id="load-draft-btn" type="button" class="button hi">ड्राफ़्ट लोड करें</button>
+          <button id="load-published-btn" type="button" class="button hi">प्रकाशित संस्करण लोड करें</button>
+          <button id="new-btn" type="button" class="button hi">नया शुरू करें</button>
+        </div>
+      </div>
+
+      <section class="card hi">
+        <h2 class="hi">1. मूल जानकारी</h2>
+        <div id="form-basics" class="cms-form-grid"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">2. पात्रता शर्तें (Eligibility)</h2>
+        <div id="form-eligibility"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">3. लाभ (Benefit)</h2>
+        <div id="form-benefit" class="cms-form-grid"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">4. अनुदान गणना नियम (subsidy_rule) — वैकल्पिक</h2>
+        <div class="chips">
+          <button id="toggle-subsidy-rule-btn" type="button" class="button hi">subsidy_rule जोड़ें / हटाएं</button>
+        </div>
+        <div id="form-subsidy-rule" style="display:none;"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">5. दस्तावेज़ (Documents)</h2>
+        <div id="form-documents"></div>
+        <button id="add-document-btn" type="button" class="chip hi">+ दस्तावेज़ जोड़ें</button>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">6. आवेदन कहाँ करें (apply_via)</h2>
+        <div id="form-apply-via" class="cms-form-grid"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">7. उत्तर टेम्पलेट (response_templates_hi)</h2>
+        <div id="form-templates" class="cms-form-grid"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">जाँच व सहेजें</h2>
+        <div class="chips">
+          <button id="validate-btn" type="button" class="button hi">जाँचें (Validate)</button>
+          <button id="save-draft-btn" type="button" class="button hi">ड्राफ़्ट सहेजें</button>
+          <button id="publish-btn" type="button" class="button hi">प्रकाशित करें</button>
+        </div>
+        <div id="validate-result"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">संस्करण इतिहास</h2>
+        <button id="load-versions-btn" type="button" class="chip hi">इतिहास देखें</button>
+        <div id="version-history"></div>
+      </section>
+
+      <section class="card hi">
+        <h2 class="hi">परीक्षण नागरिक — लाइव पूर्वावलोकन</h2>
+        <p class="hi">यहाँ एक काल्पनिक किसान के उत्तर भरें ताकि देखें कि उसे वास्तव में क्या दिखेगा — यह वही eligibility.js / assemble.js / explainer.js है जो असली पोर्टल उपयोग करता है।</p>
+        <div id="form-test-citizen" class="cms-form-grid"></div>
+        <div id="live-preview"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="./cms-ui.js"></script>
+</body>
+</html>
