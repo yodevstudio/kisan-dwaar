@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>पात्रता जांचें — किसान द्वार</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">पात्रता जांचें</h1>
+    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+  </header>
+  <div id="site-nav"></div>
+
+  <main class="container">
+    <div class="card hi">
+      <div class="answer-headline">छह सवालों में अपनी पात्रता जानें</div>
+      <p>कोई खाता या लॉग-इन ज़रूरी नहीं। अपनी उम्र, व्यवसाय, आय, श्रेणी व ज़िला बताएं — इंजन बताएगा कि आप किस योजना के लिए पात्र हैं, कौनसा दस्तावेज़ चाहिए, और अनुदान की राशि की गणना भी दिखाएगा जहाँ संभव हो।</p>
+      <p>आप कोई योजना का नाम टाइप करके भी सीधे पूछ सकते हैं — जैसे "तारबंदी योजना चाहिए"।</p>
+      <a class="button hi" id="start-check-link" href="../../index.html">अभी शुरू करें</a>
+    </div>
+
+    <div class="card hi">
+      <div class="answer-headline">या सूची में से चुनें</div>
+      <p>सभी 12 योजनाओं की सूची, हर एक के स्रोत सहित, यहाँ देखें:</p>
+      <a class="button hi" href="../schemes/index.html">सभी योजनाएं देखें</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
+  </footer>
+
+  <script type="module">
+    import { resolvePath } from '../../js/paths.js';
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    document.getElementById('start-check-link').href = resolvePath('index.html');
+    renderNav();
+    renderFooterStaffLink();
+  </script>
+</body>
+</html>

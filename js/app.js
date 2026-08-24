@@ -534,8 +534,19 @@ async function init() {
 
   track('trackPageView', location.pathname);
 
-  addBotBubble('नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।');
-  renderSampleChips(samplesDoc.samples || []);
+  // K15: pages/schemes/ links a scheme straight into this flow via
+  // ?scheme=RJ_X, so the catalogue page isn't a dead end. Falls straight
+  // through to the normal welcome message if the id is missing or wrong
+  // — a bad link degrades to the default experience, never to nothing.
+  const requestedSchemeId = new URLSearchParams(location.search).get('scheme');
+  const requestedScheme = requestedSchemeId && state.schemes.find((s) => s.scheme_id === requestedSchemeId);
+  if (requestedScheme) {
+    addBotBubble(`${requestedScheme.name_hi} की पात्रता जांचते हैं।`);
+    resolveScheme(requestedScheme);
+  } else {
+    addBotBubble('नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।');
+    renderSampleChips(samplesDoc.samples || []);
+  }
 
   composerEl.addEventListener('submit', (e) => {
     e.preventDefault();

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>कर्मचारी कॉर्नर — किसान द्वार</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">कर्मचारी कॉर्नर</h1>
+    <span class="badge hi">🔒 सेवा-स्तर · स्टाफ़ केवल</span>
+  </header>
+
+  <main class="container">
+    <div class="card bg-attention hi">
+      <div class="card-head"><span class="card-icon">ℹ️</span><span class="card-word">जानबूझकर मुख्य मेनू में नहीं</span></div>
+      <p>यह पन्ना जानबूझकर मुख्य नेविगेशन में नहीं है — केवल फ़ुटर से पहुंचा जा सकता है। docs/EVIDENCE_LEDGER.md का निष्कर्ष A1 बताता है कि विभाग के अपने पोर्टल पर "Employee Corner" जैसी प्रशासनिक सामग्री किसान-केंद्रित सामग्री के बराबर, मुख्य नेविगेशन में रखी गई है — यह ठीक वही गलती है जो हम यहाँ नहीं दोहराना चाहते।</p>
+    </div>
+
+    <div class="card hi">
+      <div class="answer-headline">स्टाफ़ उपकरण</div>
+      <div class="chips">
+        <a class="button hi" id="cms-link" href="../../admin/cms/index.html">नियम-लेखन उपकरण (CMS)</a>
+        <a class="button hi" id="session-link" href="../../services/session-demo.html">सेशन जाँच (S1)</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <p><a id="home-link" class="hi" href="../../index.html">← मुख्य पृष्ठ पर वापस जाएं</a></p>
+  </footer>
+
+  <script type="module">
+    import { resolvePath } from '../../js/paths.js';
+    document.getElementById('cms-link').href = resolvePath('admin/cms/index.html');
+    document.getElementById('session-link').href = resolvePath('services/session-demo.html');
+    document.getElementById('home-link').href = resolvePath('index.html');
+  </script>
+</body>
+</html>

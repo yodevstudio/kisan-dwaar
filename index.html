@@ -11,6 +11,7 @@
     <h1 class="hi">किसान द्वार</h1>
     <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
+  <div id="site-nav"></div>
 
   <main class="container">
     <div id="chat" class="chat" role="log" aria-live="polite" aria-label="बातचीत"></div>
@@ -28,8 +29,14 @@
 
   <footer class="site-footer">
     <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
   </footer>
 
   <script type="module" src="js/app.js"></script>
+  <script type="module">
+    import { renderNav, renderFooterStaffLink } from './js/nav.js';
+    renderNav();
+    renderFooterStaffLink();
+  </script>
 </body>
 </html>

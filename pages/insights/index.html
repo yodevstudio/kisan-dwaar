@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>आंकड़े — किसान द्वार</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">आंकड़े (Insights)</h1>
+    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+  </header>
+  <div id="site-nav"></div>
+
+  <main class="container">
+    <div class="card bg-attention hi">
+      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word">निर्माणाधीन — K18</span></div>
+      <p>यह पन्ना K18 का काम है: रजिस्ट्री (api/v1/) में हर संभव किसान-प्रोफ़ाइल को इंजन से चलाकर, स्थिर रूप से यह प्रकाशित करना कि किन प्रोफ़ाइलों के लिए कोई योजना उपलब्ध नहीं है, कौनसा सवाल सबसे ज़्यादा नतीजा तय करता है, और कौनसी योजना किसी भी सामान्य प्रोफ़ाइल तक कभी पहुंचती ही नहीं। कोई नागरिक डेटा शामिल नहीं होगा — यह पूरी तरह रजिस्ट्री के अपने आँकड़ों से बनता है।</p>
+      <p>अभी के लिए, रजिस्ट्री स्वयं यहाँ उपलब्ध है:</p>
+      <p><a id="registry-link" class="hi" href="../../api/v1/index.json">api/v1/index.json देखें</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
+  </footer>
+
+  <script type="module">
+    import { resolvePath } from '../../js/paths.js';
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    document.getElementById('registry-link').href = resolvePath('api/v1/index.json');
+    renderNav();
+    renderFooterStaffLink();
+  </script>
+</body>
+</html>

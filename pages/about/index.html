@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>परिचय — किसान द्वार</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="hi">परिचय</h1>
+    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+  </header>
+  <div id="site-nav"></div>
+
+  <main class="container">
+    <div class="card hi">
+      <div class="answer-headline">किसान द्वार क्या है</div>
+      <p>राजस्थान की कृषि योजनाओं का एक नागरिक-केंद्रित प्रवेश द्वार — YoDevStudio द्वारा, Rajasthan Innovation Challenge ("कृषि विभाग वेब पोर्टल का सुधार — नागरिक-केंद्रित डिजिटल फ्रंट-एंड") के लिए बनाया गया। एक किसान छह सवालों के जवाब देकर — बिना खाता बनाए, बिना लॉग-इन किए — एक नतीजा, दस्तावेज़ों की सूची, और जहाँ संभव हो वहाँ अनुदान राशि की गणना पाता है।</p>
+      <p>हर आंकड़ा किसी स्रोत URL व जाँच-तिथि तक पता लगाया जा सकता है। कोई राशि, सीमा, दस्तावेज़ या स्रोत बनावटी नहीं है — जहाँ जानकारी सत्यापित नहीं हो सकी, वहाँ रिकॉर्ड में खाली (null) छोड़ा गया है, अनुमान नहीं लगाया गया।</p>
+    </div>
+
+    <div class="card hi">
+      <div class="answer-headline">यह एक बड़े तंत्र का कृषि-संस्करण है</div>
+      <p>इंजन (eligibility.js, assemble.js, explainer.js, router.js) और आँकड़ों का अनुशासन एक मौजूदा योजना-नियम रजिस्ट्री से लिया गया है — यह उसी तंत्र का कृषि-विशिष्ट अनुप्रयोग है, न कि एक अलग से बनाया गया प्रोजेक्ट। रजिस्ट्री खुद <a id="api-link" href="../../api/v1/index.json">api/v1/</a> पर संस्करण व स्रोत सहित प्रकाशित है, ताकि कोई भी दूसरा एप्लिकेशन — ई-मित्र सॉफ़्टवेयर, कोई अन्य विभाग — उसी आँकड़े पर निर्माण कर सके, बिना अनुमति मांगे।</p>
+    </div>
+
+    <div class="card hi">
+      <div class="answer-headline">दो-भाग की संरचना</div>
+      <p><strong>स्थिर कोर</strong> — पोर्टल, पात्रता इंजन, दस्तावेज़ चेकलिस्ट, रजिस्ट्री — शून्य निर्भरता, कोई बिल्ड-स्टेप नहीं, कोई सेवा-कॉल नहीं। पहली बार लोड होने के बाद ऑफ़लाइन भी काम करता है। दो स्वतंत्र origins पर तैनात है।</p>
+      <p><strong>सेवा-स्तर</strong> — लॉग-इन, दस्तावेज़ अपलोड, गुमनाम एनालिटिक्स, आवेदन स्थिति, नियम-लेखन उपकरण — वैकल्पिक, हमेशा degradable। यदि यह पूरी तरह बंद हो जाए, तब भी पात्रता जांच व दस्तावेज़ सूची काम करती रहती है।</p>
+    </div>
+
+    <div class="card hi">
+      <div class="answer-headline">और पढ़ें</div>
+      <ul class="doc-list">
+        <li><a id="evidence-link" href="../../docs/EVIDENCE_LEDGER.md">EVIDENCE_LEDGER.md</a> — हर दावे का प्रमाण</li>
+        <li><a id="analytics-link" href="../../docs/ANALYTICS.md">ANALYTICS.md</a> — क्या मापा जाता है, क्या कभी नहीं</li>
+        <li><a id="dpi-link" href="../../docs/DPI.md">DPI.md</a> — यह डिजिटल पब्लिक इंफ्रास्ट्रक्चर क्यों है</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
+  </footer>
+
+  <script type="module">
+    import { resolvePath } from '../../js/paths.js';
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    document.getElementById('api-link').href = resolvePath('api/v1/index.json');
+    document.getElementById('evidence-link').href = resolvePath('docs/EVIDENCE_LEDGER.md');
+    document.getElementById('analytics-link').href = resolvePath('docs/ANALYTICS.md');
+    document.getElementById('dpi-link').href = resolvePath('docs/DPI.md');
+    renderNav();
+    renderFooterStaffLink();
+  </script>
+</body>
+</html>

@@ -11,6 +11,7 @@
     <h1 class="hi">आवेदन की स्थिति</h1>
     <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
+  <div id="site-nav"></div>
 
   <main class="container">
     <div class="card bg-attention hi">
@@ -23,8 +24,14 @@
 
   <footer class="site-footer">
     <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
   </footer>
 
   <script type="module" src="./status.js"></script>
+  <script type="module">
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    renderNav();
+    renderFooterStaffLink();
+  </script>
 </body>
 </html>
