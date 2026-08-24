@@ -1,0 +1,155 @@
+{
+  "scheme_id": "RJ_DRIP_SPRINKLER",
+  "name_hi": "सूक्ष्म सिंचाई (ड्रिप/स्प्रिंकलर) अनुदान योजना",
+  "name_en": "Micro-Irrigation (Drip/Sprinkler) Subsidy Scheme",
+  "keywords_hi": [
+    "ड्रिप सिंचाई",
+    "स्प्रिंकलर",
+    "सूक्ष्म सिंचाई अनुदान",
+    "टपक सिंचाई"
+  ],
+  "department": "Agriculture Department (Horticulture Division), Rajasthan / कृषि विभाग (उद्यान शाखा)",
+  "dataset_version": "2026.08.22-2",
+  "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
+  "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+  "source_type": "html_page",
+  "last_verified": "2026-08-22",
+  "verification_interval_days": 90,
+  "next_review_due": "2026-11-20",
+  "verified_by": "manual",
+  "eligibility": {
+    "all_of": [
+      {
+        "slot": "occupation",
+        "op": "eq",
+        "value": "farmer"
+      },
+      {
+        "slot": "landholding_hectares",
+        "op": "gte",
+        "value": 0.2
+      }
+    ],
+    "any_of": [],
+    "none_of": []
+  },
+  "benefit": {
+    "type": "subsidy",
+    "amount_inr": null,
+    "amount_text_hi": "सामान्य किसानों को लागत का 50% अनुदान; लघु व सीमांत किसानों को 70% अनुदान — सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक कवर। पृष्ठ पर कोई रुपये की सीमा (ceiling) प्रकाशित नहीं है, केवल प्रतिशत।",
+    "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
+    "note": "अनुदान प्रतिशत किसान की श्रेणी (सामान्य बनाम लघु/सीमांत) पर निर्भर है और लागत किसान के कोटेशन पर आधारित है, इसलिए सटीक गणना subsidy_rule में दी गई है, बंधी राशि के रूप में नहीं। rajkisan.rajasthan.gov.in पर कोई प्रकाशित इकाई लागत (₹/हेक्टेयर) नहीं मिली, इसलिए प्रतिशत-पद केवल किसान के आपूर्तिकर्ता कोटेशन (quoted_cost_inr) से ही गणनीय है — कोटेशन न होने पर स्थिति PARTIAL रहेगी। योजना केवल चालू वित्तीय वर्ष के लिए वैध रहती है, दरें वर्ष-दर-वर्ष बदल सकती हैं।"
+  },
+  "subsidy_rule": {
+    "rule_id": "DRIP_SPRINKLER_CATEGORY_PCT",
+    "inputs": [
+      {
+        "slot": "landholding_category",
+        "type": "single",
+        "options": [
+          "other",
+          "small",
+          "marginal"
+        ],
+        "required": true,
+        "prompt_hi": "आपकी श्रेणी क्या है — सामान्य, लघु या सीमांत किसान?"
+      },
+      {
+        "slot": "drip_area_hectares",
+        "type": "number",
+        "unit_hi": "हेक्टेयर",
+        "required": true,
+        "prompt_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?"
+      },
+      {
+        "slot": "quoted_cost_inr",
+        "type": "number",
+        "unit_hi": "रुपये",
+        "required": false,
+        "prompt_hi": "आपूर्तिकर्ता का कोटेशन कितने का है? (न हो तो छोड़ दें)"
+      }
+    ],
+    "unit_caps": {
+      "drip_area_hectares": {
+        "max": 5,
+        "label_hi": "सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक ही अनुदान देय — इससे अधिक क्षेत्र की लागत अनुदान में नहीं जुड़ेगी"
+      }
+    },
+    "terms": [
+      {
+        "id": "pct",
+        "label_hi": "इकाई लागत का अनुदान (श्रेणी अनुसार)",
+        "type": "percent_of_cost",
+        "percent_by": {
+          "other": 50,
+          "small": 70,
+          "marginal": 70
+        },
+        "percent_selector_slot": "landholding_category",
+        "cost_basis": {
+          "kind": "citizen_quotation",
+          "slot": "quoted_cost_inr"
+        }
+      }
+    ],
+    "combine": "min",
+    "on_missing_input": "report_computable_terms_only",
+    "source_quote_hi": "सामान्य कृषकों को 50 प्रतिशत तथा लघु, सीमान्त कृषकों को 70 प्रतिशत अनुदान देय है। समस्त श्रैणी के कृषकों को ड्रिप संयंत्र पर अधिकतम 5 हैक्टेयर क्षेत्रफल तक अनुदान देय है। कम से कम 0.2 हैक्टेयर सिंचित कृषि योग्य भूमि हो।",
+    "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
+    "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — 50% (general category) / 70% (small and marginal) confirmed as currently published, capped at 5 hectares per farmer for all categories, no published per-hectare rupee ceiling. The general-category key is stored as \"other\" to match the value data/slots.json's existing landholding_category slot already uses for this category, rather than adding a duplicate option.",
+    "last_verified": "2026-08-22"
+  },
+  "documents": [
+    {
+      "doc_id": "LAND_RECORD",
+      "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं)",
+      "icon": "document",
+      "where_to_get_hi": "तहसील (राजस्व विभाग)",
+      "sample_image": "assets/docs/land_record.svg"
+    },
+    {
+      "doc_id": "JAN_AADHAAR",
+      "label_hi": "जन आधार कार्ड",
+      "icon": "id-card",
+      "where_to_get_hi": "ई-मित्र",
+      "sample_image": "assets/docs/jan_aadhaar.svg"
+    },
+    {
+      "doc_id": "AADHAAR",
+      "label_hi": "आधार कार्ड",
+      "icon": "id-card",
+      "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
+      "sample_image": "assets/docs/aadhaar.svg"
+    },
+    {
+      "doc_id": "IRRIGATION_SOURCE_CERT",
+      "label_hi": "सिंचाई स्रोत प्रमाण पत्र",
+      "icon": "certificate",
+      "where_to_get_hi": "कृषि पर्यवेक्षक / पटवारी",
+      "sample_image": "assets/docs/irrigation_source_cert.svg"
+    },
+    {
+      "doc_id": "SOIL_WATER_TEST",
+      "label_hi": "मृदा एवं जल परीक्षण रिपोर्ट",
+      "icon": "document",
+      "where_to_get_hi": "कृषि विभाग प्रयोगशाला",
+      "sample_image": "assets/docs/soil_water_test.svg"
+    },
+    {
+      "doc_id": "SUPPLIER_QUOTATION",
+      "label_hi": "आपूर्तिकर्ता का कोटेशन",
+      "icon": "document",
+      "where_to_get_hi": "अधिकृत डीलर",
+      "sample_image": "assets/docs/supplier_quotation.svg"
+    }
+  ],
+  "apply_via": [
+    "emitra"
+  ],
+  "response_templates_hi": {
+    "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+    "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+    "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+    "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+  }
+}

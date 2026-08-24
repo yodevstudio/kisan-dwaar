@@ -1,0 +1,144 @@
+{
+  "scheme_id": "RJ_TARBANDI",
+  "name_hi": "राजस्थान तारबंदी योजना",
+  "name_en": "Rajasthan Tarbandi Yojana",
+  "keywords_hi": [
+    "तारबंदी",
+    "बाड़ लगाना",
+    "आवारा पशु",
+    "नीलगाय"
+  ],
+  "department": "Agriculture",
+  "dataset_version": "2026.08.22-2",
+  "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
+  "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
+  "source_type": "html_page",
+  "last_verified": "2026-08-22",
+  "verification_interval_days": 90,
+  "next_review_due": "2026-11-20",
+  "verified_by": "manual",
+  "eligibility": {
+    "all_of": [
+      {
+        "slot": "occupation",
+        "op": "eq",
+        "value": "farmer"
+      }
+    ],
+    "any_of": [
+      {
+        "slot": "landholding_hectares",
+        "op": "gte",
+        "value": 0.5
+      },
+      [
+        {
+          "slot": "group_farmer_count",
+          "op": "gte",
+          "value": 3
+        },
+        {
+          "slot": "group_landholding_hectares",
+          "op": "gte",
+          "value": 5
+        }
+      ]
+    ],
+    "none_of": []
+  },
+  "benefit": {
+    "type": "subsidy",
+    "amount_inr": null,
+    "amount_text_hi": "तारबंदी लागत का 50% या अधिकतम ₹40,000, जो भी कम हो — प्रति कृषक 400 रनिंग मीटर तक अनुदान। योजना सामुदायिक आधार पर है, जिसमें न्यूनतम 5 हेक्टेयर भूमि व 3 किसानों का समूह आवश्यक बताया गया है।",
+    "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
+    "note": "राशि किसान की वास्तविक तारबंदी लागत (कोटेशन) व मीटर सीमा पर निर्भर करती है, इसलिए सटीक गणना subsidy_rule में दी गई है, एक बंधी राशि के रूप में नहीं। पिछले रिकॉर्ड में दर्ज '50%-70%, ₹40,000-56,000' की श्रेणी-आधारित सीमा rajkisan.rajasthan.gov.in के वर्तमान पेज पर अब प्रकाशित नहीं है — पुरानी 70% श्रेणी अब हट चुकी है, यह पुष्टि 2026-08-22 को पेज व्यक्तिगत रूप से खोलकर की गई (देखें subsidy_rule.source_page_note)। वर्तमान में प्रकाशित एकमात्र दर फ्लैट 50% / अधिकतम ₹40,000 है।"
+  },
+  "subsidy_rule": {
+    "rule_id": "TARBANDI_STANDARD",
+    "inputs": [
+      {
+        "slot": "fencing_metres",
+        "type": "number",
+        "unit_hi": "मीटर",
+        "required": true,
+        "prompt_hi": "कितने रनिंग मीटर तारबंदी करनी है?"
+      },
+      {
+        "slot": "quoted_cost_inr",
+        "type": "number",
+        "unit_hi": "रुपये",
+        "required": false,
+        "prompt_hi": "तार व सामग्री की अनुमानित/कोटेशन लागत कितनी है? (न हो तो छोड़ दें)"
+      }
+    ],
+    "unit_caps": {
+      "fencing_metres": {
+        "max": 400,
+        "label_hi": "प्रति कृषक अधिकतम 400 रनिंग मीटर तक ही अनुदान देय"
+      }
+    },
+    "terms": [
+      {
+        "id": "pct",
+        "label_hi": "इकाई लागत का 50%",
+        "type": "percent_of_cost",
+        "percent": 50,
+        "cost_basis": {
+          "kind": "citizen_quotation",
+          "slot": "quoted_cost_inr"
+        }
+      },
+      {
+        "id": "cap",
+        "label_hi": "अधिकतम अनुदान सीमा",
+        "type": "flat_cap",
+        "amount_inr": 40000
+      }
+    ],
+    "combine": "min",
+    "on_missing_input": "report_computable_terms_only",
+    "source_quote_hi": "तारबंदी हेतु पेरीफरी (परिधि) कृषकों को लागत का 50 प्रतिशत अथवा अधिकतम राशि रू- 40,000/- जो भी कम हो, प्रति कृषक 400 रनिंग मीटर तक अनुदान अनुज्ञेय है। सभी श्रेणी के कृषकों को लक्षित कर सामुदायिक आधार पर, जिसमें कम से कम 5 हैक्टेयर कृषि भूमि तथा 3 कृषकों का समूह होना आवश्यक है।",
+    "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
+    "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — flat 50% / max ₹40,000 confirmed as currently published, with no category-based percentage variation. The previous dataset's 50-70% / ₹40,000-56,000 range is no longer published on the current page.",
+    "last_verified": "2026-08-22"
+  },
+  "documents": [
+    {
+      "doc_id": "AADHAAR",
+      "label_hi": "आधार कार्ड",
+      "icon": "id-card",
+      "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
+      "sample_image": "assets/docs/aadhaar.svg"
+    },
+    {
+      "doc_id": "JAN_AADHAAR",
+      "label_hi": "जन आधार कार्ड",
+      "icon": "id-card",
+      "where_to_get_hi": "ई-मित्र",
+      "sample_image": "assets/docs/jan_aadhaar.svg"
+    },
+    {
+      "doc_id": "LAND_RECORD",
+      "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं हो)",
+      "icon": "document",
+      "where_to_get_hi": "तहसील (राजस्व विभाग)",
+      "sample_image": "assets/docs/land_record.svg"
+    },
+    {
+      "doc_id": "BANK_PASSBOOK",
+      "label_hi": "बैंक खाते संबंधित विवरण",
+      "icon": "bank",
+      "where_to_get_hi": "बैंक शाखा",
+      "sample_image": "assets/docs/bank_passbook.svg"
+    }
+  ],
+  "apply_via": [
+    "emitra"
+  ],
+  "response_templates_hi": {
+    "eligible": "आप {{scheme_name_hi}} के लिए पात्र लग रहे हैं। {{benefit_text}}। नज़दीकी ई-मित्र पर जाकर पुष्टि करें।",
+    "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
+    "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
+    "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
+  }
+}
