@@ -1,0 +1,11 @@
+{
+  "name": "kisan-dwaar-functions",
+  "description": "Cloud Functions for KISAN DWAAR — currently just S2's scheduled upload deletion. Not deployed by default; see README.md in this directory.",
+  "private": true,
+  "engines": { "node": "20" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.1.1"
+  }
+}

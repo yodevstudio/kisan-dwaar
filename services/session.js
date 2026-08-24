@@ -20,8 +20,7 @@
 // than carried into every caller "for convenience," since neither is a
 // field a named deliverable (uploads, application status) actually needs.
 
-import { firebaseConfig } from './firebase-config.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { app } from './firebase-app.js';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -33,7 +32,6 @@ import {
   browserLocalPersistence,
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Explicit rather than relying on the SDK default, so "session persists
