@@ -1,25 +1,43 @@
 # किसान द्वार — KISAN DWAAR
 
+## Try it in three minutes
+
+**Live:** <https://kisan-dwaar.netlify.app/>
+
+**Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → answer as a small farmer → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
+
 A citizen-facing front door to Rajasthan's agriculture schemes, built by **YoDevStudio** for the Rajasthan Innovation Challenge: *"Revamp of Department of Agriculture Web Portal — Citizen-Centric Digital Front-End."*
 
 A farmer answers six questions instead of navigating a login wall, and gets a verdict, a document checklist, and — where the rule is known — a worked subsidy calculation. Every figure is traceable to a versioned dataset with a source URL and a verification date. This is the agriculture instance of a general scheme-rules registry — same engine, same provenance discipline, an agriculture dataset and a portal-shaped front end on top.
 
 ---
 
-## Deliverable Mapping Table
+## Table A — the challenge brief's six Expected Outcomes
 
-Six deliverables, six rows. Every artifact link below is a path in this repository — click through, don't take our word for it.
+Every artifact link below is a path in this repository — click through, don't take our word for it.
 
-| # | Deliverable | Key Artifact(s) | Status |
-|---|---|---|---|
-| **1** | **Working Multilingual Prototype & Core Engine** | Live portal ([`index.html`](index.html)) · static core engine ([`js/eligibility.js`](js/eligibility.js), [`js/assemble.js`](js/assemble.js)) · ten-page IA ([`pages/`](pages/)) · bilingual Hindi/English switcher ([`js/i18n.js`](js/i18n.js)) | ✅ Live |
-| **2** | **Business Case & Economic Impact** | `docs/BUSINESS_CASE.md` — cost of inaction, budget lines, stakeholder ROI | 🚧 In progress |
-| **3** | **Technical Architecture & Security Specification** | [`docs/SECURITY.md`](docs/SECURITY.md) — zero-IP privacy model, storage/Firestore rules, OIDC auth, audit trails | ✅ Live |
-| **4** | **Adoption Roadmap & Financial Proposal** | `docs/ROADMAP.md` (three-phase rollout) and `docs/FINANCIAL_PROPOSAL.md` (build/run costs, SLA retainers) | 🚧 In progress |
-| **5** | **Team Capabilities & Execution Track Record** | `docs/TEAM.md` — YoDevStudio's shipped portfolio, live URLs | 🚧 In progress |
-| **6** | **DPI Alignment, Market Analysis & Analytics Spec** | [`docs/DPI.md`](docs/DPI.md) (open standard) · `docs/MARKET.md` (four-rung ladder) · [`docs/ANALYTICS.md`](docs/ANALYTICS.md) (privacy spec) | DPI/Analytics ✅ · Market 🚧 |
+| Expected Outcome | Key Artifact(s) | Status |
+|---|---|---|
+| **Mobile-first, multilingual CMS** | [`admin/cms/`](admin/cms/index.html) (authoring, drafts, version history) · [`js/i18n.js`](js/i18n.js) (Hindi/English, all ten pages) · [`css/kisan.css`](css/kisan.css) (64px touch targets, mobile-first layout) | 🟡 Partial — multilingual UI and mobile-first layout are live across the whole portal; CMS authoring works end to end, but publish writes to a staging area only — a human still copies the emitted JSON into `data/schemes.json` by hand ([`services/cms.js`](services/cms.js)). |
+| **Rules-based AI chatbot** | [`index.html`](index.html) · [`js/app.js`](js/app.js) · [`js/eligibility.js`](js/eligibility.js) · [`js/router.js`](js/router.js) · [`js/normalise.js`](js/normalise.js) | 🟡 Partial — deterministic, zero-LLM engine (37/37 tests passing), full tap-to-answer discovery in Hindi and English. Typed free-text routing is Hindi-only by current design; English/Hinglish free text does not yet resolve to a scheme. |
+| **API-driven scheme-eligibility checker** | [`api/v1/`](api/v1/index.json) · [`js/eligibility.js`](js/eligibility.js) · [`tools/build-registry.mjs`](tools/build-registry.mjs) | ✅ Live — versioned, diffed, no-auth registry; the same engine the portal itself uses. |
+| **Secure document-upload module** | [`services/upload.js`](services/upload.js) · [`storage.rules`](storage.rules) · [`firestore.rules`](firestore.rules) · [`functions/index.js`](functions/index.js) | 🟡 Partial — auth-gating, per-user storage paths, and type/size limits are enforced at the rules layer, not just the client. Scheduled auto-deletion is written but not deployed (requires a paid Firebase plan); virus scanning is a documented, not built, hook. No upload screen exists yet in the citizen-facing ten-page portal itself. |
+| **SSO / Jan Aadhaar integration** | [`services/session.js`](services/session.js) · [`docs/SECURITY.md`](docs/SECURITY.md) | 🟡 Partial — a real, working OIDC-framed login (Google Sign-In via Firebase Auth) is live. The Jan Aadhaar/Rajasthan-SSO adapter itself is designed but not built, blocked on a still-pending official sandbox-credential request (`docs/SECURITY.md` §1.2). |
+| **Analytics dashboard for usage and feedback** | [`services/telemetry.js`](services/telemetry.js) · [`services/analytics-dashboard.html`](services/analytics-dashboard.html) · [`docs/ANALYTICS.md`](docs/ANALYTICS.md) | ✅ Live — real event counters from real usage, zero identifiers collected, verifiable in DevTools. |
 
-A 🚧 row is a real gap, stated as one rather than left to be discovered — the same discipline the engine itself applies to a scheme record it can't verify (`data/schemes.json`'s `null` fields, never a guess).
+A 🟡 row is a real gap, stated as one rather than left to be discovered — the same discipline the engine itself applies to a scheme record it can't verify (`data/schemes.json`'s `null` fields, never a guess).
+
+## Table B — the seven iStart evaluation parameters
+
+| Parameter | Document |
+|---|---|
+| Approach to problem solving | [`CONTEXT.md`](CONTEXT.md) |
+| Business use case | `docs/BUSINESS_CASE.md` 🚧 not yet written |
+| Solution technical feasibility | [`docs/SECURITY.md`](docs/SECURITY.md) · [`CONTEXT.md`](CONTEXT.md) |
+| Product roadmap | `docs/ROADMAP.md` 🚧 not yet written |
+| Team ability and culture | `docs/TEAM.md` 🚧 not yet written |
+| Addressable market | `docs/MARKET.md` 🚧 not yet written |
+| Financial proposal | `docs/FINANCIAL_PROPOSAL.md` 🚧 not yet written |
 
 ---
 
@@ -29,12 +47,12 @@ Deployed to **two independent origins**, deliberately — the resilience story i
 
 | Origin | Role | URL |
 |---|---|---|
-| **Netlify** | Primary — hosts the services-layer integration | `https://<your-netlify-url>/` |
+| **Netlify** | Primary — hosts the services-layer integration | <https://kisan-dwaar.netlify.app/> |
 | **GitHub Pages** | Static mirror — core only | <https://yodevstudio.github.io/kisan-dwaar/> |
 
 ```bash
 curl -sI https://yodevstudio.github.io/kisan-dwaar/ | head -1   # expect 200
-curl -sI https://<your-netlify-url>/ | head -1                  # expect 200
+curl -sI https://kisan-dwaar.netlify.app/ | head -1              # expect 200
 ```
 
 ---
@@ -180,7 +198,7 @@ kisan-dwaar/
 Everything a reviewer needs, in one place:
 
 - [ ] `curl -sI https://yodevstudio.github.io/kisan-dwaar/` → `200`
-- [ ] `curl -sI https://<your-netlify-url>/` → `200`
+- [ ] `curl -sI https://kisan-dwaar.netlify.app/` → `200`
 - [ ] Open the portal, complete a discovery flow with no account — reaches a verdict and a document list
 - [ ] Toggle the Hindi/English switcher in the nav bar — every page, every question, every answer chip updates instantly
 - [ ] `tests/eligibility.test.html` — all tests pass
