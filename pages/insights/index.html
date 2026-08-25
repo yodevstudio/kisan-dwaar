@@ -14,12 +14,27 @@
   <div id="site-nav"></div>
 
   <main class="container">
-    <div class="card bg-attention hi">
-      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word">निर्माणाधीन — K18</span></div>
-      <p>यह पन्ना K18 का काम है: रजिस्ट्री (api/v1/) में हर संभव किसान-प्रोफ़ाइल को इंजन से चलाकर, स्थिर रूप से यह प्रकाशित करना कि किन प्रोफ़ाइलों के लिए कोई योजना उपलब्ध नहीं है, कौनसा सवाल सबसे ज़्यादा नतीजा तय करता है, और कौनसी योजना किसी भी सामान्य प्रोफ़ाइल तक कभी पहुंचती ही नहीं। कोई नागरिक डेटा शामिल नहीं होगा — यह पूरी तरह रजिस्ट्री के अपने आँकड़ों से बनता है।</p>
-      <p>अभी के लिए, रजिस्ट्री स्वयं यहाँ उपलब्ध है:</p>
-      <p><a id="registry-link" class="hi" href="../../api/v1/index.json">api/v1/index.json देखें</a></p>
-    </div>
+    <div id="insight-summary" class="card hi"><p>लोड हो रहा है…</p></div>
+
+    <section class="card hi">
+      <div class="card-head"><span class="card-icon">📋</span><span class="card-word">योजना-वार पहुंच</span></div>
+      <p class="citation hi">हर पट्टी उस योजना के अपने ही सन्दर्भ-स्लॉट के हर यथार्थ मान-संयोजन (data/slots.json से) को इंजन से चलाने का नतीजा दिखाती है — हरा: पात्र, लाल: अपात्र, धूसर: जानकारी चाहिए।</p>
+      <div id="insight-schemes"></div>
+    </section>
+
+    <section class="card hi">
+      <div class="card-head"><span class="card-icon">🚧</span><span class="card-word">सबसे ज़्यादा नतीजा तय करने वाले सवाल</span></div>
+      <p class="citation hi">जब भी कोई योजना अपात्र ठहरती है, कौन-सा सवाल (स्लॉट) उसका कारण बना — पूरी रजिस्ट्री में कुल गिनती के हिसाब से।</p>
+      <div id="insight-slots"></div>
+    </section>
+
+    <section class="card hi">
+      <div class="card-head"><span class="card-icon">🧮</span><span class="card-word">पहले तीन सवालों से क्या तय होता है</span></div>
+      <p class="citation hi">पेशा × उम्र × लिंग — डिस्कवरी फ़्लो के पहले तीन सवाल — अकेले कितना तय कर देते हैं, बाकी कुछ भी बताए बिना।</p>
+      <div id="insight-headline"></div>
+    </section>
+
+    <p class="hi result-note">पूरा जनरेट किया गया डेटा: <a id="insights-json-link" class="hi" href="../../api/v1/insights.json">api/v1/insights.json देखें</a></p>
   </main>
 
   <footer class="site-footer">
@@ -27,10 +42,9 @@
     <div id="site-footer-links"></div>
   </footer>
 
+  <script type="module" src="./insights.js"></script>
   <script type="module">
-    import { resolvePath } from '../../js/paths.js';
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
-    document.getElementById('registry-link').href = resolvePath('api/v1/index.json');
     renderNav();
     renderFooterStaffLink();
   </script>

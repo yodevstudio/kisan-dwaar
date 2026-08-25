@@ -1090,20 +1090,21 @@
       "slot": "kcc_limit_inr",
       "question_hi": "आपकी किसान क्रेडिट कार्ड सीमा कितनी है?",
       "type": "range_select",
+      "note": "Bucket boundary fixed 2026-08-25 (K18): the previous {0,50000}/{50001,...} split left the exact value 50000 in neither bucket, and collided with RJ_PMAY_GRAMIN's `kcc_limit_inr gte 50000` exclusion so the engine could never resolve it (evaluateRangeCondition returns 'unknown' when a bucket straddles a threshold) — making that scheme permanently unreachable via the real UI. {0,49999}/{50000,...} is contiguous, exhaustive, and matches the threshold exactly.",
       "options": [
         {
           "value": {
             "min": 0,
-            "max": 50000
+            "max": 49999
           },
           "label_hi": "₹50,000 तक"
         },
         {
           "value": {
-            "min": 50001,
+            "min": 50000,
             "max": 10000000
           },
-          "label_hi": "₹50,000 से ज़्यादा"
+          "label_hi": "₹50,000 या ज़्यादा"
         },
         {
           "value": null,

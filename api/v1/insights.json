@@ -1,0 +1,308 @@
+{
+  "generated_at": "2026-08-25T04:14:31.775Z",
+  "methodology_note_hi": "यह पृष्ठ किसी नागरिक के डेटा से नहीं, बल्कि योजना-नियमों व प्रश्न-सूची (data/slots.json) के अपने मानों से बनता है। हर आँकड़ा js/eligibility.js — वही इंजन जो पोर्टल पर असली सवाल-जवाब चलाता है — को चलाकर निकाला गया है।",
+  "scheme_count": 12,
+  "per_scheme": [
+    {
+      "scheme_id": "RJ_TARBANDI",
+      "name_hi": "राजस्थान तारबंदी योजना",
+      "referenced_slots": [
+        "occupation",
+        "landholding_hectares",
+        "group_farmer_count",
+        "group_landholding_hectares"
+      ],
+      "profiles_tested": 368,
+      "eligible_profiles": 8,
+      "not_eligible_profiles": 355,
+      "need_more_info_profiles": 5,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_DRIP_SPRINKLER",
+      "name_hi": "सूक्ष्म सिंचाई (ड्रिप/स्प्रिंकलर) अनुदान योजना",
+      "referenced_slots": [
+        "occupation",
+        "landholding_hectares"
+      ],
+      "profiles_tested": 92,
+      "eligible_profiles": 2,
+      "not_eligible_profiles": 89,
+      "need_more_info_profiles": 1,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_FARM_POND",
+      "name_hi": "खेत तलाई अनुदान योजना",
+      "referenced_slots": [
+        "occupation",
+        "landholding_hectares"
+      ],
+      "profiles_tested": 92,
+      "eligible_profiles": 2,
+      "not_eligible_profiles": 89,
+      "need_more_info_profiles": 1,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_PMKISAN",
+      "name_hi": "प्रधानमंत्री किसान सम्मान निधि योजना",
+      "referenced_slots": [
+        "occupation",
+        "landholding_hectares",
+        "employment_sector",
+        "is_income_tax_payer",
+        "pension_monthly_inr"
+      ],
+      "profiles_tested": 3864,
+      "eligible_profiles": 8,
+      "not_eligible_profiles": 3840,
+      "need_more_info_profiles": 16,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_PMFBY",
+      "name_hi": "प्रधानमंत्री फसल बीमा योजना",
+      "referenced_slots": [
+        "occupation",
+        "farmer_loan_status"
+      ],
+      "profiles_tested": 46,
+      "eligible_profiles": 2,
+      "not_eligible_profiles": 44,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_KCC",
+      "name_hi": "किसान क्रेडिट कार्ड योजना",
+      "referenced_slots": [
+        "occupation",
+        "group_type"
+      ],
+      "profiles_tested": 69,
+      "eligible_profiles": 50,
+      "not_eligible_profiles": 19,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
+      "name_hi": "वृद्धजन कृषक सम्मान पेंशन योजना",
+      "referenced_slots": [
+        "occupation",
+        "landholding_category",
+        "has_regular_income_source",
+        "gender",
+        "age",
+        "other_social_security_pension_recipient"
+      ],
+      "profiles_tested": 4140,
+      "eligible_profiles": 6,
+      "not_eligible_profiles": 4132,
+      "need_more_info_profiles": 2,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
+      "name_hi": "विकसित भारत - ग्राम रोजगार एवं आजीविका मिशन (ग्रामीण) अधिनियम, 2025 (पूर्व में मनरेगा)",
+      "referenced_slots": [
+        "residence_type",
+        "willing_to_do_unskilled_manual_work",
+        "age"
+      ],
+      "profiles_tested": 20,
+      "eligible_profiles": 5,
+      "not_eligible_profiles": 15,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_PMAY_GRAMIN",
+      "name_hi": "प्रधानमंत्री आवास योजना - ग्रामीण",
+      "referenced_slots": [
+        "owns_pucca_house",
+        "kcc_limit_inr",
+        "employment_sector",
+        "monthly_income",
+        "is_income_tax_payer",
+        "owns_non_agri_enterprise",
+        "irrigated_land_acres"
+      ],
+      "profiles_tested": 448,
+      "eligible_profiles": 6,
+      "not_eligible_profiles": 436,
+      "need_more_info_profiles": 6,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_AYUSHMAN",
+      "name_hi": "मुख्यमंत्री आयुष्मान आरोग्य योजना",
+      "referenced_slots": [
+        "health_cover_category"
+      ],
+      "profiles_tested": 6,
+      "eligible_profiles": 6,
+      "not_eligible_profiles": 0,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_NFSA",
+      "name_hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम (राशन/खाद्य सुरक्षा योजना)",
+      "referenced_slots": [
+        "ration_card_category"
+      ],
+      "profiles_tested": 4,
+      "eligible_profiles": 2,
+      "not_eligible_profiles": 2,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    },
+    {
+      "scheme_id": "RJ_UJJWALA",
+      "name_hi": "प्रधानमंत्री उज्ज्वला योजना 2.0",
+      "referenced_slots": [
+        "gender",
+        "age",
+        "household_poor_declaration",
+        "household_has_lpg_connection"
+      ],
+      "profiles_tested": 60,
+      "eligible_profiles": 5,
+      "not_eligible_profiles": 55,
+      "need_more_info_profiles": 0,
+      "reachable": true
+    }
+  ],
+  "unreachable_scheme_ids": [],
+  "slot_block_ranking": [
+    {
+      "slot": "occupation",
+      "times_blocking": 9106,
+      "share": 0.2775204193587712
+    },
+    {
+      "slot": "gender",
+      "times_blocking": 5552,
+      "share": 0.16920638790686335
+    },
+    {
+      "slot": "age",
+      "times_blocking": 4968,
+      "share": 0.15140802145556503
+    },
+    {
+      "slot": "is_income_tax_payer",
+      "times_blocking": 2156,
+      "share": 0.0657076679263684
+    },
+    {
+      "slot": "has_regular_income_source",
+      "times_blocking": 2070,
+      "share": 0.06308667560648543
+    },
+    {
+      "slot": "other_social_security_pension_recipient",
+      "times_blocking": 2070,
+      "share": 0.06308667560648543
+    },
+    {
+      "slot": "employment_sector",
+      "times_blocking": 1720,
+      "share": 0.05241984639765939
+    },
+    {
+      "slot": "landholding_category",
+      "times_blocking": 1380,
+      "share": 0.04205778373765696
+    },
+    {
+      "slot": "pension_monthly_inr",
+      "times_blocking": 1288,
+      "share": 0.039253931488479825
+    },
+    {
+      "slot": "landholding_hectares",
+      "times_blocking": 1103,
+      "share": 0.0336157503352432
+    },
+    {
+      "slot": "owns_pucca_house",
+      "times_blocking": 224,
+      "share": 0.006826770693648665
+    },
+    {
+      "slot": "owns_non_agri_enterprise",
+      "times_blocking": 224,
+      "share": 0.006826770693648665
+    },
+    {
+      "slot": "monthly_income",
+      "times_blocking": 224,
+      "share": 0.006826770693648665
+    },
+    {
+      "slot": "kcc_limit_inr",
+      "times_blocking": 224,
+      "share": 0.006826770693648665
+    },
+    {
+      "slot": "group_landholding_hectares",
+      "times_blocking": 178,
+      "share": 0.0054248445690601
+    },
+    {
+      "slot": "group_farmer_count",
+      "times_blocking": 178,
+      "share": 0.0054248445690601
+    },
+    {
+      "slot": "farmer_loan_status",
+      "times_blocking": 44,
+      "share": 0.0013409728148238449
+    },
+    {
+      "slot": "household_has_lpg_connection",
+      "times_blocking": 30,
+      "share": 0.0009142996464708034
+    },
+    {
+      "slot": "household_poor_declaration",
+      "times_blocking": 30,
+      "share": 0.0009142996464708034
+    },
+    {
+      "slot": "group_type",
+      "times_blocking": 19,
+      "share": 0.0005790564427648421
+    },
+    {
+      "slot": "willing_to_do_unskilled_manual_work",
+      "times_blocking": 10,
+      "share": 0.00030476654882360114
+    },
+    {
+      "slot": "residence_type",
+      "times_blocking": 10,
+      "share": 0.00030476654882360114
+    },
+    {
+      "slot": "ration_card_category",
+      "times_blocking": 4,
+      "share": 0.00012190661952944045
+    }
+  ],
+  "headline_profile_analysis": {
+    "dimensions": [
+      "occupation",
+      "age",
+      "gender"
+    ],
+    "total_profiles": 345,
+    "definitely_zero_eligible_profiles": 0,
+    "already_eligible_for_some_profiles": 60,
+    "still_undetermined_profiles": 285,
+    "occupations_always_zero_eligible": []
+  }
+}
