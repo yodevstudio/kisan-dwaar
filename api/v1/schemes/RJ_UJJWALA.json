@@ -48,7 +48,8 @@
     "amount_inr": 2200,
     "amount_text_hi": "₹2,200 प्रति कनेक्शन की वित्तीय सहायता (शुरुआत में ₹1,600 थी, बाद में बढ़ाकर ₹2,200 की गई); नए PMUY लाभार्थियों को पहला रिफिल व चूल्हा (स्टोव) भी निःशुल्क",
     "rate_policy": "CENTRAL_SCHEME_RATE_SEE_SOURCE",
-    "note": "प्रवासी आवेदकों के लिए विशेष स्व-घोषणा प्रपत्र (Annexure I) की सुविधा है, जिसमें स्थायी निवास प्रमाण की सामान्य शर्त में छूट मिलती है। परिवार में किसी भी तेल कंपनी से पहले से LPG कनेक्शन न होना अनिवार्य शर्त है।"
+    "note": "प्रवासी आवेदकों के लिए विशेष स्व-घोषणा प्रपत्र (Annexure I) की सुविधा है, जिसमें स्थायी निवास प्रमाण की सामान्य शर्त में छूट मिलती है। परिवार में किसी भी तेल कंपनी से पहले से LPG कनेक्शन न होना अनिवार्य शर्त है।",
+    "amount_text_en": "₹2,200 financial assistance per connection (started at ₹1,600, later raised to ₹2,200); new PMUY beneficiaries also get the first refill and stove free of cost."
   },
   "documents": [
     {
@@ -56,28 +57,36 @@
       "label_hi": "आधार कार्ड (आवेदक महिला व वयस्क परिवार सदस्यों का)",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card (of the applicant woman and adult household members)",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "RATION_CARD",
       "label_hi": "राशन कार्ड या परिवार संरचना प्रमाणित करने वाला दस्तावेज़",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / रसद विभाग",
-      "sample_image": "assets/docs/ration_card.svg"
+      "sample_image": "assets/docs/ration_card.svg",
+      "label_en": "Ration card or document certifying household composition",
+      "where_to_get_en": "e-Mitra / Food & Civil Supplies Department"
     },
     {
       "doc_id": "DEPRIVATION_DECLARATION",
       "label_hi": "गरीब परिवार होने का स्व-घोषणा पत्र (Deprivation Declaration)",
       "icon": "document",
       "where_to_get_hi": "गैस एजेंसी / ई-मित्र",
-      "sample_image": "assets/docs/deprivation_declaration.svg"
+      "sample_image": "assets/docs/deprivation_declaration.svg",
+      "label_en": "Self-declaration of being a poor household (Deprivation Declaration)",
+      "where_to_get_en": "Gas agency / e-Mitra"
     },
     {
       "doc_id": "BANK_PASSBOOK",
       "label_hi": "बैंक पासबुक / रद्द चेक",
       "icon": "bank",
       "where_to_get_hi": "बैंक शाखा",
-      "sample_image": "assets/docs/bank_passbook.svg"
+      "sample_image": "assets/docs/bank_passbook.svg",
+      "label_en": "Bank passbook / cancelled cheque",
+      "where_to_get_en": "Bank branch"
     }
   ],
   "apply_via": [
@@ -88,5 +97,16 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी गैस एजेंसी से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Apply at your nearest gas agency (Indane/Bharat Gas/HP Gas).",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest gas agency."
+  },
+  "keywords_en": [
+    "Ujjwala Yojana",
+    "free gas connection",
+    "LPG connection poor woman"
+  ]
 }

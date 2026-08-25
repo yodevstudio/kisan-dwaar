@@ -1,0 +1,20 @@
+{
+  "from": "2026.08.25-1",
+  "to": "2026.08.25-2",
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "scheme_id": "RJ_TARBANDI",
+      "changed_fields": [
+        "subsidy_rule"
+      ]
+    },
+    {
+      "scheme_id": "RJ_DRIP_SPRINKLER",
+      "changed_fields": [
+        "subsidy_rule"
+      ]
+    }
+  ]
+}

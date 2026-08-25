@@ -1,4 +1,5 @@
 import { resolvePath } from '../../js/paths.js';
+import { getLang, t } from '../../js/i18n.js';
 
 // S4: entirely static, no auth, no service call — this is seeded
 // demonstration data (docs/BUILD_GUIDE_V2.md: "clearly labelled as
@@ -9,10 +10,10 @@ import { resolvePath } from '../../js/paths.js';
 // fabricated for demonstration only, never real citizen data.
 
 const STAGES = [
-  { key: 'submitted', label_hi: 'प्रस्तुत किया गया' },
-  { key: 'under_review', label_hi: 'समीक्षाधीन' },
-  { key: 'inspection', label_hi: 'निरीक्षण' },
-  { key: 'disbursed', label_hi: 'वितरित' },
+  { key: 'submitted', i18nKey: 'status.stage.submitted' },
+  { key: 'under_review', i18nKey: 'status.stage.under_review' },
+  { key: 'inspection', i18nKey: 'status.stage.inspection' },
+  { key: 'disbursed', i18nKey: 'status.stage.disbursed' },
 ];
 
 const SEED_APPLICATIONS = [
@@ -25,14 +26,18 @@ const SEED_APPLICATIONS = [
 function el(tag, className, text) {
   const e = document.createElement(tag);
   if (className) e.className = className;
-  if (text !== undefined) e.textContent = text;
+  if (text !== undefined && text !== null) e.textContent = text;
   return e;
 }
 
+function langClass(base) {
+  return getLang() === 'hi' ? `${base} hi` : base;
+}
+
 function renderTimeline(app, schemeNames) {
-  const card = el('div', 'card hi');
+  const card = el('div', langClass('card'));
   card.appendChild(el('div', 'answer-headline', schemeNames[app.scheme_id] || app.scheme_id));
-  card.appendChild(el('p', 'citation', `आवेदन संख्या: ${app.application_id} (डेमो) · प्रस्तुत: ${app.submitted_on}`));
+  card.appendChild(el('p', 'citation', `${t('status.application_no')}: ${app.application_id} ${t('status.demo_note')} · ${t('status.submitted_on')}: ${app.submitted_on}`));
 
   const currentIndex = STAGES.findIndex((s) => s.key === app.current_stage);
   const list = el('ol', 'status-timeline');
@@ -44,7 +49,7 @@ function renderTimeline(app, schemeNames) {
 
     const li = el('li', `status-step ${stepClass}`);
     li.appendChild(el('span', 'status-icon', icon));
-    li.appendChild(el('span', 'status-label', stage.label_hi));
+    li.appendChild(el('span', 'status-label', t(stage.i18nKey)));
     list.appendChild(li);
   });
   card.appendChild(list);
@@ -53,19 +58,28 @@ function renderTimeline(app, schemeNames) {
 
 async function init() {
   const container = document.getElementById('timelines');
-  let schemeNames = {};
+  let schemes = [];
   try {
     const res = await fetch(resolvePath('data/schemes.json'));
-    const schemes = await res.json();
-    schemeNames = Object.fromEntries(schemes.map((s) => [s.scheme_id, s.name_hi]));
+    schemes = await res.json();
   } catch (err) {
     // Falls back to raw scheme_id — still renders the timeline, since a
     // missing scheme-name lookup shouldn't take down a page that has
     // nothing to do with the registry otherwise.
     console.warn('status: could not load scheme names, falling back to scheme_id:', err);
   }
-  container.innerHTML = '';
-  SEED_APPLICATIONS.forEach((app) => container.appendChild(renderTimeline(app, schemeNames)));
+
+  const render = () => {
+    const lang = getLang();
+    const schemeNames = Object.fromEntries(
+      schemes.map((s) => [s.scheme_id, lang === 'en' && s.name_en ? s.name_en : s.name_hi]),
+    );
+    container.innerHTML = '';
+    SEED_APPLICATIONS.forEach((app) => container.appendChild(renderTimeline(app, schemeNames)));
+  };
+
+  render();
+  window.addEventListener('kisan:langchange', render);
 }
 
 init();

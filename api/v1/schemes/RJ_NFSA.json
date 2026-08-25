@@ -38,7 +38,8 @@
     "amount_inr": null,
     "amount_text_hi": "अंत्योदय अन्न योजना (AAY) - सबसे निर्धन परिवार: प्रति परिवार 35 किलो अनाज प्रतिमाह; प्राथमिकता परिवार (Priority Household): प्रति व्यक्ति 5 किलो प्रतिमाह — 1 जनवरी 2024 से अगले 5 वर्षों (दिसंबर 2029 तक) के लिए पूर्णतः निःशुल्क (पहले न्यूनतम मूल्य पर मिलता था)",
     "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
-    "note": "यह अनाज (गेहूं/चावल) के रूप में लाभ है, नकद नहीं, इसलिए amount_inr लागू नहीं। पात्र परिवारों की पहचान राज्य सरकार द्वारा निरंतर अद्यतन डेटाबेस से होती है। ग्रामीण क्षेत्र की 75% व शहरी क्षेत्र की 50% जनसंख्या तक कवरेज का प्रावधान राष्ट्रीय स्तर पर है — राजस्थान-विशिष्ट कवरेज आँकड़ा इस सत्र में सत्यापित नहीं हो सका।"
+    "note": "यह अनाज (गेहूं/चावल) के रूप में लाभ है, नकद नहीं, इसलिए amount_inr लागू नहीं। पात्र परिवारों की पहचान राज्य सरकार द्वारा निरंतर अद्यतन डेटाबेस से होती है। ग्रामीण क्षेत्र की 75% व शहरी क्षेत्र की 50% जनसंख्या तक कवरेज का प्रावधान राष्ट्रीय स्तर पर है — राजस्थान-विशिष्ट कवरेज आँकड़ा इस सत्र में सत्यापित नहीं हो सका।",
+    "amount_text_en": "Antyodaya Anna Yojana (AAY) — poorest households: 35 kg of grain per household per month; Priority Household: 5 kg per person per month — fully free (previously available at a minimal price) from 1 January 2024 for the next 5 years (until December 2029)."
   },
   "documents": [
     {
@@ -46,21 +47,27 @@
       "label_hi": "जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/jan_aadhaar.svg"
+      "sample_image": "assets/docs/jan_aadhaar.svg",
+      "label_en": "Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "RATION_CARD",
       "label_hi": "राशन कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / रसद विभाग",
-      "sample_image": "assets/docs/ration_card.svg"
+      "sample_image": "assets/docs/ration_card.svg",
+      "label_en": "Ration card",
+      "where_to_get_en": "e-Mitra / Food & Civil Supplies Department"
     },
     {
       "doc_id": "AADHAAR",
       "label_hi": "आधार कार्ड (सभी परिवार सदस्यों का, e-KYC हेतु)",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card (of all household members, for e-KYC)",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     }
   ],
   "apply_via": [
@@ -71,5 +78,17 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Check your ration card status at your nearest fair-price shop or e-Mitra.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "ration card",
+    "food security scheme",
+    "free wheat rice",
+    "Antyodaya"
+  ]
 }

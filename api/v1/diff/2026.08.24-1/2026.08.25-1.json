@@ -1,0 +1,116 @@
+{
+  "from": "2026.08.24-1",
+  "to": "2026.08.25-1",
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "scheme_id": "RJ_TARBANDI",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_DRIP_SPRINKLER",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_FARM_POND",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMKISAN",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMFBY",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_KCC",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMAY_GRAMIN",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_AYUSHMAN",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_NFSA",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    },
+    {
+      "scheme_id": "RJ_UJJWALA",
+      "changed_fields": [
+        "benefit",
+        "documents",
+        "response_templates_en",
+        "keywords_en"
+      ]
+    }
+  ]
+}

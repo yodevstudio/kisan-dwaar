@@ -110,6 +110,7 @@ function main() {
     return {
       scheme_id: scheme.scheme_id,
       name_hi: scheme.name_hi,
+      name_en: scheme.name_en,
       referenced_slots: slotNames,
       profiles_tested: combos.length,
       eligible_profiles: eligible,
@@ -151,13 +152,18 @@ function main() {
   // An occupation only belongs in the "guaranteed zero" list if EVERY
   // age/gender combination under it was zero-eligible — one reachable
   // combination is enough to prove that occupation isn't a dead end.
+  const occupationDef = slotsCatalogue.slots.find((s) => s.slot === 'occupation');
   const occupationsAlwaysZeroEligible = [...zeroEligibleOccupations].filter(
     (occ) => !reachableOccupations.has(occ),
-  ).sort();
+  ).sort().map((occ) => {
+    const opt = occupationDef.options.find((o) => o.value === occ);
+    return { value: occ, label_hi: opt ? opt.label_hi : occ, label_en: opt ? opt.label_en : occ };
+  });
 
   const insights = {
     generated_at: new Date().toISOString(),
     methodology_note_hi: 'यह पृष्ठ किसी नागरिक के डेटा से नहीं, बल्कि योजना-नियमों व प्रश्न-सूची (data/slots.json) के अपने मानों से बनता है। हर आँकड़ा js/eligibility.js — वही इंजन जो पोर्टल पर असली सवाल-जवाब चलाता है — को चलाकर निकाला गया है।',
+    methodology_note_en: 'This page is built not from any citizen data, but from the scheme rules and question catalogue (data/slots.json) own values. Every figure is derived by running js/eligibility.js — the same engine that runs real question-answering on the portal.',
     scheme_count: schemes.length,
     per_scheme: perScheme,
     unreachable_scheme_ids: perScheme.filter((s) => !s.reachable).map((s) => s.scheme_id),

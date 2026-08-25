@@ -64,8 +64,79 @@ const SLOT_LABELS_HI = {
   pension_monthly_inr: 'मासिक पेंशन राशि',
 };
 
+// K8: additive only, alongside SLOT_LABELS_HI above — same keys, English
+// values. Nothing above this line changes; assemble()/explainGap() and
+// their Hindi output are untouched, per CONTEXT.md's port-delta table.
+const SLOT_LABELS_EN = {
+  age: 'age',
+  child_age: "child's age",
+  gender: 'gender',
+  marital_status: 'marital status',
+  annual_income: 'annual income',
+  residency_years: 'years resident in Rajasthan',
+  child_status: 'child status',
+  disability_pct: 'disability percentage',
+  category: 'category',
+  birth_date: 'date of birth',
+  birth_facility_type: 'place of birth',
+  family_girls_count: 'number of daughters in the family',
+  occupation: 'occupation',
+  landholding_hectares: 'land (in hectares)',
+  group_farmer_count: 'number of farmers in the group',
+  group_landholding_hectares: "group's land (in hectares)",
+  education_level: 'education level',
+  employment_registered: 'employment office registration',
+  district: 'district',
+  health_cover_category: 'category (free or premium cover)',
+  exam_passed: 'exam passed',
+  employment_sector: 'employment sector',
+  religion: 'religion',
+  is_income_tax_payer: 'income tax payment',
+  owns_pucca_house: 'ownership of a pucca house',
+  residence_type: 'residence type (village/city)',
+  willing_to_do_unskilled_manual_work: 'willingness to do manual labour',
+  pregnancy_status: 'pregnancy status',
+  pregnancy_child_number: 'child number in pregnancy',
+  remarriage_status: 'remarriage status',
+  widow_pension_recipient_or_eligible: 'widow pension receipt/eligibility',
+  bocw_board_registered: 'construction workers welfare board registration',
+  construction_work_days_last_year: 'construction work days last year',
+  silicosis_certified: 'silicosis certification',
+  residence_distance_from_crusher_km: 'distance of home from crusher',
+  hospitalization_hours: 'duration of hospitalisation',
+  farmer_loan_status: 'crop loan (KCC) status',
+  group_type: 'group type',
+  marks_percent_board_exam: 'board exam percentage',
+  marks_percent_10_or_12: '10th/12th percentage',
+  has_regular_income_source: 'regular income source',
+  landholding_category: 'landholding category',
+  other_social_security_pension_recipient: 'other social-security pension receipt',
+  monthly_family_income: 'monthly family income',
+  monthly_income: 'monthly income',
+  irrigated_land_acres: 'irrigated land (in acres)',
+  kcc_limit_inr: 'Kisan Credit Card limit',
+  owns_non_agri_enterprise: 'ownership of a non-agricultural business',
+  household_has_lpg_connection: 'household gas connection',
+  household_poor_declaration: "household's poor-category declaration",
+  ration_card_category: 'ration card category',
+  visited_government_health_facility: 'government health facility visits',
+  is_state_government_pensioner: 'state government pensioner status',
+  is_dependent_of_rghs_beneficiary: 'RGHS beneficiary dependent status',
+  pension_monthly_inr: 'monthly pension amount',
+};
+
 function labelFor(slot) {
   return SLOT_LABELS_HI[slot] || slot;
+}
+
+function labelForEn(slot) {
+  return SLOT_LABELS_EN[slot] || slot;
+}
+
+function joinEn(labels) {
+  if (labels.length === 0) return null;
+  if (labels.length === 1) return labels[0];
+  return `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
 }
 
 function joinHi(labels) {
@@ -195,6 +266,114 @@ export function assemble(verdict, scheme, evaluation) {
   }
 
   assertNoUnsourcedNumber(output, scheme);
+  return output;
+}
+
+// ===== K8: English-language counterparts, purely additive =====
+// Same shape, same guard discipline, English source fields. Nothing
+// above this line changes.
+
+function getBenefitTextEn(scheme) {
+  const benefit = scheme.benefit || {};
+  if (typeof benefit.amount_inr === 'number') return `₹${benefit.amount_inr}`;
+  if (benefit.amount_text_en) return benefit.amount_text_en;
+  return null;
+}
+
+function formatMissingEn(missingSlots) {
+  return joinEn([...new Set((missingSlots || []).map(labelForEn))]) || 'some information';
+}
+
+function formatFailureReasonEn(reasons) {
+  const failMarkers = ['शर्त असफल', 'अपवर्जन शर्त लागू'];
+  const slots = (reasons || [])
+    .filter((r) => failMarkers.some((marker) => r.includes(marker)))
+    .map((r) => {
+      const m = r.match(/^(\S+):/);
+      return m ? labelForEn(m[1]) : null;
+    })
+    .filter(Boolean);
+  return joinEn([...new Set(slots)]) || 'some conditions';
+}
+
+function buildUnknownEn(templates) {
+  const text_en = (templates && templates.unknown)
+    || "I don't have confirmed information on this. Ask at your nearest e-Mitra.";
+  return { text_en, speech_en: text_en, citation: null, documents: [] };
+}
+
+// Mirrors assertNoUnsourcedNumber exactly, checking output.text_en/
+// speech_en against an allowlist built from the English benefit fields —
+// the same anti-hallucination guarantee, applied to the English output
+// path so an English-reading citizen gets no weaker a guarantee than a
+// Hindi-reading one.
+export function assertNoUnsourcedNumberEn(output, scheme, extraAllowlist) {
+  const benefit = (scheme && scheme.benefit) || {};
+  const allowlist = [
+    typeof benefit.amount_inr === 'number' ? String(benefit.amount_inr) : '',
+    benefit.amount_text_en || '',
+    (scheme && scheme.name_en) || '',
+    scheme && scheme.eligibility ? JSON.stringify(scheme.eligibility) : '',
+    ...(extraAllowlist || []),
+  ].join(' | ');
+
+  for (const field of [output.text_en, output.speech_en]) {
+    const digitSequences = (field || '').match(/\d+/g) || [];
+    for (const seq of digitSequences) {
+      if (!allowlist.includes(seq)) {
+        throw new Error(
+          `assertNoUnsourcedNumberEn: "${seq}" is not traceable to an allowlisted benefit field on scheme ${scheme && scheme.scheme_id}`
+        );
+      }
+    }
+  }
+  return true;
+}
+
+// evaluation is eligibility.js's evaluate() output: { reasons, missing_slots }.
+export function assembleEn(verdict, scheme, evaluation) {
+  const templates = (scheme && scheme.response_templates_en) || {};
+
+  if (!scheme || !scheme.source_url) {
+    return buildUnknownEn(templates);
+  }
+
+  const citation = {
+    url: scheme.source_url,
+    last_verified: scheme.last_verified || null,
+    next_review_due: scheme.next_review_due || null,
+  };
+  const missing_slots = (evaluation && evaluation.missing_slots) || [];
+  const reasons = (evaluation && evaluation.reasons) || [];
+
+  let output;
+
+  if (verdict === 'ELIGIBLE') {
+    const benefitText = getBenefitTextEn(scheme);
+    if (benefitText === null || !templates.eligible) return buildUnknownEn(templates);
+    const text_en = fillTemplate(templates.eligible, {
+      scheme_name_en: scheme.name_en || '',
+      benefit_text: benefitText,
+    });
+    output = { text_en, speech_en: text_en, citation, documents: scheme.documents || [] };
+  } else if (verdict === 'NEED_MORE_INFO') {
+    if (!templates.need_info) return buildUnknownEn(templates);
+    const text_en = fillTemplate(templates.need_info, {
+      scheme_name_en: scheme.name_en || '',
+      missing: formatMissingEn(missing_slots),
+    });
+    output = { text_en, speech_en: text_en, citation, documents: [] };
+  } else if (verdict === 'NOT_ELIGIBLE') {
+    if (!templates.not_eligible) return buildUnknownEn(templates);
+    const text_en = fillTemplate(templates.not_eligible, {
+      reason_en: formatFailureReasonEn(reasons),
+    });
+    output = { text_en, speech_en: text_en, citation, documents: [] };
+  } else {
+    return buildUnknownEn(templates);
+  }
+
+  assertNoUnsourcedNumberEn(output, scheme);
   return output;
 }
 
@@ -329,5 +508,40 @@ export function explainGap(gap, scheme) {
   }
 
   assertNoUnsourcedNumber({ text_hi: sentence, speech_hi: sentence }, scheme, [actualDisplay]);
+  return sentence;
+}
+
+// K8: English counterpart of explainGap, purely additive — same guard
+// discipline via assertNoUnsourcedNumberEn. English has no grammatical
+// gender to resolve, so there's no counterpart to chahiye() above.
+export function explainGapEn(gap, scheme) {
+  const { slot, op, required, actual, kind } = gap;
+  const label = labelForEn(slot);
+  const actualDisplay = formatGapValue(actual);
+
+  let sentence;
+  if (kind === 'exclusion') {
+    sentence = `You are not eligible for this scheme because ${label} is ${formatGapValue(required)}.`;
+  } else if (op === 'gte' && slot === 'age' && typeof required === 'number') {
+    sentence = `You are ${actualDisplay} — you will become eligible at age ${required}.`;
+  } else if (op === 'lte' && slot === 'annual_income' && typeof required === 'number') {
+    sentence = `Income must be less than ₹${required} — yours is stated as ₹${actualDisplay}.`;
+  } else if (op === 'gte' && typeof required === 'number') {
+    sentence = `${label} must be at least ${required} — you stated: ${actualDisplay}.`;
+  } else if (op === 'lte' && typeof required === 'number') {
+    sentence = `${label} must be less than ${required} — you stated: ${actualDisplay}.`;
+  } else if (op === 'between') {
+    const { min: bLo, max: bHi } = parseBounds(required);
+    sentence = `${label} must be between ${bLo} and ${bHi} — you stated: ${actualDisplay}.`;
+  } else if (op === 'in') {
+    const list = Array.isArray(required) ? required.join(' / ') : String(required);
+    sentence = `${label} must be one of: ${list} — you stated: ${actualDisplay}.`;
+  } else if (op === 'eq') {
+    sentence = `${label} must be: ${formatGapValue(required)} — you stated: ${actualDisplay}.`;
+  } else {
+    sentence = `The condition on ${label} is not met.`;
+  }
+
+  assertNoUnsourcedNumberEn({ text_en: sentence, speech_en: sentence }, scheme, [actualDisplay]);
   return sentence;
 }

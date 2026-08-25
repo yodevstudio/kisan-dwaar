@@ -3,35 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>आवेदन की स्थिति — किसान द्वार</title>
+<title data-i18n="status.title">आवेदन की स्थिति — किसान द्वार</title>
 <link rel="stylesheet" href="../../css/kisan.css">
 </head>
 <body>
   <header class="site-header">
-    <h1 class="hi">आवेदन की स्थिति</h1>
-    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+    <h1 class="hi" data-i18n="status.h1">आवेदन की स्थिति</h1>
+    <span class="badge hi" data-i18n="common.badge_rules">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
   <div id="site-nav"></div>
 
   <main class="container">
     <div class="card bg-attention hi">
-      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word">डेमो डेटा</span></div>
-      <p>यहाँ दिखाए गए सभी आवेदन <strong>बनावटी उदाहरण हैं</strong> — असली आवेदन प्रणाली से जुड़े नहीं हैं। योजना के नाम असली, सत्यापित डेटा से हैं; आवेदन-संख्या, तारीख़ और स्थिति सभी केवल प्रदर्शन के लिए हैं।</p>
+      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word" data-i18n="status.demo_title">डेमो डेटा</span></div>
+      <p><span data-i18n="status.demo_body_before">यहाँ दिखाए गए सभी आवेदन</span> <strong data-i18n="status.demo_body_strong">बनावटी उदाहरण हैं</strong> <span data-i18n="status.demo_body_after">— असली आवेदन प्रणाली से जुड़े नहीं हैं। योजना के नाम असली, सत्यापित डेटा से हैं; आवेदन-संख्या, तारीख़ और स्थिति सभी केवल प्रदर्शन के लिए हैं।</span></p>
     </div>
 
-    <div id="timelines"><p class="hi">लोड हो रहा है…</p></div>
+    <div id="timelines"><p class="hi" data-i18n="common.loading">लोड हो रहा है…</p></div>
   </main>
 
   <footer class="site-footer">
-    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <p class="hi disclosure" data-i18n="common.footer_disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
     <div id="site-footer-links"></div>
   </footer>
 
   <script type="module" src="./status.js"></script>
   <script type="module">
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    import { applyTranslations } from '../../js/i18n.js';
     renderNav();
     renderFooterStaffLink();
+    applyTranslations();
   </script>
 </body>
 </html>

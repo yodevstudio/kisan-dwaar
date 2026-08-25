@@ -5,17 +5,18 @@
 // or its Firebase import is unreachable, this page still renders; only
 // the widget silently declines to record anything (see track() below).
 import { resolvePath } from '../../js/paths.js';
+import { getLang, t } from '../../js/i18n.js';
 
 const REASONS = {
   up: [
-    { value: 'easy_to_use', label_hi: 'इस्तेमाल करना आसान लगा' },
-    { value: 'useful_info', label_hi: 'जानकारी उपयोगी लगी' },
-    { value: 'fast', label_hi: 'जल्दी जवाब मिला' },
+    { value: 'easy_to_use', key: 'feedback.reason.easy_to_use' },
+    { value: 'useful_info', key: 'feedback.reason.useful_info' },
+    { value: 'fast', key: 'feedback.reason.fast' },
   ],
   down: [
-    { value: 'confusing', label_hi: 'समझने में मुश्किल हुई' },
-    { value: 'missing_scheme', label_hi: 'जो योजना चाहिए थी वह नहीं मिली' },
-    { value: 'other_issue', label_hi: 'कोई और समस्या' },
+    { value: 'confusing', key: 'feedback.reason.confusing' },
+    { value: 'missing_scheme', key: 'feedback.reason.missing_scheme' },
+    { value: 'other_issue', key: 'feedback.reason.other_issue' },
   ],
 };
 
@@ -35,39 +36,49 @@ function el(tag, className, text) {
   return e;
 }
 
+function langClass(base) {
+  return getLang() === 'hi' ? `${base} hi` : base;
+}
+
 function renderWidget() {
   const host = document.getElementById('feedback-widget');
-  const promptRow = el('div', 'feedback-prompt hi', 'क्या यह पोर्टल आपके लिए मददगार रहा?');
-  const thumbsRow = el('div', 'chips');
-  host.appendChild(promptRow);
-  host.appendChild(thumbsRow);
+  const render = () => {
+    host.innerHTML = '';
+    const promptRow = el('div', langClass('feedback-prompt'), t('feedback.prompt'));
+    const thumbsRow = el('div', 'chips');
+    host.appendChild(promptRow);
+    host.appendChild(thumbsRow);
 
-  function showReasons(direction) {
-    thumbsRow.remove();
-    promptRow.textContent = direction === 'up' ? 'क्या अच्छा लगा?' : 'क्या समस्या हुई?';
-    const reasonsRow = el('div', 'chips');
-    REASONS[direction].forEach((reason) => {
-      const btn = el('button', 'chip hi', reason.label_hi);
-      btn.type = 'button';
-      btn.addEventListener('click', () => {
-        reasonsRow.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-        track(direction, reason.value);
-        promptRow.textContent = 'धन्यवाद!';
-        reasonsRow.remove();
+    function showReasons(direction) {
+      thumbsRow.remove();
+      promptRow.textContent = direction === 'up' ? t('feedback.prompt_up') : t('feedback.prompt_down');
+      const reasonsRow = el('div', 'chips');
+      REASONS[direction].forEach((reason) => {
+        const btn = el('button', langClass('chip'), t(reason.key));
+        btn.type = 'button';
+        btn.addEventListener('click', () => {
+          reasonsRow.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+          track(direction, reason.value);
+          promptRow.textContent = t('chat.thanks');
+          reasonsRow.remove();
+        });
+        reasonsRow.appendChild(btn);
       });
-      reasonsRow.appendChild(btn);
-    });
-    host.appendChild(reasonsRow);
-  }
+      host.appendChild(reasonsRow);
+    }
 
-  const upBtn = el('button', 'chip hi', '👍');
-  const downBtn = el('button', 'chip hi', '👎');
-  upBtn.type = 'button';
-  downBtn.type = 'button';
-  upBtn.addEventListener('click', () => showReasons('up'));
-  downBtn.addEventListener('click', () => showReasons('down'));
-  thumbsRow.appendChild(upBtn);
-  thumbsRow.appendChild(downBtn);
+    const upBtn = el('button', langClass('chip'), '👍');
+    const downBtn = el('button', langClass('chip'), '👎');
+    upBtn.type = 'button';
+    downBtn.type = 'button';
+    upBtn.addEventListener('click', () => showReasons('up'));
+    downBtn.addEventListener('click', () => showReasons('down'));
+    thumbsRow.appendChild(upBtn);
+    thumbsRow.appendChild(downBtn);
+  };
+
+  render();
+  window.addEventListener('kisan:langchange', render);
 }
 
 renderWidget();

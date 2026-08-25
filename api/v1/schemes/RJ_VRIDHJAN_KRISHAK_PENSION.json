@@ -77,7 +77,8 @@
     "amount_inr": null,
     "amount_text_hi": "55-74 वर्ष (महिला) / 58-74 वर्ष (पुरुष) आयु वर्ग में ₹750 प्रतिमाह; 75 वर्ष व अधिक आयु में ₹1,000 प्रतिमाह — 1 मार्च 2019 से प्रभावी",
     "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
-    "note": "यह योजना सामान्य वृद्धावस्था पेंशन (RJ_RAJSSP_OLD_AGE) जैसी ही राशि-संरचना उपयोग करती है परंतु विशेष रूप से लघु/सीमांत किसानों के लिए है जिनकी नियमित आय का कोई स्रोत नहीं है — दोनों योजनाओं का एक साथ लाभ नहीं मिलता। राशि 2019 की घोषणा पर आधारित है, तब से संशोधित हो सकती है।"
+    "note": "यह योजना सामान्य वृद्धावस्था पेंशन (RJ_RAJSSP_OLD_AGE) जैसी ही राशि-संरचना उपयोग करती है परंतु विशेष रूप से लघु/सीमांत किसानों के लिए है जिनकी नियमित आय का कोई स्रोत नहीं है — दोनों योजनाओं का एक साथ लाभ नहीं मिलता। राशि 2019 की घोषणा पर आधारित है, तब से संशोधित हो सकती है।",
+    "amount_text_en": "₹750 per month in the 55–74 (female) / 58–74 (male) age group; ₹1,000 per month at age 75 and above — effective from 1 March 2019."
   },
   "documents": [
     {
@@ -85,21 +86,27 @@
       "label_hi": "जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/jan_aadhaar.svg"
+      "sample_image": "assets/docs/jan_aadhaar.svg",
+      "label_en": "Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "AGE_CERT",
       "label_hi": "आयु प्रमाण पत्र",
       "icon": "certificate",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/age_cert.svg"
+      "sample_image": "assets/docs/age_cert.svg",
+      "label_en": "Age proof certificate",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "LAND_RECORD",
       "label_hi": "जमाबंदी की नकल (लघु/सीमांत किसान श्रेणी हेतु)",
       "icon": "document",
       "where_to_get_hi": "तहसील (राजस्व विभाग)",
-      "sample_image": "assets/docs/land_record.svg"
+      "sample_image": "assets/docs/land_record.svg",
+      "label_en": "Land record copy (Jamabandi) (for small/marginal farmer category)",
+      "where_to_get_en": "Tehsil (Revenue Department)"
     }
   ],
   "apply_via": [
@@ -110,5 +117,17 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm at your nearest e-Mitra.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "farmer pension",
+    "old-age farmer pension",
+    "krishak samman pension",
+    "budhapa farmer pension"
+  ]
 }

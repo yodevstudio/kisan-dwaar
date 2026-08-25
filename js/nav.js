@@ -5,20 +5,26 @@
 // resolvePath so navigation resolves correctly from any page, at any
 // depth, on both the Netlify root and the GitHub Pages "/kisan-dwaar/"
 // mirror (CONTEXT.md: "never write an absolute path").
+//
+// K8: the language toggle lives inside the nav bar itself (rendered here,
+// not duplicated per page) so every page that already calls renderNav()
+// gets bilingual switching for free. Labels re-render on 'kisan:langchange'
+// since NAV_ITEMS' i18n keys must reflect whichever language is now active.
 import { resolvePath } from './paths.js';
+import { getLang, setLang, t } from './i18n.js';
 
 // "employee" is deliberately absent from the primary menu — see
 // renderFooterStaffLink below for why.
 const NAV_ITEMS = [
-  { path: 'index.html', label_hi: 'मुख्य पृष्ठ' },
-  { path: 'pages/schemes/index.html', label_hi: 'योजनाएं' },
-  { path: 'pages/check/index.html', label_hi: 'पात्रता जांचें' },
-  { path: 'pages/documents/index.html', label_hi: 'दस्तावेज़' },
-  { path: 'pages/notices/index.html', label_hi: 'सूचनाएं' },
-  { path: 'pages/insights/index.html', label_hi: 'आंकड़े' },
-  { path: 'pages/feedback/index.html', label_hi: 'प्रतिक्रिया' },
-  { path: 'pages/status/index.html', label_hi: 'आवेदन स्थिति' },
-  { path: 'pages/about/index.html', label_hi: 'परिचय' },
+  { path: 'index.html', key: 'nav.home' },
+  { path: 'pages/schemes/index.html', key: 'nav.schemes' },
+  { path: 'pages/check/index.html', key: 'nav.check' },
+  { path: 'pages/documents/index.html', key: 'nav.documents' },
+  { path: 'pages/notices/index.html', key: 'nav.notices' },
+  { path: 'pages/insights/index.html', key: 'nav.insights' },
+  { path: 'pages/feedback/index.html', key: 'nav.feedback' },
+  { path: 'pages/status/index.html', key: 'nav.status' },
+  { path: 'pages/about/index.html', key: 'nav.about' },
 ];
 
 function isCurrentPage(itemPath) {
@@ -32,18 +38,38 @@ function isCurrentPage(itemPath) {
 export function renderNav(containerId = 'site-nav') {
   const container = document.getElementById(containerId);
   if (!container) return;
-  const nav = document.createElement('nav');
-  nav.className = 'site-nav';
-  nav.setAttribute('aria-label', 'मुख्य नेविगेशन');
-  NAV_ITEMS.forEach((item) => {
-    const a = document.createElement('a');
-    a.href = resolvePath(item.path);
-    a.textContent = item.label_hi;
-    a.className = 'hi site-nav-link';
-    if (isCurrentPage(item.path)) a.setAttribute('aria-current', 'page');
-    nav.appendChild(a);
-  });
-  container.appendChild(nav);
+
+  const render = () => {
+    container.innerHTML = '';
+    const nav = document.createElement('nav');
+    nav.className = 'site-nav';
+    nav.setAttribute('aria-label', t('nav.aria_label'));
+    NAV_ITEMS.forEach((item) => {
+      const a = document.createElement('a');
+      a.href = resolvePath(item.path);
+      a.textContent = t(item.key);
+      a.className = getLang() === 'hi' ? 'hi site-nav-link' : 'site-nav-link';
+      if (isCurrentPage(item.path)) a.setAttribute('aria-current', 'page');
+      nav.appendChild(a);
+    });
+    // Built inline rather than via i18n.js's renderLangToggle: this
+    // whole render() already re-runs on every langchange (it rebuilds the
+    // entire nav), so delegating to a second self-re-rendering helper
+    // would attach one more stale listener, bound to a since-discarded
+    // DOM node, on every toggle.
+    const lang = getLang();
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lang-toggle-btn site-nav-lang-toggle';
+    btn.setAttribute('aria-label', lang === 'hi' ? t('lang.switch_to_en') : t('lang.switch_to_hi'));
+    btn.textContent = lang === 'hi' ? 'EN' : 'हिं';
+    btn.addEventListener('click', () => setLang(lang === 'hi' ? 'en' : 'hi'));
+    nav.appendChild(btn);
+    container.appendChild(nav);
+  };
+
+  render();
+  window.addEventListener('kisan:langchange', render);
 }
 
 // Deliberately separate from renderNav and visually secondary (see
@@ -57,9 +83,16 @@ export function renderNav(containerId = 'site-nav') {
 export function renderFooterStaffLink(containerId = 'site-footer-links') {
   const container = document.getElementById(containerId);
   if (!container) return;
-  const a = document.createElement('a');
-  a.href = resolvePath('pages/employee/index.html');
-  a.textContent = 'कर्मचारी कॉर्नर';
-  a.className = 'hi footer-staff-link';
-  container.appendChild(a);
+
+  const render = () => {
+    container.innerHTML = '';
+    const a = document.createElement('a');
+    a.href = resolvePath('pages/employee/index.html');
+    a.textContent = t('nav.employee');
+    a.className = getLang() === 'hi' ? 'hi footer-staff-link' : 'footer-staff-link';
+    container.appendChild(a);
+  };
+
+  render();
+  window.addEventListener('kisan:langchange', render);
 }

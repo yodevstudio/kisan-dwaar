@@ -1,9 +1,10 @@
 import { resolvePath } from './paths.js';
 import { normalise } from './normalise.js';
-import { route, RAJASTHAN_DISTRICTS } from './router.js';
+import { route, RAJASTHAN_DISTRICTS, RAJASTHAN_DISTRICTS_EN } from './router.js';
 import { evaluate, evaluateAll } from './eligibility.js';
-import { assemble } from './assemble.js';
+import { assemble, assembleEn, explainGapEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
+import { getLang, t } from './i18n.js';
 
 // K5: presentation only — every verdict, every rupee figure and every
 // missing-slot prompt below comes from eligibility.js / assemble.js /
@@ -27,20 +28,31 @@ function track(fnName, ...args) {
   if (telemetryModule) telemetryModule[fnName](...args);
 }
 
+// K8: chat history is deliberately NOT retroactively translated when the
+// citizen toggles language mid-conversation — every bubble below is
+// plain appended text, frozen in whichever language was active when it
+// was printed, exactly like any real chat app. Only the language active
+// *at the moment a new bubble is created* decides that bubble's language;
+// the composer, nav and every other static-core surface still switch
+// instantly via their own 'kisan:langchange' listeners (js/i18n.js).
+function langClass(base) {
+  return getLang() === 'hi' ? `${base} hi` : base;
+}
+
 // K20: reason chips shown after a thumb is picked — no free-text field
 // anywhere in this widget, so a citizen can never type an identifier into
 // an analytics event by accident (docs/ANALYTICS.md §3's never-collected
 // list depends on this staying true).
 const FEEDBACK_REASONS = {
   up: [
-    { value: 'correct', label_hi: 'सही जानकारी' },
-    { value: 'easy', label_hi: 'आसान समझ आया' },
-    { value: 'fast', label_hi: 'जल्दी मिला' },
+    { value: 'correct', label_hi: 'सही जानकारी', label_en: 'Correct information' },
+    { value: 'easy', label_hi: 'आसान समझ आया', label_en: 'Was easy to understand' },
+    { value: 'fast', label_hi: 'जल्दी मिला', label_en: 'Got it quickly' },
   ],
   down: [
-    { value: 'wrong', label_hi: 'गलत लगा' },
-    { value: 'confusing', label_hi: 'समझ नहीं आया' },
-    { value: 'incomplete', label_hi: 'जानकारी अधूरी' },
+    { value: 'wrong', label_hi: 'गलत लगा', label_en: 'Seemed wrong' },
+    { value: 'confusing', label_hi: 'समझ नहीं आया', label_en: "Didn't understand it" },
+    { value: 'incomplete', label_hi: 'जानकारी अधूरी', label_en: 'Information was incomplete' },
   ],
 };
 
@@ -74,26 +86,36 @@ function scrollToBottom() {
 }
 
 function addBotBubble(text) {
-  const bubble = el('div', 'bubble bubble-bot hi', text);
+  const bubble = el('div', langClass('bubble bubble-bot'), text);
   chatEl.appendChild(bubble);
   scrollToBottom();
   return bubble;
 }
 
 function addUserBubble(text) {
-  const bubble = el('div', 'bubble bubble-user hi', text);
+  const bubble = el('div', langClass('bubble bubble-user'), text);
   chatEl.appendChild(bubble);
   scrollToBottom();
+}
+
+// opt carries label_hi and (where available) label_en; falls back to
+// label_hi if an option has no English label yet (e.g. a typed-query
+// sample — those stay Hindi-only, since the free-text router itself only
+// understands Hindi, see routeQuery below).
+function labelForOption(opt) {
+  const lang = getLang();
+  if (lang === 'en' && opt.label_en) return opt.label_en;
+  return opt.label_hi;
 }
 
 function addChips(options, onPick) {
   const wrap = el('div', 'chips');
   options.forEach((opt) => {
-    const btn = el('button', 'chip hi', opt.label_hi);
+    const btn = el('button', langClass('chip'), labelForOption(opt));
     btn.type = 'button';
     btn.addEventListener('click', () => {
       wrap.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-      addUserBubble(opt.value === null ? 'पता नहीं' : opt.label_hi);
+      addUserBubble(opt.value === null ? t('chat.dont_know') : labelForOption(opt));
       onPick(opt.value);
     });
     wrap.appendChild(btn);
@@ -102,37 +124,37 @@ function addChips(options, onPick) {
   scrollToBottom();
 }
 
-function addNumberPrompt(unitHi, required, onSubmit) {
+function addNumberPrompt(unit, required, onSubmit) {
   const wrap = el('div', 'chips');
   const input = document.createElement('input');
   input.type = 'number';
-  input.className = 'hi number-input';
+  input.className = langClass('number-input');
   input.min = '0';
   input.step = 'any';
-  if (unitHi) input.placeholder = unitHi;
+  if (unit) input.placeholder = unit;
   const done = () => {
     const raw = input.value.trim();
     wrap.querySelectorAll('input,button').forEach((n) => { n.disabled = true; });
     if (raw === '') {
-      addUserBubble('छोड़ दिया');
+      addUserBubble(t('chat.skipped'));
       onSubmit(undefined);
       return;
     }
-    addUserBubble(unitHi ? `${raw} ${unitHi}` : raw);
+    addUserBubble(unit ? `${raw} ${unit}` : raw);
     onSubmit(Number(raw));
   };
-  const submit = el('button', 'chip hi', 'ठीक है');
+  const submit = el('button', langClass('chip'), t('chat.ok'));
   submit.type = 'button';
   submit.addEventListener('click', done);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); done(); } });
   wrap.appendChild(input);
   wrap.appendChild(submit);
   if (!required) {
-    const skip = el('button', 'chip chip-secondary hi', 'छोड़ें');
+    const skip = el('button', langClass('chip chip-secondary'), t('chat.skip'));
     skip.type = 'button';
     skip.addEventListener('click', () => {
       wrap.querySelectorAll('input,button').forEach((n) => { n.disabled = true; });
-      addUserBubble('छोड़ दिया');
+      addUserBubble(t('chat.skipped'));
       onSubmit(undefined);
     });
     wrap.appendChild(skip);
@@ -145,18 +167,31 @@ function findSlotDef(slotName) {
   return state.slotsDoc.slots.find((s) => s.slot === slotName);
 }
 
+function questionFor(def) {
+  return getLang() === 'en' && def.question_en ? def.question_en : def.question_hi;
+}
+
+function unitFor(def) {
+  return getLang() === 'en' && def.unit_en ? def.unit_en : def.unit_hi;
+}
+
 // Asks one question from data/slots.json's catalogue — the shared,
 // discovery-flow wording every scheme's eligibility conditions share.
 // district_select carries no inline options — data/slots.json's own note on
 // that slot says it's "populated from the Rajasthan district list in
 // router.js", so RAJASTHAN_DISTRICTS is the single source for these chips,
 // the same list router.js itself matches typed district names against.
+// RAJASTHAN_DISTRICTS_EN is index-aligned with it for the English label
+// only — the stored slot *value* stays the Hindi name regardless of UI
+// language, since no eligibility condition in this dataset reads district
+// at all; it only needs to be echoed back consistently.
 function optionsForCatalogSlot(def) {
   if (Array.isArray(def.options)) return def.options;
   if (def.type === 'district_select') {
-    return [...RAJASTHAN_DISTRICTS].sort((a, b) => a.localeCompare(b, 'hi'))
-      .map((d) => ({ value: d, label_hi: d }))
-      .concat([{ value: null, label_hi: 'पता नहीं' }]);
+    const paired = RAJASTHAN_DISTRICTS.map((d, i) => ({ value: d, label_hi: d, label_en: RAJASTHAN_DISTRICTS_EN[i] }));
+    return paired
+      .sort((a, b) => labelForOption(a).localeCompare(labelForOption(b), getLang() === 'en' ? 'en' : 'hi'))
+      .concat([{ value: null, label_hi: 'पता नहीं', label_en: "Don't know" }]);
   }
   return null;
 }
@@ -165,7 +200,7 @@ function askCatalogSlot(slotName) {
   return new Promise((resolve) => {
     const def = findSlotDef(slotName);
     if (!def) { resolve(undefined); return; } // K3b guarantees every referenced slot is catalogued
-    addBotBubble(def.question_hi);
+    addBotBubble(questionFor(def));
     const options = optionsForCatalogSlot(def);
     if (options) {
       addChips(options, (value) => {
@@ -174,7 +209,7 @@ function askCatalogSlot(slotName) {
         resolve(value);
       });
     } else {
-      addNumberPrompt(def.unit_hi, true, (value) => {
+      addNumberPrompt(unitFor(def), true, (value) => {
         if (value !== undefined) state.slots[slotName] = value;
         track('trackQuestionAnswered', slotName);
         resolve(value);
@@ -190,14 +225,15 @@ function askCatalogSlot(slotName) {
 // same slot exists there, so a citizen never sees a raw internal string.
 function askExplainerInput(input) {
   return new Promise((resolve) => {
-    addBotBubble(input.prompt_hi);
+    const prompt = getLang() === 'en' && input.prompt_en ? input.prompt_en : input.prompt_hi;
+    addBotBubble(prompt);
     if (Array.isArray(input.options)) {
       const catalogDef = findSlotDef(input.slot);
       const options = input.options.map((value) => {
         const known = catalogDef && Array.isArray(catalogDef.options)
           ? catalogDef.options.find((o) => o.value === value)
           : null;
-        return { value, label_hi: known ? known.label_hi : String(value) };
+        return known ? known : { value, label_hi: String(value) };
       });
       addChips(options, (value) => {
         state.slots[input.slot] = value;
@@ -205,7 +241,8 @@ function askExplainerInput(input) {
         resolve(value);
       });
     } else {
-      addNumberPrompt(input.unit_hi, !!input.required, (value) => {
+      const unit = getLang() === 'en' && input.unit_en ? input.unit_en : input.unit_hi;
+      addNumberPrompt(unit, !!input.required, (value) => {
         if (value !== undefined) state.slots[input.slot] = value;
         track('trackQuestionAnswered', input.slot);
         resolve(value);
@@ -217,22 +254,22 @@ function askExplainerInput(input) {
 // K20: thumbs + reason chip, feeding S3's feedback_vote counter.
 function renderFeedbackWidget() {
   const wrap = el('div', 'feedback-widget');
-  const promptRow = el('div', 'feedback-prompt hi', 'क्या यह जवाब मददगार था?');
+  const promptRow = el('div', langClass('feedback-prompt'), t('chat.feedback_prompt'));
   const thumbsRow = el('div', 'chips');
   wrap.appendChild(promptRow);
   wrap.appendChild(thumbsRow);
 
   function showReasons(direction) {
     thumbsRow.remove();
-    promptRow.textContent = direction === 'up' ? 'क्या अच्छा लगा?' : 'क्या समस्या हुई?';
+    promptRow.textContent = direction === 'up' ? t('chat.feedback_up_prompt') : t('chat.feedback_down_prompt');
     const reasonsRow = el('div', 'chips');
     FEEDBACK_REASONS[direction].forEach((reason) => {
-      const btn = el('button', 'chip hi', reason.label_hi);
+      const btn = el('button', langClass('chip'), labelForOption(reason));
       btn.type = 'button';
       btn.addEventListener('click', () => {
         reasonsRow.querySelectorAll('button').forEach((b) => { b.disabled = true; });
         track('trackFeedbackVote', direction, reason.value);
-        promptRow.textContent = 'धन्यवाद!';
+        promptRow.textContent = t('chat.thanks');
         reasonsRow.remove();
       });
       reasonsRow.appendChild(btn);
@@ -240,8 +277,8 @@ function renderFeedbackWidget() {
     wrap.appendChild(reasonsRow);
   }
 
-  const upBtn = el('button', 'chip hi', '👍');
-  const downBtn = el('button', 'chip hi', '👎');
+  const upBtn = el('button', langClass('chip'), '👍');
+  const downBtn = el('button', langClass('chip'), '👎');
   upBtn.type = 'button';
   downBtn.type = 'button';
   upBtn.addEventListener('click', () => showReasons('up'));
@@ -253,38 +290,58 @@ function renderFeedbackWidget() {
 }
 
 function verdictIcon(verdict) {
-  if (verdict === 'ELIGIBLE') return { icon: '✅', word: 'पात्र', cls: 'bg-verdict' };
-  if (verdict === 'NOT_ELIGIBLE') return { icon: '❌', word: 'अपात्र', cls: 'bg-halt' };
-  return { icon: 'ℹ️', word: 'जानकारी चाहिए', cls: 'bg-attention' };
+  if (verdict === 'ELIGIBLE') return { icon: '✅', word: t('chat.verdict_eligible'), cls: 'bg-verdict' };
+  if (verdict === 'NOT_ELIGIBLE') return { icon: '❌', word: t('chat.verdict_not_eligible'), cls: 'bg-halt' };
+  return { icon: 'ℹ️', word: t('chat.verdict_need_info'), cls: 'bg-attention' };
+}
+
+function assembleForLang(verdict, scheme, evaluation) {
+  return getLang() === 'en' ? assembleEn(verdict, scheme, evaluation) : assemble(verdict, scheme, evaluation);
+}
+
+function schemeNameFor(scheme) {
+  return getLang() === 'en' && scheme.name_en ? scheme.name_en : scheme.name_hi;
+}
+
+function outputText(output) {
+  return getLang() === 'en' ? (output.text_en || output.text_hi) : output.text_hi;
+}
+
+function docLabelFor(doc) {
+  return getLang() === 'en' && doc.label_en ? doc.label_en : doc.label_hi;
+}
+
+function docWhereFor(doc) {
+  return getLang() === 'en' && doc.where_to_get_en ? doc.where_to_get_en : doc.where_to_get_hi;
 }
 
 function renderVerdictCard(scheme, evaluation, output) {
   track('trackVerdictIssued', evaluation.verdict);
   track('trackSchemeSurfaced', scheme.scheme_id);
   const { icon, word, cls } = verdictIcon(evaluation.verdict);
-  const card = el('div', `card ${cls} hi`);
+  const card = el('div', langClass(`card ${cls}`));
   const head = el('div', 'card-head');
   head.appendChild(el('span', 'card-icon', icon));
   head.appendChild(el('span', 'card-word', word));
   card.appendChild(head);
-  card.appendChild(el('div', 'answer-headline', scheme.name_hi));
-  card.appendChild(el('p', '', output.text_hi));
+  card.appendChild(el('div', 'answer-headline', schemeNameFor(scheme)));
+  card.appendChild(el('p', '', outputText(output)));
 
   if (evaluation.verdict === 'ELIGIBLE' && scheme.documents && scheme.documents.length) {
-    card.appendChild(el('p', 'doc-list-title', 'ज़रूरी दस्तावेज़:'));
+    card.appendChild(el('p', 'doc-list-title', t('chat.documents_needed')));
     const list = el('ul', 'doc-list');
     scheme.documents.forEach((d) => {
-      list.appendChild(el('li', '', `${d.label_hi} — ${d.where_to_get_hi}`));
+      list.appendChild(el('li', '', `${docLabelFor(d)} — ${docWhereFor(d)}`));
     });
     card.appendChild(list);
   }
 
   if (output.citation) {
-    card.appendChild(el('p', 'citation', `स्रोत: ${output.citation.url} · जाँचा गया: ${output.citation.last_verified}`));
+    card.appendChild(el('p', 'citation', `${t('chat.source')}: ${output.citation.url} · ${t('chat.verified_on')}: ${output.citation.last_verified}`));
   }
 
   if (evaluation.verdict === 'ELIGIBLE' && scheme.subsidy_rule) {
-    const btn = el('button', 'button hi', 'अनुदान राशि जानें');
+    const btn = el('button', langClass('button'), t('chat.know_subsidy_amount'));
     btn.type = 'button';
     btn.addEventListener('click', () => { btn.disabled = true; runExplainer(scheme); });
     card.appendChild(btn);
@@ -306,7 +363,7 @@ async function resolveScheme(scheme) {
     evaluation = evaluate(state.slots, scheme);
     guard += 1;
   }
-  const output = assemble(evaluation.verdict, scheme, evaluation);
+  const output = assembleForLang(evaluation.verdict, scheme, evaluation);
   renderVerdictCard(scheme, evaluation, output);
 }
 
@@ -325,10 +382,11 @@ function describeStatedInputs(rule, slots) {
     if (Array.isArray(input.options)) {
       const catalogDef = findSlotDef(input.slot);
       const known = catalogDef && catalogDef.options && catalogDef.options.find((o) => o.value === value);
-      parts.push(known ? known.label_hi : String(value));
+      parts.push(known ? labelForOption(known) : String(value));
     } else {
       const shown = typeof value === 'number' ? value.toLocaleString('en-IN') : String(value);
-      parts.push(input.unit_hi ? `${shown} ${input.unit_hi}` : shown);
+      const unit = getLang() === 'en' && input.unit_en ? input.unit_en : input.unit_hi;
+      parts.push(unit ? `${shown} ${unit}` : shown);
     }
   }
   return parts.join(' · ');
@@ -342,11 +400,14 @@ function describeStatedInputs(rule, slots) {
 // rather than nothing.
 function formatTermMath(node) {
   const amount = formatInr(node.value);
-  if (node.from.kind === 'rule') return `= ${amount} (तय सीमा)`;
+  const lang = getLang();
+  if (node.from.kind === 'rule') return lang === 'en' ? `= ${amount} (fixed limit)` : `= ${amount} (तय सीमा)`;
   if (node.from.kind === 'derived') {
     const [a, b] = node.from.operands;
     if (node.from.op === 'percent_of') {
-      return `${formatInr(b.value)} का ${a.value}% = ${amount}`;
+      return lang === 'en'
+        ? `${a.value}% of ${formatInr(b.value)} = ${amount}`
+        : `${formatInr(b.value)} का ${a.value}% = ${amount}`;
     }
     if (node.from.op === 'multiply') {
       return `${formatInr(a.value)} × ${b.value} = ${amount}`;
@@ -356,6 +417,11 @@ function formatTermMath(node) {
 }
 
 function combinePhrase(combineMode) {
+  if (getLang() === 'en') {
+    if (combineMode === 'min') return 'Rule: whichever is lower is payable.';
+    if (combineMode === 'max') return 'Rule: whichever is higher is payable.';
+    return 'Rule: the payable amount is the sum of every condition.';
+  }
   if (combineMode === 'min') return 'नियम कहता है: जो भी कम हो, वही देय।';
   if (combineMode === 'max') return 'नियम कहता है: जो भी ज़्यादा हो, वही देय।';
   return 'नियम कहता है: सभी शर्तों को जोड़कर देय राशि तय होती है।';
@@ -371,24 +437,30 @@ function findBindingTerm(terms, combineMode, value) {
   return computable.find((t) => t.value.value === value) || null;
 }
 
+function termLabelFor(term) {
+  return getLang() === 'en' && term.label_en ? term.label_en : term.label_hi;
+}
+
 function renderExplainerResult(scheme, output) {
   const rule = scheme.subsidy_rule;
-  const card = el('div', 'card explainer-card hi');
-  card.appendChild(el('div', 'answer-headline', 'अनुदान की गणना'));
+  const lang = getLang();
+  const card = el('div', langClass('card explainer-card'));
+  card.appendChild(el('div', 'answer-headline', t('chat.subsidy_calculation')));
 
   const stated = describeStatedInputs(rule, state.slots);
-  if (stated) card.appendChild(el('p', 'stated-inputs', `आपने बताया: ${stated}`));
+  if (stated) card.appendChild(el('p', 'stated-inputs', `${t('chat.you_stated')}: ${stated}`));
 
   output.terms.forEach((term, i) => {
-    card.appendChild(el('p', 'term-heading', `शर्त ${i + 1} — ${term.label_hi}`));
+    card.appendChild(el('p', 'term-heading', `${t('chat.condition')} ${i + 1} — ${termLabelFor(term)}`));
     if (term.value) {
       card.appendChild(el('p', 'term-math', formatTermMath(term.value)));
     } else {
       const missingInputs = term.missing.map((slot) => rule.inputs.find((inp) => inp.slot === slot)).filter(Boolean);
-      const warn = el('p', 'term-warning', `⚠ ${missingInputs.map((inp) => inp.prompt_hi).join(' · ') || 'जानकारी चाहिए'}`);
+      const missingPrompts = missingInputs.map((inp) => (lang === 'en' && inp.prompt_en ? inp.prompt_en : inp.prompt_hi));
+      const warn = el('p', 'term-warning', `⚠ ${missingPrompts.join(' · ') || t('chat.need_more_info')}`);
       card.appendChild(warn);
       if (missingInputs.length) {
-        const btn = el('button', 'chip hi', 'अभी बताएं');
+        const btn = el('button', langClass('chip'), t('chat.tell_now'));
         btn.type = 'button';
         btn.addEventListener('click', async () => {
           btn.disabled = true;
@@ -403,22 +475,23 @@ function renderExplainerResult(scheme, output) {
   if (output.status === 'OK') {
     card.appendChild(el('p', 'result-note', combinePhrase(rule.combine)));
     const binding = findBindingTerm(output.terms, rule.combine, output.result.value);
-    const suffix = binding ? ` ← ${binding.label_hi} लागू हुई` : '';
-    card.appendChild(el('p', 'result-line', `आपको मिलेगा: ${formatInr(output.result.value)}${suffix}`));
+    const suffix = binding ? ` ← ${termLabelFor(binding)} ${t('chat.applied')}` : '';
+    card.appendChild(el('p', 'result-line', `${t('chat.you_will_get')}: ${formatInr(output.result.value)}${suffix}`));
   } else if (output.status === 'PARTIAL' && output.bound) {
-    const phrase = output.bound.type === 'upper' ? 'आपको अधिकतम मिल सकता है' : 'आपको कम से कम मिलेगा';
+    const phrase = output.bound.type === 'upper' ? t('chat.max_you_could_get') : t('chat.min_you_will_get');
     card.appendChild(el('p', 'result-line', `${phrase}: ${formatInr(output.bound.value.value)}`));
-    card.appendChild(el('p', 'result-note', 'सही राशि ऊपर बताई गई जानकारी दिए बिना नहीं बताई जा सकती।'));
+    card.appendChild(el('p', 'result-note', t('chat.exact_amount_needs_more_info')));
   } else if (output.status === 'NEED_MORE_INFO') {
-    card.appendChild(el('p', 'result-note', 'राशि बताने के लिए अभी पर्याप्त जानकारी नहीं है।'));
+    card.appendChild(el('p', 'result-note', t('chat.amount_needs_more_info')));
   } else if (output.status === 'NOT_APPLICABLE') {
-    card.appendChild(el('p', 'result-note', 'यह गणना इस स्थिति पर लागू नहीं होती।'));
+    card.appendChild(el('p', 'result-note', t('chat.calculation_not_applicable')));
   }
 
   if (output.citation && output.citation.source_url) {
-    card.appendChild(el('p', 'citation', `स्रोत: ${output.citation.source_url} · जाँचा गया: ${output.citation.last_verified}`));
+    card.appendChild(el('p', 'citation', `${t('chat.source')}: ${output.citation.source_url} · ${t('chat.verified_on')}: ${output.citation.last_verified}`));
     if (rule.source_quote_hi) {
-      card.appendChild(el('p', 'source-quote', `"${rule.source_quote_hi}"`));
+      const quoteLabel = lang === 'en' ? t('chat.original_hindi_text') : '';
+      card.appendChild(el('p', 'source-quote', `${quoteLabel ? quoteLabel + ': ' : ''}"${rule.source_quote_hi}"`));
     }
   }
 
@@ -439,9 +512,9 @@ async function runExplainer(scheme) {
   } catch (err) {
     // A guard-throw here means an internal bug, not a citizen data problem —
     // never shown as a raw error (CONTEXT.md: errors say what happened and
-    // what to do next, never a raw status code).
+        // what to do next, never a raw status code).
     console.error('assertDerivedFromSourced failed:', err);
-    addBotBubble('माफ़ कीजिए, गणना में एक समस्या आई। नज़दीकी ई-मित्र पर सही राशि पूछें।');
+    addBotBubble(t('chat.calculation_error'));
     return;
   }
   renderExplainerResult(scheme, output);
@@ -454,32 +527,40 @@ async function runCoreSequence() {
   }
 }
 
+// Hindi plural word-endings ("योजना" -> "योजनाएं", "है" -> "हैं") can't be
+// produced by a generic {{n}}-substitution template, so this stays a
+// dedicated function rather than an i18n.js STRINGS entry.
+function eligibleCountIntro(n) {
+  if (getLang() === 'en') return `${n} scheme${n > 1 ? 's' : ''} look${n > 1 ? '' : 's'} suitable for you:`;
+  return `${n} योजना${n > 1 ? 'एं' : ''} आपके लिए उपयुक्त लग रही ${n > 1 ? 'हैं' : 'है'}:`;
+}
+
 async function runDiscovery() {
-  addBotBubble('ठीक है, कुछ सवाल पूछता हूँ ताकि आपके लिए सही योजनाएं ढूंढ सकूं।');
+  addBotBubble(t('chat.discovery_start'));
   await runCoreSequence();
   const results = evaluateAll(state.slots, state.schemes);
   const eligible = results.filter((r) => r.evaluation.verdict === 'ELIGIBLE');
   const needInfo = results.filter((r) => r.evaluation.verdict === 'NEED_MORE_INFO');
 
   if (eligible.length === 0 && needInfo.length === 0) {
-    addBotBubble('दिए गए विवरण के अनुसार, फिलहाल कोई योजना आपके लिए उपयुक्त नहीं लग रही। नज़दीकी ई-मित्र पर पूरी जानकारी के लिए पूछें।');
+    addBotBubble(t('chat.no_scheme_found'));
     return;
   }
 
   if (eligible.length > 0) {
-    addBotBubble(`${eligible.length} योजना${eligible.length > 1 ? 'एं' : ''} आपके लिए उपयुक्त लग रही ${eligible.length > 1 ? 'हैं' : 'है'}:`);
+    addBotBubble(eligibleCountIntro(eligible.length));
     for (const { scheme, evaluation } of eligible) {
-      const output = assemble('ELIGIBLE', scheme, evaluation);
+      const output = assembleForLang('ELIGIBLE', scheme, evaluation);
       renderVerdictCard(scheme, evaluation, output);
     }
   }
 
   if (needInfo.length > 0) {
-    addBotBubble('इनके लिए थोड़ी और जानकारी चाहिए — किसी एक का नाम टाइप करके पूछें:');
-    const list = el('ul', 'doc-list hi');
+    addBotBubble(t('chat.need_info_intro'));
+    const list = el('ul', langClass('doc-list'));
     needInfo.forEach(({ scheme }) => {
       track('trackSchemeSurfaced', scheme.scheme_id);
-      list.appendChild(el('li', '', scheme.name_hi));
+      list.appendChild(el('li', '', schemeNameFor(scheme)));
     });
     chatEl.appendChild(list);
     scrollToBottom();
@@ -495,13 +576,19 @@ async function handleRouteResult(result) {
       if (scheme) await resolveScheme(scheme);
     }
   } else {
-    addBotBubble('मेरे पास इसकी पक्की जानकारी नहीं है। "सभी योजनाएं देखें" दबाएं, या नज़दीकी ई-मित्र से पूछें।');
+    addBotBubble(t('chat.unknown_query'));
   }
 }
 
 // Routes a query without rendering the citizen's own text — the caller is
 // responsible for that, since a chip tap (addChips) already renders it and
 // must not show it twice.
+//
+// K8: routing itself stays Hindi-only by design (normalise.js's lexicon
+// and router.js's keyword lists are Hindi vocabulary) — typing a query in
+// English is out of K8's scope, a toggle-driven UI language switch, not
+// English free-text understanding. The tap-to-answer path above is fully
+// bilingual regardless.
 async function routeQuery(text) {
   const { normalised } = normalise(text, state.lexicon);
   const result = route(normalised, state.schemes);
@@ -510,7 +597,7 @@ async function routeQuery(text) {
 
 function renderSampleChips(samples) {
   const shown = samples.slice(0, FALLBACK_SAMPLE_COUNT);
-  addBotBubble('कुछ उदाहरण, आज़माने के लिए:');
+  addBotBubble(t('chat.samples_intro'));
   addChips(shown.map((s) => ({ value: s.query_hi, label_hi: s.query_hi })), (query) => {
     routeQuery(query);
   });
@@ -519,6 +606,15 @@ function renderSampleChips(samples) {
 async function loadJSON(relativePath) {
   const response = await fetch(resolvePath(relativePath));
   return response.json();
+}
+
+function applyComposerLabels() {
+  const label = document.querySelector('label[for="query-input"]');
+  if (label) label.textContent = t('index.query_label');
+  queryInputEl.placeholder = t('index.query_placeholder');
+  const sendBtn = composerEl.querySelector('button[type="submit"]');
+  if (sendBtn) sendBtn.textContent = t('index.send');
+  discoverBtnEl.textContent = t('index.discover_btn');
 }
 
 async function init() {
@@ -534,6 +630,9 @@ async function init() {
 
   track('trackPageView', location.pathname);
 
+  applyComposerLabels();
+  window.addEventListener('kisan:langchange', applyComposerLabels);
+
   // K15: pages/schemes/ links a scheme straight into this flow via
   // ?scheme=RJ_X, so the catalogue page isn't a dead end. Falls straight
   // through to the normal welcome message if the id is missing or wrong
@@ -541,10 +640,10 @@ async function init() {
   const requestedSchemeId = new URLSearchParams(location.search).get('scheme');
   const requestedScheme = requestedSchemeId && state.schemes.find((s) => s.scheme_id === requestedSchemeId);
   if (requestedScheme) {
-    addBotBubble(`${requestedScheme.name_hi} की पात्रता जांचते हैं।`);
+    addBotBubble(t('chat.checking_eligibility_for').replace('{{scheme}}', schemeNameFor(requestedScheme)));
     resolveScheme(requestedScheme);
   } else {
-    addBotBubble('नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।');
+    addBotBubble(t('chat.greeting'));
     renderSampleChips(samplesDoc.samples || []);
   }
 

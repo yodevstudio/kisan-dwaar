@@ -4,7 +4,11 @@
 // cartesian product across every referenced slot isn't used). No
 // service call, no citizen data — every number here is either read
 // straight from the fetched JSON or computed from it in this file.
+//
+// K8: bilingual — re-renders on 'kisan:langchange', same as every other
+// static-core surface.
 import { resolvePath } from '../../js/paths.js';
+import { getLang, t } from '../../js/i18n.js';
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -17,12 +21,16 @@ function pct(n, total) {
   return total > 0 ? Math.round((n / total) * 100) : 0;
 }
 
+function nameFor(scheme) {
+  return getLang() === 'en' && scheme.name_en ? scheme.name_en : scheme.name_hi;
+}
+
 function renderSchemeBar(scheme) {
   const row = el('div', 'insight-scheme-row');
   const head = el('div', 'insight-scheme-head');
-  head.appendChild(el('span', 'hi', scheme.name_hi));
-  head.appendChild(el('span', `hi badge ${scheme.reachable ? '' : 'bg-halt'}`.trim(),
-    scheme.reachable ? '✅ पहुंच योग्य' : '⛔ अप्राप्य'));
+  head.appendChild(el('span', getLang() === 'hi' ? 'hi' : '', nameFor(scheme)));
+  head.appendChild(el('span', `badge ${scheme.reachable ? '' : 'bg-halt'}`.trim(),
+    scheme.reachable ? t('insights.reachable') : t('insights.unreachable')));
   row.appendChild(head);
 
   const bar = el('div', 'insight-bar');
@@ -39,19 +47,21 @@ function renderSchemeBar(scheme) {
   bar.appendChild(needEl);
   row.appendChild(bar);
 
-  row.appendChild(el('p', 'citation hi',
-    `${scheme.profiles_tested} यथार्थ प्रोफ़ाइलों में से — पात्र ${scheme.eligible_profiles}, अपात्र ${scheme.not_eligible_profiles}, जानकारी चाहिए ${scheme.need_more_info_profiles} (सन्दर्भ स्लॉट: ${scheme.referenced_slots.join(', ')})`));
+  const cls = getLang() === 'hi' ? 'citation hi' : 'citation';
+  row.appendChild(el('p', cls,
+    `${scheme.profiles_tested} ${t('insights.out_of_profiles')} — ${t('chat.verdict_eligible')} ${scheme.eligible_profiles}, ${t('chat.verdict_not_eligible')} ${scheme.not_eligible_profiles}, ${t('chat.verdict_need_info')} ${scheme.need_more_info_profiles} (${t('insights.reference_slots')}: ${scheme.referenced_slots.join(', ')})`));
   return row;
 }
 
 function renderSlotRanking(container, ranking) {
   const top = ranking.slice(0, 8);
   const maxShare = top.length > 0 ? top[0].share : 1;
+  const cls = getLang() === 'hi' ? 'hi' : '';
   top.forEach((entry) => {
     const row = el('div', 'insight-scheme-row');
     const head = el('div', 'insight-scheme-head');
-    head.appendChild(el('span', 'hi', entry.slot));
-    head.appendChild(el('span', 'citation hi', `${Math.round(entry.share * 1000) / 10}%`));
+    head.appendChild(el('span', cls, entry.slot));
+    head.appendChild(el('span', 'citation', `${Math.round(entry.share * 1000) / 10}%`));
     row.appendChild(head);
     const bar = el('div', 'insight-bar');
     const seg = el('span', 'insight-bar-segment insight-bar-not-eligible', '');
@@ -78,52 +88,61 @@ async function init() {
   } catch (err) {
     console.error('insights: failed to load api/v1/insights.json:', err);
     summaryEl.innerHTML = '';
-    summaryEl.appendChild(el('p', 'hi term-warning', '⚠ आंकड़े अभी लोड नहीं हो सके।'));
+    summaryEl.appendChild(el('p', 'hi term-warning', t('insights.load_error')));
     return;
   }
 
-  summaryEl.innerHTML = '';
-  summaryEl.appendChild(el('p', 'hi',
-    `${data.scheme_count} योजनाओं का विश्लेषण · अप्राप्य: ${data.unreachable_scheme_ids.length} · बना: ${new Date(data.generated_at).toLocaleString('hi-IN')}`));
-  summaryEl.appendChild(el('p', 'hi citation', data.methodology_note_hi));
-  if (data.unreachable_scheme_ids.length > 0) {
-    const warn = el('p', 'hi term-warning', `⚠ अप्राप्य योजना(एं): ${data.unreachable_scheme_ids.join(', ')}`);
-    summaryEl.appendChild(warn);
-  }
+  const render = () => {
+    const lang = getLang();
+    const cls = lang === 'hi' ? 'hi' : '';
+    const methodologyNote = lang === 'en' && data.methodology_note_en ? data.methodology_note_en : data.methodology_note_hi;
 
-  schemesEl.innerHTML = '';
-  data.per_scheme
-    .slice()
-    .sort((a, b) => (a.reachable === b.reachable ? 0 : a.reachable ? 1 : -1))
-    .forEach((scheme) => schemesEl.appendChild(renderSchemeBar(scheme)));
+    summaryEl.innerHTML = '';
+    summaryEl.appendChild(el('p', cls,
+      `${data.scheme_count} ${t('insights.generated_summary')} · ${t('insights.unreachable_count')}: ${data.unreachable_scheme_ids.length} · ${t('insights.built_at')}: ${new Date(data.generated_at).toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')}`));
+    summaryEl.appendChild(el('p', `citation ${cls}`.trim(), methodologyNote));
+    if (data.unreachable_scheme_ids.length > 0) {
+      summaryEl.appendChild(el('p', `${cls} term-warning`.trim(), `⚠ ${t('insights.unreachable_warning')}: ${data.unreachable_scheme_ids.join(', ')}`));
+    }
 
-  slotsEl.innerHTML = '';
-  renderSlotRanking(slotsEl, data.slot_block_ranking);
+    schemesEl.innerHTML = '';
+    data.per_scheme
+      .slice()
+      .sort((a, b) => (a.reachable === b.reachable ? 0 : a.reachable ? 1 : -1))
+      .forEach((scheme) => schemesEl.appendChild(renderSchemeBar(scheme)));
 
-  const h = data.headline_profile_analysis;
-  headlineEl.innerHTML = '';
-  const grid = el('div', 'stat-grid');
-  const tile = (value, label) => {
-    const t = el('div', 'stat-tile');
-    t.appendChild(el('div', 'stat-tile-value', String(value)));
-    t.appendChild(el('div', 'stat-tile-label hi', label));
-    return t;
+    slotsEl.innerHTML = '';
+    renderSlotRanking(slotsEl, data.slot_block_ranking);
+
+    const h = data.headline_profile_analysis;
+    headlineEl.innerHTML = '';
+    const grid = el('div', 'stat-grid');
+    const tile = (value, label) => {
+      const tl = el('div', 'stat-tile');
+      tl.appendChild(el('div', 'stat-tile-value', String(value)));
+      tl.appendChild(el('div', `stat-tile-label ${cls}`.trim(), label));
+      return tl;
+    };
+    grid.appendChild(tile(h.total_profiles, `${t('insights.stat_total')} (${h.dimensions.join(' × ')})`));
+    grid.appendChild(tile(h.already_eligible_for_some_profiles, t('insights.stat_eligible_some')));
+    grid.appendChild(tile(h.still_undetermined_profiles, t('insights.stat_undetermined')));
+    grid.appendChild(tile(h.definitely_zero_eligible_profiles, t('insights.stat_zero_eligible')));
+    headlineEl.appendChild(grid);
+    headlineEl.appendChild(el('p', `citation ${cls}`.trim(), t('insights.zero_eligible_note')));
+    if (h.occupations_always_zero_eligible.length > 0) {
+      const list = el('ul', 'doc-list');
+      h.occupations_always_zero_eligible.forEach((occ) => {
+        list.appendChild(el('li', cls, lang === 'en' && occ.label_en ? occ.label_en : occ.label_hi));
+      });
+      headlineEl.appendChild(el('p', `${cls} doc-list-title`.trim(), t('insights.occupations_zero_title')));
+      headlineEl.appendChild(list);
+    } else {
+      headlineEl.appendChild(el('p', `citation ${cls}`.trim(), t('insights.occupations_zero_none')));
+    }
   };
-  grid.appendChild(tile(h.total_profiles, `कुल प्रोफ़ाइल (${h.dimensions.join(' × ')})`));
-  grid.appendChild(tile(h.already_eligible_for_some_profiles, 'पहले से किसी योजना के लिए पात्र'));
-  grid.appendChild(tile(h.still_undetermined_profiles, 'अभी अनिर्णीत — और जानकारी चाहिए'));
-  grid.appendChild(tile(h.definitely_zero_eligible_profiles, 'निश्चित रूप से शून्य-पात्र'));
-  headlineEl.appendChild(grid);
-  headlineEl.appendChild(el('p', 'hi citation',
-    '"निश्चित रूप से शून्य-पात्र" का मतलब है: इंजन के तीन-मान तर्क में, एक बार जो शर्त झूठी सिद्ध हो जाए, वह आगे कोई भी जानकारी जोड़ने से सच नहीं बन सकती — इसलिए यह आंकड़ा अनुमान नहीं, स्थायी तथ्य है।'));
-  if (h.occupations_always_zero_eligible.length > 0) {
-    const list = el('ul', 'doc-list');
-    h.occupations_always_zero_eligible.forEach((occ) => list.appendChild(el('li', 'hi', occ)));
-    headlineEl.appendChild(el('p', 'hi doc-list-title', 'ऐसे पेशे जिनके लिए (उम्र/लिंग चाहे जो भी हों) फिलहाल कोई योजना कभी पात्र नहीं बनती:'));
-    headlineEl.appendChild(list);
-  } else {
-    headlineEl.appendChild(el('p', 'hi citation', 'फिलहाल कोई भी पेशा ऐसा नहीं मिला जो अकेले (उम्र/लिंग के साथ) हर योजना से स्थायी रूप से बाहर कर दे।'));
-  }
+
+  render();
+  window.addEventListener('kisan:langchange', render);
 }
 
 init();

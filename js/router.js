@@ -148,6 +148,18 @@ export const RAJASTHAN_DISTRICTS = [
   'सवाई माधोपुर', 'सीकर', 'सिरोही', 'श्रीगंगानगर', 'टोंक', 'उदयपुर',
 ].sort((a, b) => b.length - a.length);
 
+// K8: additive only — same 33 districts, same order as RAJASTHAN_DISTRICTS
+// above, for the English-language discovery flow's district chips.
+// extractDistrict() below (typed-query keyword matching) stays Hindi-only
+// by design; English free-text district matching is out of K8's scope
+// (a toggle-driven UI language switch, not English NLU).
+export const RAJASTHAN_DISTRICTS_EN = [
+  'Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi',
+  'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore',
+  'Jhalawar', 'Jhunjhunu', 'Jodhpur', 'Karauli', 'Kota', 'Nagaur', 'Pali', 'Pratapgarh', 'Rajsamand',
+  'Sawai Madhopur', 'Sikar', 'Sirohi', 'Sri Ganganagar', 'Tonk', 'Udaipur',
+];
+
 function extractDistrict(text) {
   return extractLastMatch(text, RAJASTHAN_DISTRICTS.map((d) => [d, d]));
 }

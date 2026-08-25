@@ -515,6 +515,28 @@ img, svg { max-width: 100%; height: auto; }
   background: rgba(246, 242, 233, 0.15);
 }
 
+/* ===== K8: bilingual toggle ===== */
+.lang-toggle-btn {
+  font-family: var(--font-latin);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--field);
+  background: var(--paper);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.lang-toggle-btn:hover, .lang-toggle-btn:focus-visible {
+  filter: brightness(0.95);
+}
+
+.site-nav .lang-toggle-btn.site-nav-lang-toggle {
+  margin-left: auto;
+}
+
 .footer-staff-link {
   display: inline-block;
   margin-top: 8px;

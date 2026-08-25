@@ -44,7 +44,8 @@
     "amount_inr": null,
     "amount_text_hi": "किसान का प्रीमियम अंश फसल के अनुसार तय है — खरीफ फसलों पर बीमित राशि का 2%, रबी फसलों पर 1.5%, वाणिज्यिक/बागवानी फसलों पर 5%; शेष प्रीमियम केंद्र व राज्य सरकार वहन करती है (सिंचित जिलों में 25% व असिंचित में 30% तक सरकार की सीमा)। दावा राशि फसल के नुकसान के आकलन पर निर्भर है, इसलिए एक स्थिर amount_inr नहीं दिया जा सकता",
     "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
-    "note": "PMFBY 2.0 (खरीफ 2020 से) के तहत ऋणी (loanee) किसानों के लिए भी नामांकन अब स्वैच्छिक है, पहले अनिवार्य था। बीमित राशि व दावा फसल-वार व मौसम-वार तय होती है, इसलिए एक बंधी राशि देना भ्रामक होगा।"
+    "note": "PMFBY 2.0 (खरीफ 2020 से) के तहत ऋणी (loanee) किसानों के लिए भी नामांकन अब स्वैच्छिक है, पहले अनिवार्य था। बीमित राशि व दावा फसल-वार व मौसम-वार तय होती है, इसलिए एक बंधी राशि देना भ्रामक होगा।",
+    "amount_text_en": "The farmer's premium share is fixed by crop — 2% of the sum insured for Kharif crops, 1.5% for Rabi crops, 5% for commercial/horticultural crops; the remaining premium is borne by the central and state governments (up to a government cap of 25% in irrigated districts and 30% in unirrigated ones). The claim amount depends on the assessed crop loss, so a fixed amount_inr cannot be given."
   },
   "documents": [
     {
@@ -52,28 +53,36 @@
       "label_hi": "आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "LAND_RECORD",
       "label_hi": "जमाबंदी / बुवाई प्रमाण पत्र",
       "icon": "document",
       "where_to_get_hi": "तहसील (राजस्व विभाग)",
-      "sample_image": "assets/docs/land_record.svg"
+      "sample_image": "assets/docs/land_record.svg",
+      "label_en": "Land record / sowing certificate",
+      "where_to_get_en": "Tehsil (Revenue Department)"
     },
     {
       "doc_id": "BANK_PASSBOOK",
       "label_hi": "बैंक खाते की पासबुक",
       "icon": "bank",
       "where_to_get_hi": "बैंक शाखा",
-      "sample_image": "assets/docs/bank_passbook.svg"
+      "sample_image": "assets/docs/bank_passbook.svg",
+      "label_en": "Bank passbook",
+      "where_to_get_en": "Bank branch"
     },
     {
       "doc_id": "SOWING_CERT",
       "label_hi": "बुवाई प्रमाण पत्र (स्व-घोषणा)",
       "icon": "certificate",
       "where_to_get_hi": "पटवारी / ई-मित्र",
-      "sample_image": "assets/docs/sowing_cert.svg"
+      "sample_image": "assets/docs/sowing_cert.svg",
+      "label_en": "Sowing certificate (self-declaration)",
+      "where_to_get_en": "Patwari / e-Mitra"
     }
   ],
   "apply_via": [
@@ -85,5 +94,17 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm at your nearest e-Mitra or bank branch.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "crop insurance",
+    "crop damage",
+    "farmer insurance scheme",
+    "PMFBY"
+  ]
 }

@@ -133,7 +133,11 @@ function computeTerm(term, index, slots, unitCaps) {
     throw new Error(`explainer.js: unknown term type "${term.type}"`);
   }
 
-  return { id: term.id, label_hi: term.label_hi, value: valueNode, missing: [...new Set(missing)] };
+  // label_en: K8, purely additive — one more inert display field passed
+  // through alongside label_hi. Never read by any arithmetic here or in
+  // Guard 2 (assertDerivedFromSourced), so it carries none of that
+  // guarantee's risk.
+  return { id: term.id, label_hi: term.label_hi, label_en: term.label_en, value: valueNode, missing: [...new Set(missing)] };
 }
 
 // combine:'min'/'max' need every term to state an exact figure — that's

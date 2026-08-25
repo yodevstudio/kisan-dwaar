@@ -3,31 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>दस्तावेज़ — किसान द्वार</title>
+<title data-i18n="documents.title">दस्तावेज़ — किसान द्वार</title>
 <link rel="stylesheet" href="../../css/kisan.css">
 </head>
 <body>
   <header class="site-header">
-    <h1 class="hi">दस्तावेज़</h1>
-    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+    <h1 class="hi" data-i18n="documents.h1">दस्तावेज़</h1>
+    <span class="badge hi" data-i18n="common.badge_rules">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
   <div id="site-nav"></div>
 
   <main class="container">
-    <p class="hi">सभी 12 योजनाओं में इस्तेमाल होने वाले दस्तावेज़, एक जगह — कौनसा दस्तावेज़ किन योजनाओं के लिए चाहिए, और कहाँ से मिलेगा। ठीक-ठीक सूची अपनी योजना जांचते समय दिखेगी — यह पन्ना पहले से तैयारी के लिए है।</p>
-    <div id="document-list"><p class="hi">लोड हो रहा है…</p></div>
+    <p class="hi" data-i18n="documents.intro">सभी 12 योजनाओं में इस्तेमाल होने वाले दस्तावेज़, एक जगह — कौनसा दस्तावेज़ किन योजनाओं के लिए चाहिए, और कहाँ से मिलेगा। ठीक-ठीक सूची अपनी योजना जांचते समय दिखेगी — यह पन्ना पहले से तैयारी के लिए है।</p>
+    <div id="document-list"><p class="hi" data-i18n="common.loading">लोड हो रहा है…</p></div>
   </main>
 
   <footer class="site-footer">
-    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <p class="hi disclosure" data-i18n="common.footer_disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
     <div id="site-footer-links"></div>
   </footer>
 
   <script type="module" src="./documents.js"></script>
   <script type="module">
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    import { applyTranslations } from '../../js/i18n.js';
     renderNav();
     renderFooterStaffLink();
+    applyTranslations();
   </script>
 </body>
 </html>

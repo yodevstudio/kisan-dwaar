@@ -37,7 +37,8 @@
     "amount_inr": null,
     "amount_text_hi": "निर्माण लागत का 60% अनुदान — सामान्य (मिट्टी) तलाई हेतु अधिकतम ₹63,000, प्लास्टिक लाइनिंग वाली तलाई हेतु अधिकतम ₹90,000 (जो भी कम हो), न्यूनतम क्षमता 400 घन मीटर आवश्यक — सभी श्रेणी के किसानों के लिए समान दर",
     "rate_policy": "VARIES_BY_MATERIAL_DO_NOT_COLLAPSE",
-    "note": "राशि तलाई के प्रकार (सामान्य/प्लास्टिक लाइनिंग) पर निर्भर है, इसलिए दोनों सीमाएँ amount_text_hi में स्पष्ट रखी हैं।"
+    "note": "राशि तलाई के प्रकार (सामान्य/प्लास्टिक लाइनिंग) पर निर्भर है, इसलिए दोनों सीमाएँ amount_text_hi में स्पष्ट रखी हैं।",
+    "amount_text_en": "60% subsidy on construction cost — up to ₹63,000 maximum for a regular (earthen) pond, up to ₹90,000 maximum for a plastic-lined pond (whichever is lower), minimum capacity of 400 cubic metres required — same rate for farmers of every category."
   },
   "documents": [
     {
@@ -45,14 +46,18 @@
       "label_hi": "आधार कार्ड / जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card / Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "LAND_RECORD",
       "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं)",
       "icon": "document",
       "where_to_get_hi": "तहसील (राजस्व विभाग)",
-      "sample_image": "assets/docs/land_record.svg"
+      "sample_image": "assets/docs/land_record.svg",
+      "label_en": "Land record copy (Jamabandi) (not older than six months)",
+      "where_to_get_en": "Tehsil (Revenue Department)"
     }
   ],
   "apply_via": [
@@ -64,5 +69,16 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm at your nearest e-Mitra.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "farm pond",
+    "khet talai",
+    "rainwater harvesting farm"
+  ]
 }

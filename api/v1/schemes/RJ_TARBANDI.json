@@ -51,7 +51,8 @@
     "amount_inr": null,
     "amount_text_hi": "तारबंदी लागत का 50% या अधिकतम ₹40,000, जो भी कम हो — प्रति कृषक 400 रनिंग मीटर तक अनुदान। योजना सामुदायिक आधार पर है, जिसमें न्यूनतम 5 हेक्टेयर भूमि व 3 किसानों का समूह आवश्यक बताया गया है।",
     "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
-    "note": "राशि किसान की वास्तविक तारबंदी लागत (कोटेशन) व मीटर सीमा पर निर्भर करती है, इसलिए सटीक गणना subsidy_rule में दी गई है, एक बंधी राशि के रूप में नहीं। पिछले रिकॉर्ड में दर्ज '50%-70%, ₹40,000-56,000' की श्रेणी-आधारित सीमा rajkisan.rajasthan.gov.in के वर्तमान पेज पर अब प्रकाशित नहीं है — पुरानी 70% श्रेणी अब हट चुकी है, यह पुष्टि 2026-08-22 को पेज व्यक्तिगत रूप से खोलकर की गई (देखें subsidy_rule.source_page_note)। वर्तमान में प्रकाशित एकमात्र दर फ्लैट 50% / अधिकतम ₹40,000 है।"
+    "note": "राशि किसान की वास्तविक तारबंदी लागत (कोटेशन) व मीटर सीमा पर निर्भर करती है, इसलिए सटीक गणना subsidy_rule में दी गई है, एक बंधी राशि के रूप में नहीं। पिछले रिकॉर्ड में दर्ज '50%-70%, ₹40,000-56,000' की श्रेणी-आधारित सीमा rajkisan.rajasthan.gov.in के वर्तमान पेज पर अब प्रकाशित नहीं है — पुरानी 70% श्रेणी अब हट चुकी है, यह पुष्टि 2026-08-22 को पेज व्यक्तिगत रूप से खोलकर की गई (देखें subsidy_rule.source_page_note)। वर्तमान में प्रकाशित एकमात्र दर फ्लैट 50% / अधिकतम ₹40,000 है।",
+    "amount_text_en": "50% of fencing cost or a maximum of ₹40,000, whichever is lower — subsidy up to 400 running metres per farmer. The scheme is on a community basis, stated to require a minimum of 5 hectares of land and a group of 3 farmers."
   },
   "subsidy_rule": {
     "rule_id": "TARBANDI_STANDARD",
@@ -61,20 +62,25 @@
         "type": "number",
         "unit_hi": "मीटर",
         "required": true,
-        "prompt_hi": "कितने रनिंग मीटर तारबंदी करनी है?"
+        "prompt_hi": "कितने रनिंग मीटर तारबंदी करनी है?",
+        "unit_en": "metres",
+        "prompt_en": "How many running metres of fencing are needed?"
       },
       {
         "slot": "quoted_cost_inr",
         "type": "number",
         "unit_hi": "रुपये",
         "required": false,
-        "prompt_hi": "तार व सामग्री की अनुमानित/कोटेशन लागत कितनी है? (न हो तो छोड़ दें)"
+        "prompt_hi": "तार व सामग्री की अनुमानित/कोटेशन लागत कितनी है? (न हो तो छोड़ दें)",
+        "unit_en": "rupees",
+        "prompt_en": "What is the estimated/quoted cost of wire and material? (leave blank if unknown)"
       }
     ],
     "unit_caps": {
       "fencing_metres": {
         "max": 400,
-        "label_hi": "प्रति कृषक अधिकतम 400 रनिंग मीटर तक ही अनुदान देय"
+        "label_hi": "प्रति कृषक अधिकतम 400 रनिंग मीटर तक ही अनुदान देय",
+        "label_en": "Subsidy is payable only up to a maximum of 400 running metres per farmer"
       }
     },
     "terms": [
@@ -86,13 +92,15 @@
         "cost_basis": {
           "kind": "citizen_quotation",
           "slot": "quoted_cost_inr"
-        }
+        },
+        "label_en": "50% of unit cost"
       },
       {
         "id": "cap",
         "label_hi": "अधिकतम अनुदान सीमा",
         "type": "flat_cap",
-        "amount_inr": 40000
+        "amount_inr": 40000,
+        "label_en": "Maximum subsidy limit"
       }
     ],
     "combine": "min",
@@ -108,28 +116,36 @@
       "label_hi": "आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "JAN_AADHAAR",
       "label_hi": "जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/jan_aadhaar.svg"
+      "sample_image": "assets/docs/jan_aadhaar.svg",
+      "label_en": "Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "LAND_RECORD",
       "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं हो)",
       "icon": "document",
       "where_to_get_hi": "तहसील (राजस्व विभाग)",
-      "sample_image": "assets/docs/land_record.svg"
+      "sample_image": "assets/docs/land_record.svg",
+      "label_en": "Land record copy (Jamabandi) (not older than six months)",
+      "where_to_get_en": "Tehsil (Revenue Department)"
     },
     {
       "doc_id": "BANK_PASSBOOK",
       "label_hi": "बैंक खाते संबंधित विवरण",
       "icon": "bank",
       "where_to_get_hi": "बैंक शाखा",
-      "sample_image": "assets/docs/bank_passbook.svg"
+      "sample_image": "assets/docs/bank_passbook.svg",
+      "label_en": "Bank account details",
+      "where_to_get_en": "Bank branch"
     }
   ],
   "apply_via": [
@@ -140,5 +156,17 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm at your nearest e-Mitra.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "fencing",
+    "tarbandi",
+    "stray animals",
+    "nilgai"
+  ]
 }

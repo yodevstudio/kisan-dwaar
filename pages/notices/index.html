@@ -3,33 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>सूचनाएं — किसान द्वार</title>
+<title data-i18n="notices.title">सूचनाएं — किसान द्वार</title>
 <link rel="stylesheet" href="../../css/kisan.css">
 </head>
 <body>
   <header class="site-header">
-    <h1 class="hi">सूचनाएं</h1>
-    <span class="badge hi">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
+    <h1 class="hi" data-i18n="notices.h1">सूचनाएं</h1>
+    <span class="badge hi" data-i18n="common.badge_rules">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
   <div id="site-nav"></div>
 
   <main class="container">
     <div class="card bg-attention hi">
-      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word">निर्माणाधीन</span></div>
-      <p>यह पन्ना जानबूझकर खाली रखा गया है — यहाँ कोई बनावटी सूचना नहीं दिखाई गई है, क्योंकि विभाग की कोई असली, सत्यापित सूचना अभी इस प्रोटोटाइप में शामिल नहीं की गई है।</p>
-      <p>असली सूचनाएं आने पर, वे यहाँ स्रोत व तारीख़ सहित दिखेंगी — ठीक उसी अनुशासन के साथ जो योजना के आँकड़ों के लिए इस्तेमाल होता है (हर सूचना का एक स्रोत URL व जाँच-तिथि)।</p>
+      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word" data-i18n="notices.card_title">निर्माणाधीन</span></div>
+      <p data-i18n="notices.card_body1">यह पन्ना जानबूझकर खाली रखा गया है — यहाँ कोई बनावटी सूचना नहीं दिखाई गई है, क्योंकि विभाग की कोई असली, सत्यापित सूचना अभी इस प्रोटोटाइप में शामिल नहीं की गई है।</p>
+      <p data-i18n="notices.card_body2">असली सूचनाएं आने पर, वे यहाँ स्रोत व तारीख़ सहित दिखेंगी — ठीक उसी अनुशासन के साथ जो योजना के आँकड़ों के लिए इस्तेमाल होता है (हर सूचना का एक स्रोत URL व जाँच-तिथि)।</p>
     </div>
   </main>
 
   <footer class="site-footer">
-    <p class="hi disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <p class="hi disclosure" data-i18n="common.footer_disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
     <div id="site-footer-links"></div>
   </footer>
 
   <script type="module">
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    import { applyTranslations } from '../../js/i18n.js';
     renderNav();
     renderFooterStaffLink();
+    applyTranslations();
   </script>
 </body>
 </html>

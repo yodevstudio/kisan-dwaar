@@ -20,42 +20,49 @@
             "min": 18,
             "max": 30
           },
-          "label_hi": "18 – 30 साल"
+          "label_hi": "18 – 30 साल",
+          "label_en": "18 – 30 years"
         },
         {
           "value": {
             "min": 31,
             "max": 45
           },
-          "label_hi": "31 – 45 साल"
+          "label_hi": "31 – 45 साल",
+          "label_en": "31 – 45 years"
         },
         {
           "value": {
             "min": 46,
             "max": 54
           },
-          "label_hi": "46 – 54 साल"
+          "label_hi": "46 – 54 साल",
+          "label_en": "46 – 54 years"
         },
         {
           "value": {
             "min": 55,
             "max": 74
           },
-          "label_hi": "55 – 74 साल"
+          "label_hi": "55 – 74 साल",
+          "label_en": "55 – 74 years"
         },
         {
           "value": {
             "min": 75,
             "max": 110
           },
-          "label_hi": "75 साल या ज़्यादा"
+          "label_hi": "75 साल या ज़्यादा",
+          "label_en": "75 years or more"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "years"
+      "unit": "years",
+      "question_en": "What is your age?"
     },
     {
       "slot": "gender",
@@ -64,21 +71,26 @@
       "options": [
         {
           "value": "female",
-          "label_hi": "महिला"
+          "label_hi": "महिला",
+          "label_en": "Female"
         },
         {
           "value": "male",
-          "label_hi": "पुरुष"
+          "label_hi": "पुरुष",
+          "label_en": "Male"
         },
         {
           "value": "transgender",
-          "label_hi": "ट्रांसजेंडर"
+          "label_hi": "ट्रांसजेंडर",
+          "label_en": "Transgender"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you female or male?"
     },
     {
       "slot": "occupation",
@@ -87,101 +99,126 @@
       "options": [
         {
           "value": "farmer",
-          "label_hi": "किसान"
+          "label_hi": "किसान",
+          "label_en": "Farmer"
         },
         {
           "value": "labourer",
-          "label_hi": "मजदूर"
+          "label_hi": "मजदूर",
+          "label_en": "Labourer"
         },
         {
           "value": "construction_worker",
-          "label_hi": "निर्माण श्रमिक"
+          "label_hi": "निर्माण श्रमिक",
+          "label_en": "Construction worker"
         },
         {
           "value": "student",
-          "label_hi": "विद्यार्थी"
+          "label_hi": "विद्यार्थी",
+          "label_en": "Student"
         },
         {
           "value": "unemployed",
-          "label_hi": "कोई काम नहीं"
+          "label_hi": "कोई काम नहीं",
+          "label_en": "Unemployed"
         },
         {
           "value": "self_employed",
-          "label_hi": "अपना काम"
+          "label_hi": "अपना काम",
+          "label_en": "Self-employed"
         },
         {
           "value": "salaried",
-          "label_hi": "नौकरी"
+          "label_hi": "नौकरी",
+          "label_en": "Salaried employee"
         },
         {
           "value": "doctor",
-          "label_hi": "डॉक्टर"
+          "label_hi": "डॉक्टर",
+          "label_en": "Doctor"
         },
         {
           "value": "engineer",
-          "label_hi": "इंजीनियर"
+          "label_hi": "इंजीनियर",
+          "label_en": "Engineer"
         },
         {
           "value": "lawyer",
-          "label_hi": "वकील"
+          "label_hi": "वकील",
+          "label_en": "Lawyer"
         },
         {
           "value": "ca",
-          "label_hi": "चार्टर्ड अकाउंटेंट (CA)"
+          "label_hi": "चार्टर्ड अकाउंटेंट (CA)",
+          "label_en": "Chartered Accountant (CA)"
         },
         {
           "value": "architect",
-          "label_hi": "आर्किटेक्ट"
+          "label_hi": "आर्किटेक्ट",
+          "label_en": "Architect"
         },
         {
           "value": "tenant_farmer",
-          "label_hi": "बटाईदार किसान"
+          "label_hi": "बटाईदार किसान",
+          "label_en": "Tenant farmer"
         },
         {
           "value": "oral_lessee",
-          "label_hi": "मौखिक पट्टेदार किसान"
+          "label_hi": "मौखिक पट्टेदार किसान",
+          "label_en": "Oral lessee farmer"
         },
         {
           "value": "sharecropper",
-          "label_hi": "अर्ध-बटाईदार"
+          "label_hi": "अर्ध-बटाईदार",
+          "label_en": "Sharecropper"
         },
         {
           "value": "mine_worker",
-          "label_hi": "खनन श्रमिक"
+          "label_hi": "खनन श्रमिक",
+          "label_en": "Mine worker"
         },
         {
           "value": "stone_cutter",
-          "label_hi": "पत्थर तोड़ने वाला श्रमिक"
+          "label_hi": "पत्थर तोड़ने वाला श्रमिक",
+          "label_en": "Stone cutter"
         },
         {
           "value": "crusher_worker",
-          "label_hi": "क्रशर श्रमिक"
+          "label_hi": "क्रशर श्रमिक",
+          "label_en": "Crusher worker"
         },
         {
           "value": "street_vendor",
-          "label_hi": "फेरी वाला / रेहड़ी-पटरी विक्रेता"
+          "label_hi": "फेरी वाला / रेहड़ी-पटरी विक्रेता",
+          "label_en": "Street vendor"
         },
         {
           "value": "mla",
-          "label_hi": "विधायक (MLA)"
+          "label_hi": "विधायक (MLA)",
+          "label_en": "MLA"
         },
         {
           "value": "ex_mla",
-          "label_hi": "पूर्व विधायक"
+          "label_hi": "पूर्व विधायक",
+          "label_en": "Former MLA"
         },
         {
           "value": "minister",
-          "label_hi": "मंत्री"
+          "label_hi": "मंत्री",
+          "label_en": "Minister"
         },
         {
           "value": "all_india_service_officer",
-          "label_hi": "अखिल भारतीय सेवा अधिकारी (IAS/IPS/IFS)"
+          "label_hi": "अखिल भारतीय सेवा अधिकारी (IAS/IPS/IFS)",
+          "label_en": "All India Service officer (IAS/IPS/IFS)"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What is your occupation?"
     },
     {
       "slot": "annual_income",
@@ -193,42 +230,49 @@
             "min": 0,
             "max": 48000
           },
-          "label_hi": "₹48,000 से कम"
+          "label_hi": "₹48,000 से कम",
+          "label_en": "Less than ₹48,000"
         },
         {
           "value": {
             "min": 48001,
             "max": 100000
           },
-          "label_hi": "₹48,000 – 1 लाख"
+          "label_hi": "₹48,000 – 1 लाख",
+          "label_en": "₹48,000 – 1 lakh"
         },
         {
           "value": {
             "min": 100001,
             "max": 200000
           },
-          "label_hi": "₹1 – 2 लाख"
+          "label_hi": "₹1 – 2 लाख",
+          "label_en": "₹1 – 2 lakh"
         },
         {
           "value": {
             "min": 200001,
             "max": 250000
           },
-          "label_hi": "₹2 – 2.5 लाख"
+          "label_hi": "₹2 – 2.5 लाख",
+          "label_en": "₹2 – 2.5 lakh"
         },
         {
           "value": {
             "min": 250001,
             "max": 10000000
           },
-          "label_hi": "₹2.5 लाख से ज़्यादा"
+          "label_hi": "₹2.5 लाख से ज़्यादा",
+          "label_en": "More than ₹2.5 lakh"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "inr_per_year"
+      "unit": "inr_per_year",
+      "question_en": "What is your family's approximate annual income?"
     },
     {
       "slot": "category",
@@ -237,51 +281,63 @@
       "options": [
         {
           "value": "general",
-          "label_hi": "सामान्य"
+          "label_hi": "सामान्य",
+          "label_en": "General"
         },
         {
           "value": "obc",
-          "label_hi": "ओबीसी"
+          "label_hi": "ओबीसी",
+          "label_en": "OBC"
         },
         {
           "value": "mbc",
-          "label_hi": "अति पिछड़ा वर्ग (MBC)"
+          "label_hi": "अति पिछड़ा वर्ग (MBC)",
+          "label_en": "MBC (Most Backward Class)"
         },
         {
           "value": "sbc",
-          "label_hi": "विशेष पिछड़ा वर्ग (SBC)"
+          "label_hi": "विशेष पिछड़ा वर्ग (SBC)",
+          "label_en": "SBC (Special Backward Class)"
         },
         {
           "value": "sc",
-          "label_hi": "अनुसूचित जाति"
+          "label_hi": "अनुसूचित जाति",
+          "label_en": "SC (Scheduled Caste)"
         },
         {
           "value": "st",
-          "label_hi": "अनुसूचित जनजाति"
+          "label_hi": "अनुसूचित जनजाति",
+          "label_en": "ST (Scheduled Tribe)"
         },
         {
           "value": "ews",
-          "label_hi": "ईडब्ल्यूएस"
+          "label_hi": "ईडब्ल्यूएस",
+          "label_en": "EWS"
         },
         {
           "value": "dwarfism",
-          "label_hi": "बौनापन"
+          "label_hi": "बौनापन",
+          "label_en": "Dwarfism"
         },
         {
           "value": "transgender",
-          "label_hi": "ट्रांसजेंडर"
+          "label_hi": "ट्रांसजेंडर",
+          "label_en": "Transgender"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What is your category?"
     },
     {
       "slot": "district",
       "question_hi": "आप किस ज़िले में रहते हैं?",
       "type": "district_select",
-      "note": "Populated from the Rajasthan district list in router.js"
+      "note": "Populated from the Rajasthan district list in router.js",
+      "question_en": "Which district do you live in?"
     },
     {
       "slot": "marital_status",
@@ -290,29 +346,36 @@
       "options": [
         {
           "value": "unmarried",
-          "label_hi": "अविवाहित"
+          "label_hi": "अविवाहित",
+          "label_en": "Unmarried"
         },
         {
           "value": "married",
-          "label_hi": "विवाहित"
+          "label_hi": "विवाहित",
+          "label_en": "Married"
         },
         {
           "value": "widow",
-          "label_hi": "विधवा"
+          "label_hi": "विधवा",
+          "label_en": "Widow"
         },
         {
           "value": "divorced",
-          "label_hi": "तलाकशुदा"
+          "label_hi": "तलाकशुदा",
+          "label_en": "Divorced"
         },
         {
           "value": "abandoned",
-          "label_hi": "परित्यक्ता"
+          "label_hi": "परित्यक्ता",
+          "label_en": "Abandoned"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What is your marital status?"
     },
     {
       "slot": "child_status",
@@ -321,29 +384,36 @@
       "options": [
         {
           "value": "orphan",
-          "label_hi": "अनाथ बच्चा"
+          "label_hi": "अनाथ बच्चा",
+          "label_en": "Orphan child"
         },
         {
           "value": "single_parent",
-          "label_hi": "एकल अभिभावक का बच्चा"
+          "label_hi": "एकल अभिभावक का बच्चा",
+          "label_en": "Single parent's child"
         },
         {
           "value": "none",
-          "label_hi": "कोई नहीं"
+          "label_hi": "कोई नहीं",
+          "label_en": "None"
         },
         {
           "value": "single_parent_child",
-          "label_hi": "एकल अभिभावक की संतान"
+          "label_hi": "एकल अभिभावक की संतान",
+          "label_en": "Child of a single parent"
         },
         {
           "value": "special_needs_or_ill_parent_child",
-          "label_hi": "विशेष योग्यजन/बीमार माता-पिता की संतान"
+          "label_hi": "विशेष योग्यजन/बीमार माता-पिता की संतान",
+          "label_en": "Child of a special-needs/ill parent"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Status of children in the household?"
     },
     {
       "slot": "disability_pct",
@@ -355,28 +425,33 @@
             "min": 40,
             "max": 100
           },
-          "label_hi": "40% या ज़्यादा"
+          "label_hi": "40% या ज़्यादा",
+          "label_en": "40% or more"
         },
         {
           "value": {
             "min": 0,
             "max": 39
           },
-          "label_hi": "40% से कम"
+          "label_hi": "40% से कम",
+          "label_en": "Less than 40%"
         },
         {
           "value": {
             "min": 0,
             "max": 0
           },
-          "label_hi": "कोई नहीं"
+          "label_hi": "कोई नहीं",
+          "label_en": "None"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "percent"
+      "unit": "percent",
+      "question_en": "Is there a person with a disability in the household? What percentage?"
     },
     {
       "slot": "education_level",
@@ -385,33 +460,41 @@
       "options": [
         {
           "value": "below_8",
-          "label_hi": "आठवीं से कम"
+          "label_hi": "आठवीं से कम",
+          "label_en": "Below 8th"
         },
         {
           "value": "class_8",
-          "label_hi": "आठवीं पास"
+          "label_hi": "आठवीं पास",
+          "label_en": "8th pass"
         },
         {
           "value": "class_10",
-          "label_hi": "दसवीं पास"
+          "label_hi": "दसवीं पास",
+          "label_en": "10th pass"
         },
         {
           "value": "class_12",
-          "label_hi": "बारहवीं पास"
+          "label_hi": "बारहवीं पास",
+          "label_en": "12th pass"
         },
         {
           "value": "graduate",
-          "label_hi": "स्नातक"
+          "label_hi": "स्नातक",
+          "label_en": "Graduate"
         },
         {
           "value": "postgraduate",
-          "label_hi": "स्नातकोत्तर"
+          "label_hi": "स्नातकोत्तर",
+          "label_en": "Postgraduate"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What is your education level?"
     },
     {
       "slot": "landholding_hectares",
@@ -423,35 +506,41 @@
             "min": 0,
             "max": 0
           },
-          "label_hi": "कोई ज़मीन नहीं"
+          "label_hi": "कोई ज़मीन नहीं",
+          "label_en": "No land"
         },
         {
           "value": {
             "min": 0.01,
             "max": 1
           },
-          "label_hi": "1 हेक्टेयर तक"
+          "label_hi": "1 हेक्टेयर तक",
+          "label_en": "Up to 1 hectare"
         },
         {
           "value": {
             "min": 1.01,
             "max": 2
           },
-          "label_hi": "1 – 2 हेक्टेयर"
+          "label_hi": "1 – 2 हेक्टेयर",
+          "label_en": "1 – 2 hectares"
         },
         {
           "value": {
             "min": 2.01,
             "max": 100
           },
-          "label_hi": "2 हेक्टेयर से ज़्यादा"
+          "label_hi": "2 हेक्टेयर से ज़्यादा",
+          "label_en": "More than 2 hectares"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "hectares"
+      "unit": "hectares",
+      "question_en": "How much land do you own?"
     },
     {
       "slot": "exam_passed",
@@ -460,25 +549,31 @@
       "options": [
         {
           "value": "class_10",
-          "label_hi": "दसवीं"
+          "label_hi": "दसवीं",
+          "label_en": "10th"
         },
         {
           "value": "class_12",
-          "label_hi": "बारहवीं"
+          "label_hi": "बारहवीं",
+          "label_en": "12th"
         },
         {
           "value": "ug_final_year",
-          "label_hi": "स्नातक अंतिम वर्ष"
+          "label_hi": "स्नातक अंतिम वर्ष",
+          "label_en": "Undergraduate final year"
         },
         {
           "value": "none",
-          "label_hi": "इनमें से कोई नहीं"
+          "label_hi": "इनमें से कोई नहीं",
+          "label_en": "None of these"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Which exam have you recently passed?"
     },
     {
       "slot": "employment_sector",
@@ -487,37 +582,46 @@
       "options": [
         {
           "value": "government",
-          "label_hi": "हाँ, सरकारी नौकरी"
+          "label_hi": "हाँ, सरकारी नौकरी",
+          "label_en": "Yes, government job"
         },
         {
           "value": "private",
-          "label_hi": "निजी नौकरी"
+          "label_hi": "निजी नौकरी",
+          "label_en": "Private job"
         },
         {
           "value": "none",
-          "label_hi": "कोई नौकरी नहीं"
+          "label_hi": "कोई नौकरी नहीं",
+          "label_en": "No job"
         },
         {
           "value": "psu",
-          "label_hi": "सार्वजनिक उपक्रम (PSU)"
+          "label_hi": "सार्वजनिक उपक्रम (PSU)",
+          "label_en": "Public Sector Undertaking (PSU)"
         },
         {
           "value": "constitutional_post",
-          "label_hi": "संवैधानिक पद"
+          "label_hi": "संवैधानिक पद",
+          "label_en": "Constitutional post"
         },
         {
           "value": "elected_official",
-          "label_hi": "निर्वाचित पदाधिकारी"
+          "label_hi": "निर्वाचित पदाधिकारी",
+          "label_en": "Elected official"
         },
         {
           "value": "rajasthan_state_government",
-          "label_hi": "राजस्थान राज्य सरकार"
+          "label_hi": "राजस्थान राज्य सरकार",
+          "label_en": "Rajasthan state government"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you or a family member in a government job?"
     },
     {
       "slot": "religion",
@@ -526,42 +630,52 @@
       "options": [
         {
           "value": "hindu",
-          "label_hi": "हिन्दू"
+          "label_hi": "हिन्दू",
+          "label_en": "Hindu"
         },
         {
           "value": "muslim",
-          "label_hi": "मुस्लिम"
+          "label_hi": "मुस्लिम",
+          "label_en": "Muslim"
         },
         {
           "value": "christian",
-          "label_hi": "ईसाई"
+          "label_hi": "ईसाई",
+          "label_en": "Christian"
         },
         {
           "value": "sikh",
-          "label_hi": "सिख"
+          "label_hi": "सिख",
+          "label_en": "Sikh"
         },
         {
           "value": "buddhist",
-          "label_hi": "बौद्ध"
+          "label_hi": "बौद्ध",
+          "label_en": "Buddhist"
         },
         {
           "value": "jain",
-          "label_hi": "जैन"
+          "label_hi": "जैन",
+          "label_en": "Jain"
         },
         {
           "value": "parsi",
-          "label_hi": "पारसी"
+          "label_hi": "पारसी",
+          "label_en": "Parsi"
         },
         {
           "value": "other",
-          "label_hi": "अन्य"
+          "label_hi": "अन्य",
+          "label_en": "Other"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "note": "Asked only for minority-specific schemes. Skippable."
+      "note": "Asked only for minority-specific schemes. Skippable.",
+      "question_en": "What is your religion?"
     },
     {
       "slot": "is_income_tax_payer",
@@ -570,17 +684,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you pay income tax?"
     },
     {
       "slot": "owns_pucca_house",
@@ -589,17 +707,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you own a pucca (permanent) house?"
     },
     {
       "slot": "residence_type",
@@ -608,17 +730,21 @@
       "options": [
         {
           "value": "rural",
-          "label_hi": "गाँव"
+          "label_hi": "गाँव",
+          "label_en": "Village (rural)"
         },
         {
           "value": "urban",
-          "label_hi": "शहर"
+          "label_hi": "शहर",
+          "label_en": "City (urban)"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you live in a village or a city?"
     },
     {
       "slot": "willing_to_do_unskilled_manual_work",
@@ -627,17 +753,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you willing to do unskilled manual labour?"
     },
     {
       "slot": "pregnancy_status",
@@ -646,21 +776,26 @@
       "options": [
         {
           "value": "pregnant",
-          "label_hi": "गर्भवती"
+          "label_hi": "गर्भवती",
+          "label_en": "Pregnant"
         },
         {
           "value": "recently_delivered",
-          "label_hi": "हाल में प्रसव"
+          "label_hi": "हाल में प्रसव",
+          "label_en": "Recently delivered"
         },
         {
           "value": "none",
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you pregnant or have you recently given birth?"
     },
     {
       "slot": "pregnancy_child_number",
@@ -669,21 +804,26 @@
       "options": [
         {
           "value": 1,
-          "label_hi": "पहला"
+          "label_hi": "पहला",
+          "label_en": "First"
         },
         {
           "value": 2,
-          "label_hi": "दूसरा"
+          "label_hi": "दूसरा",
+          "label_en": "Second"
         },
         {
           "value": 3,
-          "label_hi": "तीसरा या उससे आगे"
+          "label_hi": "तीसरा या उससे आगे",
+          "label_en": "Third or later"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Which child is this for you?"
     },
     {
       "slot": "remarriage_status",
@@ -692,17 +832,21 @@
       "options": [
         {
           "value": "remarried",
-          "label_hi": "हाँ, पुनर्विवाह किया"
+          "label_hi": "हाँ, पुनर्विवाह किया",
+          "label_en": "Yes, remarried"
         },
         {
           "value": "not_remarried",
-          "label_hi": "नहीं, पुनर्विवाह नहीं किया"
+          "label_hi": "नहीं, पुनर्विवाह नहीं किया",
+          "label_en": "No, not remarried"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Has the widow remarried?"
     },
     {
       "slot": "widow_pension_recipient_or_eligible",
@@ -711,17 +855,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you receiving or eligible for widow pension?"
     },
     {
       "slot": "bocw_board_registered",
@@ -730,17 +878,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you registered with the Building and Construction Workers Welfare Board?"
     },
     {
       "slot": "construction_work_days_last_year",
@@ -752,21 +904,25 @@
             "min": 90,
             "max": 365
           },
-          "label_hi": "90 दिन या ज़्यादा"
+          "label_hi": "90 दिन या ज़्यादा",
+          "label_en": "90 days or more"
         },
         {
           "value": {
             "min": 0,
             "max": 89
           },
-          "label_hi": "90 दिन से कम"
+          "label_hi": "90 दिन से कम",
+          "label_en": "Less than 90 days"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "days"
+      "unit": "days",
+      "question_en": "How many days did you do construction work last year?"
     },
     {
       "slot": "silicosis_certified",
@@ -775,17 +931,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Have you received a silicosis certificate?"
     },
     {
       "slot": "residence_distance_from_crusher_km",
@@ -797,21 +957,25 @@
             "min": 0,
             "max": 5
           },
-          "label_hi": "हाँ, 5 किमी के भीतर"
+          "label_hi": "हाँ, 5 किमी के भीतर",
+          "label_en": "Yes, within 5 km"
         },
         {
           "value": {
             "min": 5.1,
             "max": 500
           },
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "km"
+      "unit": "km",
+      "question_en": "Is your home near a stone quarry/crusher?"
     },
     {
       "slot": "hospitalization_hours",
@@ -823,21 +987,25 @@
             "min": 24,
             "max": 9999
           },
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": {
             "min": 0,
             "max": 23
           },
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "hours"
+      "unit": "hours",
+      "question_en": "Was the patient hospitalised for more than 24 hours?"
     },
     {
       "slot": "farmer_loan_status",
@@ -846,17 +1014,21 @@
       "options": [
         {
           "value": "loanee",
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": "non_loanee",
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Have you taken a crop loan (KCC)?"
     },
     {
       "slot": "group_type",
@@ -865,21 +1037,26 @@
       "options": [
         {
           "value": "shg",
-          "label_hi": "स्वयं सहायता समूह"
+          "label_hi": "स्वयं सहायता समूह",
+          "label_en": "Self-Help Group (SHG)"
         },
         {
           "value": "jlg",
-          "label_hi": "संयुक्त देयता समूह"
+          "label_hi": "संयुक्त देयता समूह",
+          "label_en": "Joint Liability Group (JLG)"
         },
         {
           "value": "individual",
-          "label_hi": "अकेले"
+          "label_hi": "अकेले",
+          "label_en": "Alone (individual)"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you part of a self-help group or farmer group?"
     },
     {
       "slot": "marks_percent_board_exam",
@@ -891,28 +1068,33 @@
             "min": 75,
             "max": 100
           },
-          "label_hi": "75% या ज़्यादा"
+          "label_hi": "75% या ज़्यादा",
+          "label_en": "75% or more"
         },
         {
           "value": {
             "min": 60,
             "max": 74.9
           },
-          "label_hi": "60 – 75%"
+          "label_hi": "60 – 75%",
+          "label_en": "60 – 75%"
         },
         {
           "value": {
             "min": 0,
             "max": 59.9
           },
-          "label_hi": "60% से कम"
+          "label_hi": "60% से कम",
+          "label_en": "Less than 60%"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "percent"
+      "unit": "percent",
+      "question_en": "What percentage did you score in the board exam?"
     },
     {
       "slot": "marks_percent_10_or_12",
@@ -924,21 +1106,25 @@
             "min": 60,
             "max": 100
           },
-          "label_hi": "60% या ज़्यादा"
+          "label_hi": "60% या ज़्यादा",
+          "label_en": "60% or more"
         },
         {
           "value": {
             "min": 0,
             "max": 59.9
           },
-          "label_hi": "60% से कम"
+          "label_hi": "60% से कम",
+          "label_en": "Less than 60%"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "percent"
+      "unit": "percent",
+      "question_en": "What percentage did you score in 10th or 12th?"
     },
     {
       "slot": "has_regular_income_source",
@@ -947,17 +1133,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you have a regular source of income?"
     },
     {
       "slot": "landholding_category",
@@ -966,21 +1156,26 @@
       "options": [
         {
           "value": "marginal",
-          "label_hi": "सीमांत (1 हेक्टेयर तक)"
+          "label_hi": "सीमांत (1 हेक्टेयर तक)",
+          "label_en": "Marginal (up to 1 hectare)"
         },
         {
           "value": "small",
-          "label_hi": "लघु (1–2 हेक्टेयर)"
+          "label_hi": "लघु (1–2 हेक्टेयर)",
+          "label_en": "Small (1–2 hectares)"
         },
         {
           "value": "other",
-          "label_hi": "इससे बड़ा"
+          "label_hi": "इससे बड़ा",
+          "label_en": "Larger than this"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What category of farmer are you?"
     },
     {
       "slot": "other_social_security_pension_recipient",
@@ -989,17 +1184,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you already receiving any government pension?"
     },
     {
       "slot": "monthly_family_income",
@@ -1011,28 +1210,33 @@
             "min": 0,
             "max": 15000
           },
-          "label_hi": "₹15,000 तक"
+          "label_hi": "₹15,000 तक",
+          "label_en": "Up to ₹15,000"
         },
         {
           "value": {
             "min": 15001,
             "max": 20000
           },
-          "label_hi": "₹15,000 – 20,000"
+          "label_hi": "₹15,000 – 20,000",
+          "label_en": "₹15,000 – 20,000"
         },
         {
           "value": {
             "min": 20001,
             "max": 1000000
           },
-          "label_hi": "₹20,000 से ज़्यादा"
+          "label_hi": "₹20,000 से ज़्यादा",
+          "label_en": "More than ₹20,000"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "inr_per_month"
+      "unit": "inr_per_month",
+      "question_en": "What is your family's approximate monthly income?"
     },
     {
       "slot": "monthly_income",
@@ -1044,21 +1248,25 @@
             "min": 0,
             "max": 15000
           },
-          "label_hi": "₹15,000 तक"
+          "label_hi": "₹15,000 तक",
+          "label_en": "Up to ₹15,000"
         },
         {
           "value": {
             "min": 15001,
             "max": 1000000
           },
-          "label_hi": "₹15,000 से ज़्यादा"
+          "label_hi": "₹15,000 से ज़्यादा",
+          "label_en": "More than ₹15,000"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "inr_per_month"
+      "unit": "inr_per_month",
+      "question_en": "What is your approximate monthly income?"
     },
     {
       "slot": "irrigated_land_acres",
@@ -1070,21 +1278,25 @@
             "min": 0,
             "max": 2.5
           },
-          "label_hi": "2.5 एकड़ तक"
+          "label_hi": "2.5 एकड़ तक",
+          "label_en": "Up to 2.5 acres"
         },
         {
           "value": {
             "min": 2.51,
             "max": 1000
           },
-          "label_hi": "2.5 एकड़ से ज़्यादा"
+          "label_hi": "2.5 एकड़ से ज़्यादा",
+          "label_en": "More than 2.5 acres"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "acres"
+      "unit": "acres",
+      "question_en": "How much irrigated land do you have?"
     },
     {
       "slot": "kcc_limit_inr",
@@ -1097,21 +1309,25 @@
             "min": 0,
             "max": 49999
           },
-          "label_hi": "₹50,000 तक"
+          "label_hi": "₹50,000 तक",
+          "label_en": "Up to ₹50,000"
         },
         {
           "value": {
             "min": 50000,
             "max": 10000000
           },
-          "label_hi": "₹50,000 या ज़्यादा"
+          "label_hi": "₹50,000 या ज़्यादा",
+          "label_en": "₹50,000 or more"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "inr"
+      "unit": "inr",
+      "question_en": "What is your Kisan Credit Card limit?"
     },
     {
       "slot": "owns_non_agri_enterprise",
@@ -1120,17 +1336,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you own a registered business other than farming?"
     },
     {
       "slot": "household_has_lpg_connection",
@@ -1139,17 +1359,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Does the household already have a gas connection?"
     },
     {
       "slot": "household_poor_declaration",
@@ -1158,17 +1382,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Does your family fall in the poor category?"
     },
     {
       "slot": "ration_card_category",
@@ -1177,25 +1405,31 @@
       "options": [
         {
           "value": "aay",
-          "label_hi": "अंत्योदय (AAY)"
+          "label_hi": "अंत्योदय (AAY)",
+          "label_en": "Antyodaya (AAY)"
         },
         {
           "value": "priority_household",
-          "label_hi": "प्राथमिकता (PHH)"
+          "label_hi": "प्राथमिकता (PHH)",
+          "label_en": "Priority Household (PHH)"
         },
         {
           "value": "apl",
-          "label_hi": "एपीएल"
+          "label_hi": "एपीएल",
+          "label_en": "APL"
         },
         {
           "value": "none",
-          "label_hi": "राशन कार्ड नहीं है"
+          "label_hi": "राशन कार्ड नहीं है",
+          "label_en": "No ration card"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "What category is your ration card?"
     },
     {
       "slot": "visited_government_health_facility",
@@ -1204,17 +1438,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Do you go to a government hospital?"
     },
     {
       "slot": "is_state_government_pensioner",
@@ -1223,17 +1461,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you a Rajasthan state government pensioner?"
     },
     {
       "slot": "is_dependent_of_rghs_beneficiary",
@@ -1242,17 +1484,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you a dependent of an RGHS beneficiary?"
     },
     {
       "slot": "pension_monthly_inr",
@@ -1264,33 +1510,39 @@
             "min": 0,
             "max": 10000
           },
-          "label_hi": "₹10,000 तक"
+          "label_hi": "₹10,000 तक",
+          "label_en": "Up to ₹10,000"
         },
         {
           "value": {
             "min": 10001,
             "max": 1000000
           },
-          "label_hi": "₹10,000 से ज़्यादा"
+          "label_hi": "₹10,000 से ज़्यादा",
+          "label_en": "More than ₹10,000"
         },
         {
           "value": {
             "min": 0,
             "max": 0
           },
-          "label_hi": "पेंशन नहीं मिलती"
+          "label_hi": "पेंशन नहीं मिलती",
+          "label_en": "No pension received"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "inr_per_month"
+      "unit": "inr_per_month",
+      "question_en": "How much monthly pension do you receive?"
     },
     {
       "slot": "birth_date",
       "question_hi": "बच्चे की जन्म तिथि?",
-      "type": "date"
+      "type": "date",
+      "question_en": "Child's date of birth?"
     },
     {
       "slot": "birth_facility_type",
@@ -1299,25 +1551,31 @@
       "options": [
         {
           "value": "government",
-          "label_hi": "सरकारी अस्पताल"
+          "label_hi": "सरकारी अस्पताल",
+          "label_en": "Government hospital"
         },
         {
           "value": "private",
-          "label_hi": "निजी अस्पताल"
+          "label_hi": "निजी अस्पताल",
+          "label_en": "Private hospital"
         },
         {
           "value": "home",
-          "label_hi": "घर पर"
+          "label_hi": "घर पर",
+          "label_en": "At home"
         },
         {
           "value": "jsy_empaneled_private",
-          "label_hi": "JSY-पंजीकृत निजी अस्पताल"
+          "label_hi": "JSY-पंजीकृत निजी अस्पताल",
+          "label_en": "JSY-empanelled private hospital"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Where did the delivery take place?"
     },
     {
       "slot": "child_age",
@@ -1329,21 +1587,25 @@
             "min": 0,
             "max": 5
           },
-          "label_hi": "0 – 5 साल"
+          "label_hi": "0 – 5 साल",
+          "label_en": "0 – 5 years"
         },
         {
           "value": {
             "min": 6,
             "max": 18
           },
-          "label_hi": "6 – 18 साल"
+          "label_hi": "6 – 18 साल",
+          "label_en": "6 – 18 years"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "years"
+      "unit": "years",
+      "question_en": "Child's age?"
     },
     {
       "slot": "employment_registered",
@@ -1352,17 +1614,21 @@
       "options": [
         {
           "value": true,
-          "label_hi": "हाँ"
+          "label_hi": "हाँ",
+          "label_en": "Yes"
         },
         {
           "value": false,
-          "label_hi": "नहीं"
+          "label_hi": "नहीं",
+          "label_en": "No"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Are you registered with the employment office?"
     },
     {
       "slot": "family_girls_count",
@@ -1371,21 +1637,26 @@
       "options": [
         {
           "value": 1,
-          "label_hi": "एक"
+          "label_hi": "एक",
+          "label_en": "One"
         },
         {
           "value": 2,
-          "label_hi": "दो"
+          "label_hi": "दो",
+          "label_en": "Two"
         },
         {
           "value": 3,
-          "label_hi": "तीन या ज़्यादा"
+          "label_hi": "तीन या ज़्यादा",
+          "label_en": "Three or more"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "How many daughters are in the family?"
     },
     {
       "slot": "residency_years",
@@ -1397,21 +1668,25 @@
             "min": 10,
             "max": 100
           },
-          "label_hi": "10 साल या ज़्यादा"
+          "label_hi": "10 साल या ज़्यादा",
+          "label_en": "10 years or more"
         },
         {
           "value": {
             "min": 0,
             "max": 9
           },
-          "label_hi": "10 साल से कम"
+          "label_hi": "10 साल से कम",
+          "label_en": "Less than 10 years"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "years"
+      "unit": "years",
+      "question_en": "How many years have you lived in Rajasthan?"
     },
     {
       "slot": "group_farmer_count",
@@ -1423,20 +1698,24 @@
             "min": 2,
             "max": 100
           },
-          "label_hi": "2 या ज़्यादा"
+          "label_hi": "2 या ज़्यादा",
+          "label_en": "2 or more"
         },
         {
           "value": {
             "min": 1,
             "max": 1
           },
-          "label_hi": "अकेला"
+          "label_hi": "अकेला",
+          "label_en": "Alone"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "How many farmers are in the group?"
     },
     {
       "slot": "group_landholding_hectares",
@@ -1448,21 +1727,25 @@
             "min": 0.5,
             "max": 1000
           },
-          "label_hi": "0.5 हेक्टेयर या ज़्यादा"
+          "label_hi": "0.5 हेक्टेयर या ज़्यादा",
+          "label_en": "0.5 hectares or more"
         },
         {
           "value": {
             "min": 0,
             "max": 0.49
           },
-          "label_hi": "0.5 हेक्टेयर से कम"
+          "label_hi": "0.5 हेक्टेयर से कम",
+          "label_en": "Less than 0.5 hectares"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
       ],
-      "unit": "hectares"
+      "unit": "hectares",
+      "question_en": "Total land held by the group?"
     },
     {
       "slot": "health_cover_category",
@@ -1471,51 +1754,65 @@
       "options": [
         {
           "value": "nfsa",
-          "label_hi": "NFSA (राष्ट्रीय खाद्य सुरक्षा) सूची में"
+          "label_hi": "NFSA (राष्ट्रीय खाद्य सुरक्षा) सूची में",
+          "label_en": "In the NFSA (National Food Security) list"
         },
         {
           "value": "secc_2011",
-          "label_hi": "SECC 2011 सूची में"
+          "label_hi": "SECC 2011 सूची में",
+          "label_en": "In the SECC 2011 list"
         },
         {
           "value": "small_marginal_farmer",
-          "label_hi": "लघु/सीमांत कृषक"
+          "label_hi": "लघु/सीमांत कृषक",
+          "label_en": "Small/marginal farmer"
         },
         {
           "value": "contract_worker",
-          "label_hi": "संविदा कर्मी"
+          "label_hi": "संविदा कर्मी",
+          "label_en": "Contract worker"
         },
         {
           "value": "covid_exgratia_recipient",
-          "label_hi": "कोविड-19 अनुग्रह राशि प्राप्तकर्ता"
+          "label_hi": "कोविड-19 अनुग्रह राशि प्राप्तकर्ता",
+          "label_en": "COVID-19 ex-gratia recipient"
         },
         {
           "value": "other",
-          "label_hi": "इनमें से कोई नहीं"
+          "label_hi": "इनमें से कोई नहीं",
+          "label_en": "None of these"
         },
         {
           "value": null,
-          "label_hi": "पता नहीं"
+          "label_hi": "पता नहीं",
+          "label_en": "Don't know"
         }
-      ]
+      ],
+      "question_en": "Which category do you fall in — free or premium health cover?"
     },
     {
       "slot": "fencing_metres",
       "question_hi": "कितने रनिंग मीटर तारबंदी करनी है?",
       "type": "number",
-      "unit_hi": "मीटर"
+      "unit_hi": "मीटर",
+      "question_en": "How many running metres of fencing are needed?",
+      "unit_en": "metres"
     },
     {
       "slot": "quoted_cost_inr",
       "question_hi": "सामग्री/उपकरण या आपूर्तिकर्ता का अनुमानित कोटेशन कितने का है?",
       "type": "number",
-      "unit_hi": "रुपये"
+      "unit_hi": "रुपये",
+      "question_en": "What is the supplier's/material's estimated quotation amount?",
+      "unit_en": "rupees"
     },
     {
       "slot": "drip_area_hectares",
       "question_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?",
       "type": "number",
-      "unit_hi": "हेक्टेयर"
+      "unit_hi": "हेक्टेयर",
+      "question_en": "On how much area (hectares) will drip/sprinkler irrigation be installed?",
+      "unit_en": "hectares"
     }
   ]
 }

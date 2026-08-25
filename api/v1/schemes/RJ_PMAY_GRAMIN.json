@@ -63,7 +63,8 @@
     "amount_inr": 120000,
     "amount_text_hi": "मैदानी क्षेत्रों में ₹1.20 लाख; पूर्वोत्तर राज्यों व पहाड़ी/दुर्गम क्षेत्रों (हिमाचल, उत्तराखंड, जम्मू-कश्मीर, लद्दाख) में ₹1.30 लाख — इकाई सहायता (राजस्थान मैदानी राज्य होने से सामान्यतः ₹1.20 लाख लागू)। इसके अतिरिक्त शौचालय निर्माण हेतु ₹12,000 तक व मनरेगा के तहत 95 दिन अकुशल श्रम रोजगार (₹90.95/दिन मजदूरी दर) का प्रावधान",
     "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
-    "note": "राजस्थान एक मैदानी राज्य है, इसलिए सामान्यतः ₹1.20 लाख की दर लागू होती है — पहाड़ी दर केवल उल्लेखित विशेष राज्यों के लिए है। पात्रता SECC 2011 डेटा के स्वतः-बहिष्करण मानदंडों (KCC सीमा, सरकारी नौकरी, आयकर, सिंचित भूमि आदि) पर आधारित है।"
+    "note": "राजस्थान एक मैदानी राज्य है, इसलिए सामान्यतः ₹1.20 लाख की दर लागू होती है — पहाड़ी दर केवल उल्लेखित विशेष राज्यों के लिए है। पात्रता SECC 2011 डेटा के स्वतः-बहिष्करण मानदंडों (KCC सीमा, सरकारी नौकरी, आयकर, सिंचित भूमि आदि) पर आधारित है।",
+    "amount_text_en": "₹1.20 lakh in plain areas; ₹1.30 lakh in North-Eastern states and hilly/difficult areas (Himachal, Uttarakhand, Jammu & Kashmir, Ladakh) — unit assistance (as a plains state, Rajasthan generally gets ₹1.20 lakh). In addition, up to ₹12,000 is provided for toilet construction, and 95 days of unskilled labour employment under MGNREGA (wage rate ₹90.95/day)."
   },
   "documents": [
     {
@@ -71,28 +72,36 @@
       "label_hi": "जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/jan_aadhaar.svg"
+      "sample_image": "assets/docs/jan_aadhaar.svg",
+      "label_en": "Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "AADHAAR",
       "label_hi": "आधार कार्ड (सभी परिवार सदस्यों का)",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card (of all household members)",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "MGNREGA_JOB_CARD",
       "label_hi": "मनरेगा जॉब कार्ड (यदि उपलब्ध हो)",
       "icon": "id-card",
       "where_to_get_hi": "ग्राम पंचायत",
-      "sample_image": "assets/docs/mgnrega_job_card.svg"
+      "sample_image": "assets/docs/mgnrega_job_card.svg",
+      "label_en": "MGNREGA job card (if available)",
+      "where_to_get_en": "Gram Panchayat"
     },
     {
       "doc_id": "BANK_PASSBOOK",
       "label_hi": "बैंक खाते की पासबुक (आधार लिंक्ड)",
       "icon": "bank",
       "where_to_get_hi": "बैंक शाखा",
-      "sample_image": "assets/docs/bank_passbook.svg"
+      "sample_image": "assets/docs/bank_passbook.svg",
+      "label_en": "Bank passbook (Aadhaar-linked)",
+      "where_to_get_en": "Bank branch"
     }
   ],
   "apply_via": [
@@ -103,5 +112,16 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। ग्राम पंचायत से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You may be eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm your name on the list with the Gram Panchayat or Patwari.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your Gram Panchayat."
+  },
+  "keywords_en": [
+    "PM Awas rural",
+    "housing scheme village",
+    "pucca house scheme"
+  ]
 }

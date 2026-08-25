@@ -38,7 +38,8 @@
     "amount_inr": null,
     "amount_text_hi": "सामान्य किसानों को लागत का 50% अनुदान; लघु व सीमांत किसानों को 70% अनुदान — सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक कवर। पृष्ठ पर कोई रुपये की सीमा (ceiling) प्रकाशित नहीं है, केवल प्रतिशत।",
     "rate_policy": "COMPUTED_SEE_SUBSIDY_RULE",
-    "note": "अनुदान प्रतिशत किसान की श्रेणी (सामान्य बनाम लघु/सीमांत) पर निर्भर है और लागत किसान के कोटेशन पर आधारित है, इसलिए सटीक गणना subsidy_rule में दी गई है, बंधी राशि के रूप में नहीं। rajkisan.rajasthan.gov.in पर कोई प्रकाशित इकाई लागत (₹/हेक्टेयर) नहीं मिली, इसलिए प्रतिशत-पद केवल किसान के आपूर्तिकर्ता कोटेशन (quoted_cost_inr) से ही गणनीय है — कोटेशन न होने पर स्थिति PARTIAL रहेगी। योजना केवल चालू वित्तीय वर्ष के लिए वैध रहती है, दरें वर्ष-दर-वर्ष बदल सकती हैं।"
+    "note": "अनुदान प्रतिशत किसान की श्रेणी (सामान्य बनाम लघु/सीमांत) पर निर्भर है और लागत किसान के कोटेशन पर आधारित है, इसलिए सटीक गणना subsidy_rule में दी गई है, बंधी राशि के रूप में नहीं। rajkisan.rajasthan.gov.in पर कोई प्रकाशित इकाई लागत (₹/हेक्टेयर) नहीं मिली, इसलिए प्रतिशत-पद केवल किसान के आपूर्तिकर्ता कोटेशन (quoted_cost_inr) से ही गणनीय है — कोटेशन न होने पर स्थिति PARTIAL रहेगी। योजना केवल चालू वित्तीय वर्ष के लिए वैध रहती है, दरें वर्ष-दर-वर्ष बदल सकती हैं।",
+    "amount_text_en": "50% subsidy on cost for general farmers; 70% subsidy for small and marginal farmers — covers up to 5 hectares of area for farmers of every category. No rupee ceiling is published on the page, only percentages."
   },
   "subsidy_rule": {
     "rule_id": "DRIP_SPRINKLER_CATEGORY_PCT",
@@ -52,27 +53,33 @@
           "marginal"
         ],
         "required": true,
-        "prompt_hi": "आपकी श्रेणी क्या है — सामान्य, लघु या सीमांत किसान?"
+        "prompt_hi": "आपकी श्रेणी क्या है — सामान्य, लघु या सीमांत किसान?",
+        "prompt_en": "What is your category — general, small or marginal farmer?"
       },
       {
         "slot": "drip_area_hectares",
         "type": "number",
         "unit_hi": "हेक्टेयर",
         "required": true,
-        "prompt_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?"
+        "prompt_hi": "ड्रिप/स्प्रिंकलर सिंचाई किस क्षेत्रफल (हेक्टेयर) पर लगानी है?",
+        "unit_en": "hectares",
+        "prompt_en": "On how much area (hectares) will drip/sprinkler irrigation be installed?"
       },
       {
         "slot": "quoted_cost_inr",
         "type": "number",
         "unit_hi": "रुपये",
         "required": false,
-        "prompt_hi": "आपूर्तिकर्ता का कोटेशन कितने का है? (न हो तो छोड़ दें)"
+        "prompt_hi": "आपूर्तिकर्ता का कोटेशन कितने का है? (न हो तो छोड़ दें)",
+        "unit_en": "rupees",
+        "prompt_en": "What is the supplier's quotation amount? (leave blank if unknown)"
       }
     ],
     "unit_caps": {
       "drip_area_hectares": {
         "max": 5,
-        "label_hi": "सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक ही अनुदान देय — इससे अधिक क्षेत्र की लागत अनुदान में नहीं जुड़ेगी"
+        "label_hi": "सभी श्रेणी के किसानों के लिए अधिकतम 5 हेक्टेयर क्षेत्रफल तक ही अनुदान देय — इससे अधिक क्षेत्र की लागत अनुदान में नहीं जुड़ेगी",
+        "label_en": "Subsidy is payable up to a maximum of 5 hectares of area for farmers of every category — cost beyond this area is not added to the subsidy"
       }
     },
     "terms": [
@@ -89,7 +96,8 @@
         "cost_basis": {
           "kind": "citizen_quotation",
           "slot": "quoted_cost_inr"
-        }
+        },
+        "label_en": "Unit cost subsidy (by category)"
       }
     ],
     "combine": "min",
@@ -105,42 +113,54 @@
       "label_hi": "जमाबंदी की नकल (छः माह से अधिक पुरानी नहीं)",
       "icon": "document",
       "where_to_get_hi": "तहसील (राजस्व विभाग)",
-      "sample_image": "assets/docs/land_record.svg"
+      "sample_image": "assets/docs/land_record.svg",
+      "label_en": "Land record copy (Jamabandi) (not older than six months)",
+      "where_to_get_en": "Tehsil (Revenue Department)"
     },
     {
       "doc_id": "JAN_AADHAAR",
       "label_hi": "जन आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र",
-      "sample_image": "assets/docs/jan_aadhaar.svg"
+      "sample_image": "assets/docs/jan_aadhaar.svg",
+      "label_en": "Jan Aadhaar Card",
+      "where_to_get_en": "e-Mitra"
     },
     {
       "doc_id": "AADHAAR",
       "label_hi": "आधार कार्ड",
       "icon": "id-card",
       "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
-      "sample_image": "assets/docs/aadhaar.svg"
+      "sample_image": "assets/docs/aadhaar.svg",
+      "label_en": "Aadhaar Card",
+      "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
     },
     {
       "doc_id": "IRRIGATION_SOURCE_CERT",
       "label_hi": "सिंचाई स्रोत प्रमाण पत्र",
       "icon": "certificate",
       "where_to_get_hi": "कृषि पर्यवेक्षक / पटवारी",
-      "sample_image": "assets/docs/irrigation_source_cert.svg"
+      "sample_image": "assets/docs/irrigation_source_cert.svg",
+      "label_en": "Irrigation source certificate",
+      "where_to_get_en": "Agriculture Supervisor / Patwari"
     },
     {
       "doc_id": "SOIL_WATER_TEST",
       "label_hi": "मृदा एवं जल परीक्षण रिपोर्ट",
       "icon": "document",
       "where_to_get_hi": "कृषि विभाग प्रयोगशाला",
-      "sample_image": "assets/docs/soil_water_test.svg"
+      "sample_image": "assets/docs/soil_water_test.svg",
+      "label_en": "Soil and water test report",
+      "where_to_get_en": "Agriculture Department laboratory"
     },
     {
       "doc_id": "SUPPLIER_QUOTATION",
       "label_hi": "आपूर्तिकर्ता का कोटेशन",
       "icon": "document",
       "where_to_get_hi": "अधिकृत डीलर",
-      "sample_image": "assets/docs/supplier_quotation.svg"
+      "sample_image": "assets/docs/supplier_quotation.svg",
+      "label_en": "Supplier's quotation",
+      "where_to_get_en": "Authorised dealer"
     }
   ],
   "apply_via": [
@@ -151,5 +171,17 @@
     "need_info": "{{scheme_name_hi}} बताने के लिए मुझे {{missing}} जानना होगा।",
     "not_eligible": "{{reason_hi}} के कारण इस योजना में आप शायद पात्र नहीं हैं।",
     "unknown": "मेरे पास इसकी पक्की जानकारी नहीं है। नज़दीकी ई-मित्र से पूछें।"
-  }
+  },
+  "response_templates_en": {
+    "eligible": "You appear eligible for {{scheme_name_en}}. {{benefit_text}}. Confirm at your nearest e-Mitra.",
+    "need_info": "To answer for {{scheme_name_en}}, I need to know {{missing}}.",
+    "not_eligible": "You may not be eligible for this scheme because of {{reason_en}}.",
+    "unknown": "I don't have confirmed information on this. Ask at your nearest e-Mitra."
+  },
+  "keywords_en": [
+    "drip irrigation",
+    "sprinkler",
+    "micro-irrigation subsidy",
+    "trickle irrigation"
+  ]
 }
