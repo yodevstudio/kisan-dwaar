@@ -655,7 +655,11 @@ img, svg { max-width: 100%; height: auto; }
 }
 
 .operator-tab-count {
-  background: var(--verdict);
+  /* K14: --verdict/--paper at this size (12px, below the 18.66px bold
+     WCAG "large text" threshold) measures 4.49:1 — short of the 4.5:1 AA
+     floor by a hair. --field/--paper measures 8.59:1, comfortably clears
+     it, and is already the same pairing .operator-tab-active uses. */
+  background: var(--field);
   color: var(--paper);
   border-radius: 999px;
   font-size: 0.75rem;
