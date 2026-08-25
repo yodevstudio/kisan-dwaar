@@ -12,7 +12,9 @@ function escapeRegExp(s) {
 
 function indexOfPhrase(text, phrase) {
   if (!phrase) return -1;
-  const pattern = new RegExp(`(?<![${WORD_CHAR_CLASS}])${escapeRegExp(phrase)}(?![${WORD_CHAR_CLASS}])`);
+  // 'i' is a no-op on Devanagari (no case) and lets English keyword/phrase
+  // entries match regardless of how a citizen capitalises typed Latin text.
+  const pattern = new RegExp(`(?<![${WORD_CHAR_CLASS}])${escapeRegExp(phrase)}(?![${WORD_CHAR_CLASS}])`, 'i');
   const m = pattern.exec(text);
   return m ? m.index : -1;
 }
@@ -36,6 +38,13 @@ export const DISCOVERY_PHRASES = [
   'कौन सी योजना',
   'फायदा',
   'लाभ',
+  // T3: same phrases, same discipline, in English/Hinglish.
+  'what can i get',
+  'what am i eligible for',
+  'which scheme',
+  'koi yojana',
+  'mere layak',
+  'benefit',
 ];
 
 function isDiscoveryQuery(text) {
@@ -82,10 +91,10 @@ function devanagariToLatinDigits(str) {
   return str.replace(/[०-९]/g, (d) => String(DEVANAGARI_DIGITS.indexOf(d)));
 }
 
-const AGE_WORD = '(?:साल|वर्ष|बरस)';
+const AGE_WORD = '(?:साल|वर्ष|बरस|years?|yrs?|saal)';
 const AGE_PATTERNS = [
-  new RegExp(`(\\d{1,3})\\s*${AGE_WORD}`),
-  new RegExp(`${AGE_WORD}\\s*(\\d{1,3})`),
+  new RegExp(`(\\d{1,3})\\s*${AGE_WORD}`, 'i'),
+  new RegExp(`${AGE_WORD}\\s*(\\d{1,3})`, 'i'),
 ];
 
 function extractAge(text) {
@@ -107,6 +116,13 @@ const GENDER_TERMS = [
   ['पुरुष', 'male'],
   ['आदमी', 'male'],
   ['मर्द', 'male'],
+  // T3: same terms, same discipline, in English/Hinglish.
+  ['female', 'female'],
+  ['woman', 'female'],
+  ['mahila', 'female'],
+  ['male', 'male'],
+  ['man', 'male'],
+  ['aadmi', 'male'],
 ];
 
 function extractGender(text) {
@@ -119,6 +135,14 @@ const MARITAL_TERMS = [
   ['परित्यक्ता', 'abandoned'],
   ['अविवाहित', 'unmarried'],
   ['विवाहित', 'married'],
+  // T3: same terms, same discipline, in English/Hinglish.
+  ['widow', 'widow'],
+  ['divorced', 'divorced'],
+  ['abandoned', 'abandoned'],
+  ['unmarried', 'unmarried'],
+  ['single', 'unmarried'],
+  ['married', 'married'],
+  ['shadishuda', 'married'],
 ];
 
 function extractMaritalStatus(text) {
@@ -130,6 +154,16 @@ const OCCUPATION_TERMS = [
   ['मजदूर', 'labourer'],
   ['विद्यार्थी', 'student'],
   ['बेरोजगार', 'unemployed'],
+  // T3: same terms, same discipline, in English/Hinglish.
+  ['farmer', 'farmer'],
+  ['kisan', 'farmer'],
+  ['labourer', 'labourer'],
+  ['laborer', 'labourer'],
+  ['majdoor', 'labourer'],
+  ['student', 'student'],
+  ['vidyarthi', 'student'],
+  ['unemployed', 'unemployed'],
+  ['berojgar', 'unemployed'],
 ];
 
 function extractOccupation(text) {
@@ -148,11 +182,11 @@ export const RAJASTHAN_DISTRICTS = [
   'सवाई माधोपुर', 'सीकर', 'सिरोही', 'श्रीगंगानगर', 'टोंक', 'उदयपुर',
 ].sort((a, b) => b.length - a.length);
 
-// K8: additive only — same 33 districts, same order as RAJASTHAN_DISTRICTS
-// above, for the English-language discovery flow's district chips.
-// extractDistrict() below (typed-query keyword matching) stays Hindi-only
-// by design; English free-text district matching is out of K8's scope
-// (a toggle-driven UI language switch, not English NLU).
+// K8: additive only — alphabetical order, English transliteration of the
+// same 33 districts. NOT index-aligned with RAJASTHAN_DISTRICTS above (that
+// export is deliberately length-sorted for longest-match-first elsewhere),
+// so DISTRICT_HI_EN_PAIRS below zips this against its own alphabetical
+// Hindi list instead of against RAJASTHAN_DISTRICTS by position.
 export const RAJASTHAN_DISTRICTS_EN = [
   'Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi',
   'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore',
@@ -160,8 +194,24 @@ export const RAJASTHAN_DISTRICTS_EN = [
   'Sawai Madhopur', 'Sikar', 'Sirohi', 'Sri Ganganagar', 'Tonk', 'Udaipur',
 ];
 
+// Alphabetical Hindi order, index-aligned with RAJASTHAN_DISTRICTS_EN —
+// kept separate from RAJASTHAN_DISTRICTS above purely so this pairing
+// can't be broken by that export's own length-sort.
+const RAJASTHAN_DISTRICTS_HI_ALPHA = [
+  'अजमेर', 'अलवर', 'बांसवाड़ा', 'बारां', 'बाड़मेर', 'भरतपुर', 'भीलवाड़ा', 'बीकानेर', 'बूंदी',
+  'चित्तौड़गढ़', 'चूरू', 'दौसा', 'धौलपुर', 'डूंगरपुर', 'हनुमानगढ़', 'जयपुर', 'जैसलमेर', 'जालौर',
+  'झालावाड़', 'झुंझुनू', 'जोधपुर', 'करौली', 'कोटा', 'नागौर', 'पाली', 'प्रतापगढ़', 'राजसमंद',
+  'सवाई माधोपुर', 'सीकर', 'सिरोही', 'श्रीगंगानगर', 'टोंक', 'उदयपुर',
+];
+
+// T3: English district names resolve to the same Hindi canonical value the
+// Hindi terms already resolve to, same extractLastMatch mechanism.
 function extractDistrict(text) {
-  return extractLastMatch(text, RAJASTHAN_DISTRICTS.map((d) => [d, d]));
+  const terms = [
+    ...RAJASTHAN_DISTRICTS.map((d) => [d, d]),
+    ...RAJASTHAN_DISTRICTS_EN.map((d, i) => [d, RAJASTHAN_DISTRICTS_HI_ALPHA[i]]),
+  ];
+  return extractLastMatch(text, terms);
 }
 
 function extractSlots(text) {

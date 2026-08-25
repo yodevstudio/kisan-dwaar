@@ -10,9 +10,11 @@ function escapeRegExp(s) {
 }
 
 function findMatches(raw, key) {
+  // 'i' is a no-op on Devanagari (no case) and lets English/Hinglish lexicon
+  // keys match regardless of how a citizen capitalises typed Latin text.
   const pattern = new RegExp(
     `(?<![${WORD_CHAR_CLASS}])${escapeRegExp(key)}(?![${WORD_CHAR_CLASS}])`,
-    'g'
+    'gi'
   );
   const matches = [];
   let m;

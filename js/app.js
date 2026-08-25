@@ -100,8 +100,8 @@ function addUserBubble(text) {
 
 // opt carries label_hi and (where available) label_en; falls back to
 // label_hi if an option has no English label yet (e.g. a typed-query
-// sample — those stay Hindi-only, since the free-text router itself only
-// understands Hindi, see routeQuery below).
+// sample — data/samples.json only stores query_hi today, independent of
+// what the router itself can understand, see routeQuery below).
 function labelForOption(opt) {
   const lang = getLang();
   if (lang === 'en' && opt.label_en) return opt.label_en;
@@ -611,12 +611,6 @@ async function handleRouteResult(result) {
 // Routes a query without rendering the citizen's own text — the caller is
 // responsible for that, since a chip tap (addChips) already renders it and
 // must not show it twice.
-//
-// K8: routing itself stays Hindi-only by design (normalise.js's lexicon
-// and router.js's keyword lists are Hindi vocabulary) — typing a query in
-// English is out of K8's scope, a toggle-driven UI language switch, not
-// English free-text understanding. The tap-to-answer path above is fully
-// bilingual regardless.
 async function routeQuery(text) {
   const { normalised } = normalise(text, state.lexicon);
   const result = route(normalised, state.schemes);

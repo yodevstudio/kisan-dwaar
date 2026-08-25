@@ -200,6 +200,66 @@ await test('route: extracts age, gender and district slots from free text', () =
   assertEqual(r.slots.district, 'जयपुर');
 });
 
+// T3: English and Hinglish free text must resolve to the same scheme as
+// the equivalent Hindi phrasing, for every scheme with a subsidy_rule
+// (the two amount-bearing schemes: RJ_TARBANDI, RJ_DRIP_SPRINKLER) — run
+// against the real, ported data/lexicon.json and data/schemes.json so
+// these assertions catch a real vocabulary regression, not a fixture one.
+
+await test('route: RJ_TARBANDI reached from Hindi phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('तारबंदी अनुदान चाहिए', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_TARBANDI']);
+});
+
+await test('route: RJ_TARBANDI reached from English phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('I need a tarbandi subsidy', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_TARBANDI']);
+});
+
+await test('route: RJ_TARBANDI reached from Hinglish phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('mhane tarbandi lagwani hai', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_TARBANDI']);
+});
+
+await test('route: RJ_DRIP_SPRINKLER reached from Hindi phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('ड्रिप सिंचाई अनुदान चाहिए', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_DRIP_SPRINKLER']);
+});
+
+await test('route: RJ_DRIP_SPRINKLER reached from English phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('I want a drip irrigation subsidy', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_DRIP_SPRINKLER']);
+});
+
+await test('route: RJ_DRIP_SPRINKLER reached from Hinglish phrasing', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const { normalised } = normalise('mhane drip lagwani hai', lexicon);
+  const r = route(normalised, schemes);
+  assertEqual(r.intent, 'scheme_query');
+  assertEqual(r.scheme_ids, ['RJ_DRIP_SPRINKLER']);
+});
+
 // ===== assemble.js =====
 
 await test('assemble: ELIGIBLE verdict fills the template with sourced benefit text', () => {
