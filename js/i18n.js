@@ -115,6 +115,16 @@ const STRINGS = {
   'schemes.h1': { hi: 'योजनाएं', en: 'Schemes' },
   'schemes.load_error': { hi: 'योजना सूची लोड नहीं हो सकी।', en: 'Could not load the scheme list.' },
   'schemes.check_eligibility': { hi: 'पात्रता जांचें', en: 'Check eligibility' },
+  // T2: scheme_group is 'agriculture' | 'related_welfare' on every record
+  // (data/schemes.json) — these two keys label that split everywhere it's
+  // shown (schemes list, discovery flow results), so the wording can never
+  // drift between the two places it appears.
+  'schemes.agriculture_heading': { hi: 'कृषि योजनाएं', en: 'Agriculture schemes' },
+  'schemes.related_welfare_heading': { hi: 'किसान के लिए अन्य कल्याण योजनाएं', en: 'Other welfare schemes for farmers' },
+  'schemes.related_welfare_note': {
+    hi: 'एक किसान एक नागरिक भी है — ये योजनाएं कृषि विभाग की नहीं, बल्कि अन्य विभागों की हैं, फिर भी किसान परिवारों के लिए उपयोगी हो सकती हैं।',
+    en: 'A farmer is also a citizen — these schemes come from other departments, not Agriculture, but can still be useful to farming households.',
+  },
 
   'check.title': { hi: 'पात्रता जांचें — किसान द्वार', en: 'Check Eligibility — KISAN DWAAR' },
   'check.h1': { hi: 'पात्रता जांचें', en: 'Check Eligibility' },
@@ -131,9 +141,12 @@ const STRINGS = {
 
   'documents.title': { hi: 'दस्तावेज़ — किसान द्वार', en: 'Documents — KISAN DWAAR' },
   'documents.h1': { hi: 'दस्तावेज़', en: 'Documents' },
-  'documents.intro': {
-    hi: 'सभी 12 योजनाओं में इस्तेमाल होने वाले दस्तावेज़, एक जगह — कौनसा दस्तावेज़ किन योजनाओं के लिए चाहिए, और कहाँ से मिलेगा। ठीक-ठीक सूची अपनी योजना जांचते समय दिखेगी — यह पन्ना पहले से तैयारी के लिए है।',
-    en: 'Every document used across all 12 schemes, in one place — which document is needed for which schemes, and where to get it. The exact list will show while you check your own scheme — this page is for preparing ahead of time.',
+  // T2: no longer a static count — documents.js builds this line at
+  // render time from the real agriculture/related_welfare split, the
+  // same discipline schemes.js's intro-line already uses.
+  'documents.intro_suffix': {
+    hi: 'में इस्तेमाल होने वाले दस्तावेज़, एक जगह — कौनसा दस्तावेज़ किन योजनाओं के लिए चाहिए, और कहाँ से मिलेगा। ठीक-ठीक सूची अपनी योजना जांचते समय दिखेगी — यह पन्ना पहले से तैयारी के लिए है।',
+    en: 'in one place — which document is needed for which schemes, and where to get it. The exact list will show while you check your own scheme — this page is for preparing ahead of time.',
   },
   'documents.load_error': { hi: 'दस्तावेज़ सूची लोड नहीं हो सकी।', en: 'Could not load the document list.' },
   'documents.where_to_get': { hi: 'कहाँ से मिलेगा', en: 'Where to get it' },
@@ -222,6 +235,8 @@ const STRINGS = {
   'insights.occupations_zero_none': { hi: 'फिलहाल कोई भी पेशा ऐसा नहीं मिला जो अकेले (उम्र/लिंग के साथ) हर योजना से स्थायी रूप से बाहर कर दे।', en: 'No occupation currently found that, alone with age/gender, permanently rules out every scheme.' },
   'insights.unreachable_warning': { hi: '⚠ अप्राप्य योजना(एं)', en: '⚠ Unreachable scheme(s)' },
   'insights.generated_summary': { hi: 'योजनाओं का विश्लेषण', en: 'schemes analysed' },
+  'insights.agriculture_label': { hi: 'कृषि', en: 'agriculture' },
+  'insights.related_welfare_label': { hi: 'अन्य कल्याण', en: 'related welfare' },
   'insights.unreachable_count': { hi: 'अप्राप्य', en: 'unreachable' },
   'insights.built_at': { hi: 'बना', en: 'built' },
   'insights.out_of_profiles': { hi: 'यथार्थ प्रोफ़ाइलों में से', en: 'real profiles' },

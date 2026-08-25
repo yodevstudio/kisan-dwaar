@@ -1,0 +1,80 @@
+{
+  "from": "2026.08.25-2",
+  "to": "2026.08.25-3",
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "scheme_id": "RJ_TARBANDI",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_DRIP_SPRINKLER",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_FARM_POND",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMKISAN",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMFBY",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_KCC",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMAY_GRAMIN",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_AYUSHMAN",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_NFSA",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    },
+    {
+      "scheme_id": "RJ_UJJWALA",
+      "changed_fields": [
+        "scheme_group"
+      ]
+    }
+  ]
+}

@@ -183,5 +183,6 @@
     "sprinkler",
     "micro-irrigation subsidy",
     "trickle irrigation"
-  ]
+  ],
+  "scheme_group": "agriculture"
 }

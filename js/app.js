@@ -535,6 +535,16 @@ function eligibleCountIntro(n) {
   return `${n} योजना${n > 1 ? 'एं' : ''} आपके लिए उपयुक्त लग रही ${n > 1 ? 'हैं' : 'है'}:`;
 }
 
+// T2: agriculture results first, related-welfare results in their own
+// clearly-labelled group below — reads scheme.scheme_group off the data,
+// never a hard-coded scheme_id list.
+function splitByGroup(rows) {
+  return {
+    agriculture: rows.filter((r) => r.scheme.scheme_group === 'agriculture'),
+    relatedWelfare: rows.filter((r) => r.scheme.scheme_group === 'related_welfare'),
+  };
+}
+
 async function runDiscovery() {
   addBotBubble(t('chat.discovery_start'));
   await runCoreSequence();
@@ -549,20 +559,38 @@ async function runDiscovery() {
 
   if (eligible.length > 0) {
     addBotBubble(eligibleCountIntro(eligible.length));
-    for (const { scheme, evaluation } of eligible) {
-      const output = assembleForLang('ELIGIBLE', scheme, evaluation);
-      renderVerdictCard(scheme, evaluation, output);
+    const grouped = splitByGroup(eligible);
+    if (grouped.agriculture.length > 0) {
+      addBotBubble(t('schemes.agriculture_heading'));
+      for (const { scheme, evaluation } of grouped.agriculture) {
+        const output = assembleForLang('ELIGIBLE', scheme, evaluation);
+        renderVerdictCard(scheme, evaluation, output);
+      }
+    }
+    if (grouped.relatedWelfare.length > 0) {
+      addBotBubble(t('schemes.related_welfare_heading'));
+      for (const { scheme, evaluation } of grouped.relatedWelfare) {
+        const output = assembleForLang('ELIGIBLE', scheme, evaluation);
+        renderVerdictCard(scheme, evaluation, output);
+      }
     }
   }
 
   if (needInfo.length > 0) {
     addBotBubble(t('chat.need_info_intro'));
-    const list = el('ul', langClass('doc-list'));
-    needInfo.forEach(({ scheme }) => {
-      track('trackSchemeSurfaced', scheme.scheme_id);
-      list.appendChild(el('li', '', schemeNameFor(scheme)));
-    });
-    chatEl.appendChild(list);
+    const grouped = splitByGroup(needInfo);
+    const renderGroup = (rows, headingKey) => {
+      if (rows.length === 0) return;
+      chatEl.appendChild(el('p', langClass('doc-list-title'), t(headingKey)));
+      const list = el('ul', langClass('doc-list'));
+      rows.forEach(({ scheme }) => {
+        track('trackSchemeSurfaced', scheme.scheme_id);
+        list.appendChild(el('li', '', schemeNameFor(scheme)));
+      });
+      chatEl.appendChild(list);
+    };
+    renderGroup(grouped.agriculture, 'schemes.agriculture_heading');
+    renderGroup(grouped.relatedWelfare, 'schemes.related_welfare_heading');
     scrollToBottom();
   }
 }

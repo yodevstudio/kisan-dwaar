@@ -106,5 +106,6 @@
     "crop damage",
     "farmer insurance scheme",
     "PMFBY"
-  ]
+  ],
+  "scheme_group": "agriculture"
 }

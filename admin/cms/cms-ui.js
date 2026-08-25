@@ -29,7 +29,7 @@ let ratePolicyValues = [];
 
 function defaultRecord() {
   return {
-    scheme_id: '', name_hi: '', name_en: '', keywords_hi: [], department: '',
+    scheme_id: '', name_hi: '', name_en: '', keywords_hi: [], department: '', scheme_group: 'agriculture',
     dataset_version: '', source_url: '', source_type: 'html_page',
     last_verified: '', verification_interval_days: 90, next_review_due: '', verified_by: 'manual',
     eligibility: { all_of: [], any_of: [], none_of: [] },
@@ -96,6 +96,22 @@ function renderBasics() {
   fields.forEach(([key, label]) => {
     container.appendChild(labelledInput(label, record[key], (v) => { record[key] = v; }));
   });
+
+  // T2: exactly two values, decided from department — see validate-data-core.mjs's
+  // SCHEME_GROUPS. Required on every record so the published "N agriculture
+  // schemes" count can never drift from what's actually in the dataset.
+  const groupWrap = el('div', 'cms-field');
+  groupWrap.appendChild(el('label', 'hi', 'scheme_group (department के आधार पर)'));
+  const groupSelect = document.createElement('select');
+  [['agriculture', 'agriculture — राजस्थान कृषि विभाग / केंद्रीय कृषि मंत्रालय'], ['related_welfare', 'related_welfare — कोई अन्य विभाग']].forEach(([value, label]) => {
+    const opt = document.createElement('option');
+    opt.value = value; opt.textContent = label;
+    if (record.scheme_group === value) opt.selected = true;
+    groupSelect.appendChild(opt);
+  });
+  groupSelect.addEventListener('change', () => { record.scheme_group = groupSelect.value; });
+  groupWrap.appendChild(groupSelect);
+  container.appendChild(groupWrap);
 
   const srcTypeWrap = el('div', 'cms-field');
   srcTypeWrap.appendChild(el('label', 'hi', 'source_type'));

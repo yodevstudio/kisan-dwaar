@@ -97,9 +97,15 @@ async function init() {
     const cls = lang === 'hi' ? 'hi' : '';
     const methodologyNote = lang === 'en' && data.methodology_note_en ? data.methodology_note_en : data.methodology_note_hi;
 
+    // T2: two real numbers, not one bare total — data.agriculture_count /
+    // related_welfare_count come straight from tools/build-insights.mjs,
+    // which reads scheme_group off each record, same as everywhere else.
+    const countLine = data.agriculture_count !== undefined
+      ? `${data.agriculture_count} ${t('insights.agriculture_label')} + ${data.related_welfare_count} ${t('insights.related_welfare_label')} = ${data.scheme_count} ${t('insights.generated_summary')}`
+      : `${data.scheme_count} ${t('insights.generated_summary')}`;
     summaryEl.innerHTML = '';
     summaryEl.appendChild(el('p', cls,
-      `${data.scheme_count} ${t('insights.generated_summary')} · ${t('insights.unreachable_count')}: ${data.unreachable_scheme_ids.length} · ${t('insights.built_at')}: ${new Date(data.generated_at).toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')}`));
+      `${countLine} · ${t('insights.unreachable_count')}: ${data.unreachable_scheme_ids.length} · ${t('insights.built_at')}: ${new Date(data.generated_at).toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')}`));
     summaryEl.appendChild(el('p', `citation ${cls}`.trim(), methodologyNote));
     if (data.unreachable_scheme_ids.length > 0) {
       summaryEl.appendChild(el('p', `${cls} term-warning`.trim(), `⚠ ${t('insights.unreachable_warning')}: ${data.unreachable_scheme_ids.join(', ')}`));

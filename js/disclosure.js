@@ -25,10 +25,14 @@ function el(tag, className, text) {
   return e;
 }
 
-async function getSchemeCount() {
+async function getSchemeCounts() {
   try {
     const schemes = await (await fetch(resolvePath('data/schemes.json'))).json();
-    return schemes.length;
+    return {
+      total: schemes.length,
+      agriculture: schemes.filter((s) => s.scheme_group === 'agriculture').length,
+      relatedWelfare: schemes.filter((s) => s.scheme_group === 'related_welfare').length,
+    };
   } catch {
     return null; // never blocks the panel from rendering — see renderDisclosurePanel
   }
@@ -38,7 +42,7 @@ const COPY = {
   hi: {
     summary: 'पारदर्शिता — यह पोर्टल क्या रखता है, क्या नहीं',
     dataBasisTitle: 'डेटा का आधार',
-    dataBasisFound: (n) => `यह पोर्टल राजस्थान की ${n} सत्यापित कृषि योजनाओं पर आधारित है — हर एक का स्रोत URL व जाँच-तिथि data/schemes.json में मौजूद है, सार्वजनिक रूप से api/v1/ पर भी।`,
+    dataBasisFound: (ag, wel) => `यह पोर्टल राजस्थान की ${ag} सत्यापित कृषि योजनाओं व किसानों के लिए उपयोगी ${wel} अन्य विभागों की कल्याण योजनाओं (कुल ${ag + wel}) पर आधारित है — हर एक का स्रोत URL व जाँच-तिथि data/schemes.json में मौजूद है, सार्वजनिक रूप से api/v1/ पर भी।`,
     dataBasisMissing: 'योजना सूची अभी लोड नहीं हो सकी — संख्या यहाँ नहीं दिखाई जा सकती, पर बाकी जानकारी सही है।',
     uploadTitle: 'दस्तावेज़ अपलोड (सेवा-स्तर, वैकल्पिक)',
     uploadBody: (typesHi, maxMb, days) => `यदि आप लॉग-इन करके कोई दस्तावेज़ अपलोड करते हैं, तो वह Firebase Cloud Storage पर आपके अपने, निजी पथ में जाता है — कोई और उपयोगकर्ता उसे देख या हटा नहीं सकता। स्वीकृत प्रकार: ${typesHi}, अधिकतम आकार ${maxMb}MB। फ़ाइलें ${days} दिन बाद स्वतः हटा दी जाती हैं। पात्रता जांचना व दस्तावेज़ों की सूची देखना इसके बिना भी हमेशा काम करता है — अपलोड सेवा बंद होने पर भी।`,
@@ -48,7 +52,7 @@ const COPY = {
   en: {
     summary: 'Transparency — what this portal keeps, what it never does',
     dataBasisTitle: 'Basis of the data',
-    dataBasisFound: (n) => `This portal is based on ${n} verified Rajasthan agriculture schemes — each with a source URL and verification date in data/schemes.json, also published publicly at api/v1/.`,
+    dataBasisFound: (ag, wel) => `This portal is based on ${ag} verified Rajasthan agriculture schemes and ${wel} related welfare schemes from other departments, useful to farming households (${ag + wel} total) — each with a source URL and verification date in data/schemes.json, also published publicly at api/v1/.`,
     dataBasisMissing: 'The scheme list could not load right now — the count cannot be shown here, but the rest of the information is accurate.',
     uploadTitle: 'Document upload (service layer, optional)',
     uploadBody: (typesEn, maxMb, days) => `If you log in and upload a document, it goes to your own, private path on Firebase Cloud Storage — no other user can see or delete it. Accepted types: ${typesEn}, maximum size ${maxMb}MB. Files are automatically deleted after ${days} days. Checking eligibility and viewing the document checklist always work without this — even if the upload service is down.`,
@@ -61,7 +65,7 @@ export async function renderDisclosurePanel(containerId = 'disclosure-panel') {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const schemeCount = await getSchemeCount();
+  const schemeCounts = await getSchemeCounts();
   const maxMb = Math.round(UPLOAD_MAX_FILE_BYTES / (1024 * 1024));
 
   const render = () => {
@@ -83,7 +87,7 @@ export async function renderDisclosurePanel(containerId = 'disclosure-panel') {
     const cls = lang === 'hi' ? 'hi' : '';
 
     body.appendChild(el('h3', cls, c.dataBasisTitle));
-    body.appendChild(el('p', cls, schemeCount !== null ? c.dataBasisFound(schemeCount) : c.dataBasisMissing));
+    body.appendChild(el('p', cls, schemeCounts !== null ? c.dataBasisFound(schemeCounts.agriculture, schemeCounts.relatedWelfare) : c.dataBasisMissing));
 
     body.appendChild(el('h3', cls, c.uploadTitle));
     body.appendChild(el('p', cls, c.uploadBody(typesText, maxMb, UPLOAD_RETENTION_DAYS)));

@@ -12,6 +12,11 @@ export const SCHEME_ID_RE = /^RJ_[A-Z0-9_]+$/;
 export const DATASET_VERSION_RE = /^\d{4}\.\d{2}\.\d{2}-\d+$/;
 export const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const SOURCE_TYPES = ['html_page', 'text_pdf', 'scanned_pdf'];
+// T2: exactly two values, decided from a record's own `department` field
+// and nothing else — see data/schemes.json's own records for the actual
+// classification. Required on every record so the "N agriculture schemes"
+// headline claim can never silently drift from what the dataset contains.
+export const SCHEME_GROUPS = ['agriculture', 'related_welfare'];
 export const TERM_TYPES = ['percent_of_cost', 'per_unit_cap', 'per_unit_rate', 'flat_cap'];
 export const COMBINE_VALUES = ['min', 'max', 'sum'];
 
@@ -235,6 +240,9 @@ export function validateScheme(scheme, ratePolicyValues) {
   }
 
   if (!isNonEmptyString(scheme.department)) errors.push('department: required non-empty string');
+  if (!SCHEME_GROUPS.includes(scheme.scheme_group)) {
+    errors.push(`scheme_group: required, must be one of ${SCHEME_GROUPS.join(', ')}`);
+  }
   if (!DATASET_VERSION_RE.test(scheme.dataset_version || '')) errors.push('dataset_version: required, format YYYY.MM.DD-N');
   if (!isNonEmptyString(scheme.source_url)) errors.push('source_url: required non-empty string');
   if (!SOURCE_TYPES.includes(scheme.source_type)) errors.push(`source_type: must be one of ${SOURCE_TYPES.join(', ')}`);

@@ -43,8 +43,19 @@ async function init() {
     }
   }
 
+  const agricultureCount = schemes.filter((s) => s.scheme_group === 'agriculture').length;
+  const relatedWelfareCount = schemes.filter((s) => s.scheme_group === 'related_welfare').length;
+
   const render = () => {
-    const cls = getLang() === 'hi' ? 'hi' : '';
+    const lang = getLang();
+    const cls = lang === 'hi' ? 'hi' : '';
+
+    // T2: two real numbers, not one bare total — never "12 schemes" again.
+    const introEl = document.getElementById('intro-line');
+    introEl.textContent = lang === 'en'
+      ? `Documents from ${agricultureCount} agriculture and ${relatedWelfareCount} related-welfare schemes (${schemes.length} total) ${t('documents.intro_suffix')}`
+      : `${agricultureCount} कृषि व ${relatedWelfareCount} अन्य कल्याण योजनाओं (कुल ${schemes.length}) ${t('documents.intro_suffix')}`;
+
     listEl.innerHTML = '';
     [...byDocId.values()]
       .sort((a, b) => b.schemeRefs.length - a.schemeRefs.length)

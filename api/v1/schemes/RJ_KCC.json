@@ -111,5 +111,6 @@
     "KCC",
     "crop loan",
     "agricultural loan"
-  ]
+  ],
+  "scheme_group": "agriculture"
 }

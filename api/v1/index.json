@@ -1,7 +1,9 @@
 {
-  "registry_version": "2026.08.25-2",
-  "generated_at": "2026-08-25T04:59:21.854Z",
+  "registry_version": "2026.08.25-3",
+  "generated_at": "2026-08-25T16:16:36.663Z",
   "scheme_count": 12,
+  "agriculture_count": 6,
+  "related_welfare_count": 6,
   "schemes": [
     {
       "scheme_id": "RJ_TARBANDI",
@@ -14,6 +16,7 @@
         "नीलगाय"
       ],
       "department": "Agriculture",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.22-2",
       "last_verified": "2026-08-22",
       "has_subsidy_rule": true,
@@ -30,6 +33,7 @@
         "टपक सिंचाई"
       ],
       "department": "Agriculture Department (Horticulture Division), Rajasthan / कृषि विभाग (उद्यान शाखा)",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.22-2",
       "last_verified": "2026-08-22",
       "has_subsidy_rule": true,
@@ -45,6 +49,7 @@
         "वर्षा जल संग्रहण खेत"
       ],
       "department": "Agriculture Department (Agriculture Extension Division), Rajasthan / कृषि विभाग (कृषि विस्तार शाखा)",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -60,6 +65,7 @@
         "किसान सालाना 6000"
       ],
       "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -76,6 +82,7 @@
         "पीएमएफबीवाई"
       ],
       "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department & empanelled insurance companies",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -92,6 +99,7 @@
         "कृषि ऋण"
       ],
       "department": "Reserve Bank of India / NABARD (national credit scheme, delivered via nationalised banks, RRBs and cooperative banks in Rajasthan)",
+      "scheme_group": "agriculture",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -108,6 +116,7 @@
         "बुढ़ापा किसान पेंशन"
       ],
       "department": "Social Justice & Empowerment Department, Rajasthan",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -124,6 +133,7 @@
         "नरेगा"
       ],
       "department": "Union Ministry of Rural Development (Centrally Sponsored Scheme, 60:40 Centre-State), implemented in Rajasthan via Panchayati Raj & Rural Development Dept",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -139,6 +149,7 @@
         "पक्का घर योजना"
       ],
       "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -155,6 +166,7 @@
         "इलाज"
       ],
       "department": "Medical & Health",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-1",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -171,6 +183,7 @@
         "अंत्योदय"
       ],
       "department": "Union Ministry of Consumer Affairs, Food & Public Distribution (Central Act), implemented in Rajasthan via Food Department (food.raj.nic.in)",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
@@ -186,6 +199,7 @@
         "एलपीजी कनेक्शन गरीब महिला"
       ],
       "department": "Union Ministry of Petroleum & Natural Gas (Central Sector Scheme), delivered via Oil Marketing Companies (Indane, Bharat Gas, HP Gas) in Rajasthan",
+      "scheme_group": "related_welfare",
       "dataset_version": "2026.08.14-3",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,

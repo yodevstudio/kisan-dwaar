@@ -169,7 +169,8 @@
       "tarbandi",
       "stray animals",
       "nilgai"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_DRIP_SPRINKLER",
@@ -356,7 +357,8 @@
       "sprinkler",
       "micro-irrigation subsidy",
       "trickle irrigation"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_FARM_POND",
@@ -440,7 +442,8 @@
       "farm pond",
       "khet talai",
       "rainwater harvesting farm"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_PMKISAN",
@@ -573,7 +576,8 @@
       "PM Kisan",
       "Kisan Samman Nidhi",
       "farmer annual 6000"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_PMFBY",
@@ -683,7 +687,8 @@
       "crop damage",
       "farmer insurance scheme",
       "PMFBY"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_KCC",
@@ -798,7 +803,8 @@
       "KCC",
       "crop loan",
       "agricultural loan"
-    ]
+    ],
+    "scheme_group": "agriculture"
   },
   {
     "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
@@ -931,7 +937,8 @@
       "old-age farmer pension",
       "krishak samman pension",
       "budhapa farmer pension"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   },
   {
     "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
@@ -1030,7 +1037,8 @@
       "rural employment guarantee",
       "job card",
       "NREGA"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   },
   {
     "scheme_id": "RJ_PMAY_GRAMIN",
@@ -1157,7 +1165,8 @@
       "PM Awas rural",
       "housing scheme village",
       "pucca house scheme"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   },
   {
     "scheme_id": "RJ_AYUSHMAN",
@@ -1254,7 +1263,8 @@
       "Chiranjeevi",
       "hospital expenses",
       "treatment"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   },
   {
     "scheme_id": "RJ_NFSA",
@@ -1348,7 +1358,8 @@
       "food security scheme",
       "free wheat rice",
       "Antyodaya"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   },
   {
     "scheme_id": "RJ_UJJWALA",
@@ -1460,6 +1471,7 @@
       "Ujjwala Yojana",
       "free gas connection",
       "LPG connection poor woman"
-    ]
+    ],
+    "scheme_group": "related_welfare"
   }
 ]

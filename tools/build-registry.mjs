@@ -127,16 +127,29 @@ function main() {
     writeFileSync(path.join(SCHEMES_DIR, `${scheme.scheme_id}.json`), JSON.stringify(scheme, null, 2) + '\n');
   }
 
+  // T2: the dataset mixes schemes issued by Agriculture with schemes from
+  // other departments (rural housing, health, food security, LPG, rural
+  // employment) — scheme_count alone would restate the "N agriculture
+  // schemes" headline claim without it actually being true. Both group
+  // counts are exposed here so every consumer of the index (the UI, a
+  // third party building on this API) sees the honest split, not just a
+  // bare total.
+  const agricultureCount = schemes.filter((s) => s.scheme_group === 'agriculture').length;
+  const relatedWelfareCount = schemes.filter((s) => s.scheme_group === 'related_welfare').length;
+
   const index = {
     registry_version: registryVersion,
     generated_at: new Date().toISOString(),
     scheme_count: schemes.length,
+    agriculture_count: agricultureCount,
+    related_welfare_count: relatedWelfareCount,
     schemes: schemes.map((s) => ({
       scheme_id: s.scheme_id,
       name_hi: s.name_hi,
       name_en: s.name_en,
       keywords_hi: s.keywords_hi,
       department: s.department,
+      scheme_group: s.scheme_group,
       dataset_version: s.dataset_version,
       last_verified: s.last_verified,
       has_subsidy_rule: !!s.subsidy_rule,

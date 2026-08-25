@@ -1,13 +1,16 @@
 {
-  "generated_at": "2026-08-25T05:25:42.630Z",
+  "generated_at": "2026-08-25T16:16:36.879Z",
   "methodology_note_hi": "यह पृष्ठ किसी नागरिक के डेटा से नहीं, बल्कि योजना-नियमों व प्रश्न-सूची (data/slots.json) के अपने मानों से बनता है। हर आँकड़ा js/eligibility.js — वही इंजन जो पोर्टल पर असली सवाल-जवाब चलाता है — को चलाकर निकाला गया है।",
   "methodology_note_en": "This page is built not from any citizen data, but from the scheme rules and question catalogue (data/slots.json) own values. Every figure is derived by running js/eligibility.js — the same engine that runs real question-answering on the portal.",
   "scheme_count": 12,
+  "agriculture_count": 6,
+  "related_welfare_count": 6,
   "per_scheme": [
     {
       "scheme_id": "RJ_TARBANDI",
       "name_hi": "राजस्थान तारबंदी योजना",
       "name_en": "Rajasthan Tarbandi Yojana",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "landholding_hectares",
@@ -24,6 +27,7 @@
       "scheme_id": "RJ_DRIP_SPRINKLER",
       "name_hi": "सूक्ष्म सिंचाई (ड्रिप/स्प्रिंकलर) अनुदान योजना",
       "name_en": "Micro-Irrigation (Drip/Sprinkler) Subsidy Scheme",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "landholding_hectares"
@@ -38,6 +42,7 @@
       "scheme_id": "RJ_FARM_POND",
       "name_hi": "खेत तलाई अनुदान योजना",
       "name_en": "Farm Pond (Khet Talai) Subsidy Scheme",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "landholding_hectares"
@@ -52,6 +57,7 @@
       "scheme_id": "RJ_PMKISAN",
       "name_hi": "प्रधानमंत्री किसान सम्मान निधि योजना",
       "name_en": "PM Kisan Samman Nidhi Yojana",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "landholding_hectares",
@@ -69,6 +75,7 @@
       "scheme_id": "RJ_PMFBY",
       "name_hi": "प्रधानमंत्री फसल बीमा योजना",
       "name_en": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "farmer_loan_status"
@@ -83,6 +90,7 @@
       "scheme_id": "RJ_KCC",
       "name_hi": "किसान क्रेडिट कार्ड योजना",
       "name_en": "Kisan Credit Card (KCC) Scheme",
+      "scheme_group": "agriculture",
       "referenced_slots": [
         "occupation",
         "group_type"
@@ -97,6 +105,7 @@
       "scheme_id": "RJ_VRIDHJAN_KRISHAK_PENSION",
       "name_hi": "वृद्धजन कृषक सम्मान पेंशन योजना",
       "name_en": "Vridhjan Krishak Samman Pension Yojana (Old-Age Farmer Honour Pension)",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "occupation",
         "landholding_category",
@@ -115,6 +124,7 @@
       "scheme_id": "RJ_RURAL_EMPLOYMENT_GUARANTEE",
       "name_hi": "विकसित भारत - ग्राम रोजगार एवं आजीविका मिशन (ग्रामीण) अधिनियम, 2025 (पूर्व में मनरेगा)",
       "name_en": "Viksit Bharat - Guarantee for Rozgar and Ajeevika Mission (Gramin) Act, 2025 (VB-G RAM G) - successor to MGNREGA",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "residence_type",
         "willing_to_do_unskilled_manual_work",
@@ -130,6 +140,7 @@
       "scheme_id": "RJ_PMAY_GRAMIN",
       "name_hi": "प्रधानमंत्री आवास योजना - ग्रामीण",
       "name_en": "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "owns_pucca_house",
         "kcc_limit_inr",
@@ -149,6 +160,7 @@
       "scheme_id": "RJ_AYUSHMAN",
       "name_hi": "मुख्यमंत्री आयुष्मान आरोग्य योजना",
       "name_en": "Mukhyamantri Ayushman Arogya Yojana",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "health_cover_category"
       ],
@@ -162,6 +174,7 @@
       "scheme_id": "RJ_NFSA",
       "name_hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम (राशन/खाद्य सुरक्षा योजना)",
       "name_en": "National Food Security Act (NFSA) - Food Security / Ration Scheme",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "ration_card_category"
       ],
@@ -175,6 +188,7 @@
       "scheme_id": "RJ_UJJWALA",
       "name_hi": "प्रधानमंत्री उज्ज्वला योजना 2.0",
       "name_en": "Pradhan Mantri Ujjwala Yojana 2.0 (PMUY)",
+      "scheme_group": "related_welfare",
       "referenced_slots": [
         "gender",
         "age",
