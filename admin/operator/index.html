@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ऑपरेटर मोड — किसान द्वार</title>
+<link rel="stylesheet" href="../../css/kisan.css">
+</head>
+<body>
+  <header class="site-header no-print">
+    <h1 class="hi">ऑपरेटर मोड (S6)</h1>
+    <span class="badge hi">🔒 सेवा-स्तर · एक्सटेंशन वर्कर / ई-मित्र</span>
+  </header>
+
+  <main class="container operator-layout no-print">
+    <div class="card hi">
+      <p>यह उपकरण ई-मित्र संचालकों व कृषि विस्तार कार्यकर्ताओं के लिए है — एक साथ कई किसानों को तेज़ी से प्रोसेस करने हेतु। पात्रता जांच व दस्तावेज़ सूची पूरी तरह स्थिर कोर (offline-capable) से चलती हैं; केवल "किसान की ओर से अपलोड" के लिए लॉग-इन ज़रूरी है — बाकी सब सेवा-स्तर बंद होने पर भी काम करता है।</p>
+      <p id="upload-session-status" class="citation hi">सेशन जाँच हो रही है…</p>
+    </div>
+
+    <div class="card hi">
+      <div class="operator-tabs" id="farmer-tabs"></div>
+      <button id="add-farmer-btn" type="button" class="chip hi">+ नया किसान जोड़ें</button>
+    </div>
+
+    <div id="farmer-panel"></div>
+
+    <div class="card hi no-print">
+      <div class="chips">
+        <button id="print-active-btn" type="button" class="button hi">इस किसान का सारांश प्रिंट करें</button>
+        <button id="print-all-btn" type="button" class="button hi">सभी किसानों का सारांश प्रिंट करें (बैच)</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="print-area" class="print-only"></div>
+
+  <script type="module" src="./operator.js"></script>
+</body>
+</html>

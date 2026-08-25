@@ -23,6 +23,7 @@
       <div class="answer-headline" data-i18n="employee.card2_title">स्टाफ़ उपकरण</div>
       <div class="chips">
         <a class="button hi" id="cms-link" href="../../admin/cms/index.html" data-i18n="employee.cms_link">नियम-लेखन उपकरण (CMS)</a>
+        <a class="button hi" id="operator-link" href="../../admin/operator/index.html" data-i18n="employee.operator_link">ऑपरेटर मोड (S6)</a>
         <a class="button hi" id="session-link" href="../../services/session-demo.html" data-i18n="employee.session_link">सेशन जाँच (S1)</a>
       </div>
     </div>
@@ -37,6 +38,7 @@
     import { resolvePath } from '../../js/paths.js';
     import { applyTranslations, renderLangToggle } from '../../js/i18n.js';
     document.getElementById('cms-link').href = resolvePath('admin/cms/index.html');
+    document.getElementById('operator-link').href = resolvePath('admin/operator/index.html');
     document.getElementById('session-link').href = resolvePath('services/session-demo.html');
     document.getElementById('home-link').href = resolvePath('index.html');
     renderLangToggle();

@@ -623,3 +623,69 @@ img, svg { max-width: 100%; height: auto; }
   font-size: 0.8rem;
   margin-top: 4px;
 }
+
+/* ===== S6: operator mode ===== */
+.operator-layout { max-width: 900px; }
+
+.operator-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.operator-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 2px solid var(--field);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.operator-tab-active {
+  background: var(--field);
+  color: var(--paper);
+}
+
+.operator-tab-count {
+  background: var(--verdict);
+  color: var(--paper);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 7px;
+}
+
+.operator-tab-close {
+  font-weight: 700;
+  padding: 0 4px;
+  opacity: 0.7;
+}
+.operator-tab-close:hover { opacity: 1; }
+
+.operator-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(20, 24, 31, 0.1);
+}
+
+/* Print: only #print-area is shown, one farmer section per printed page.
+   Populated just before window.print() — see admin/operator/operator.js. */
+.print-only { display: none; }
+
+@media print {
+  .no-print { display: none !important; }
+  body > *:not(#print-area) { display: none !important; }
+  .print-only { display: block; }
+  .print-page-break { page-break-after: always; }
+}

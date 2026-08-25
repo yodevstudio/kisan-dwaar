@@ -272,6 +272,7 @@ const STRINGS = {
   },
   'employee.card2_title': { hi: 'स्टाफ़ उपकरण', en: 'Staff tools' },
   'employee.cms_link': { hi: 'नियम-लेखन उपकरण (CMS)', en: 'Rule-authoring tool (CMS)' },
+  'employee.operator_link': { hi: 'ऑपरेटर मोड (S6)', en: 'Operator mode (S6)' },
   'employee.session_link': { hi: 'सेशन जाँच (S1)', en: 'Session check (S1)' },
   'employee.home_link': { hi: '← मुख्य पृष्ठ पर वापस जाएं', en: '← Back to home' },
 };
