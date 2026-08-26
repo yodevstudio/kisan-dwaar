@@ -291,7 +291,8 @@ function buildPrintFarmer(farmer) {
     eligible.forEach(({ scheme, evaluation }) => {
       const p = el('p', '');
       const output = assemble('ELIGIBLE', scheme, evaluation);
-      p.innerHTML = `<strong>${scheme.name_hi}</strong> — ${output.text_hi}`;
+      p.appendChild(el('strong', '', scheme.name_hi));
+      p.appendChild(document.createTextNode(` — ${output.text_hi}`));
       section.appendChild(p);
       (scheme.documents || []).forEach((doc) => { if (!byDoc.has(doc.doc_id)) byDoc.set(doc.doc_id, doc); });
     });

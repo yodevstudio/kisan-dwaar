@@ -80,7 +80,7 @@ service cloud.firestore {
 
 function isValidCounterShape(data) {
   return data.event_type in
-           ['page_view', 'question_answered', 'verdict_issued', 'scheme_surfaced', 'feedback_vote']
+           ['page_view', 'question_answered', 'verdict_issued', 'scheme_surfaced', 'feedback_vote', 'language_active']
          && data.discriminator is string
          && data.discriminator.size() < 200
          && data.date is string

@@ -872,12 +872,22 @@ function applyComposerLabels() {
 }
 
 async function init() {
-  const [registry, slotsDoc, lexicon, samplesDoc] = await Promise.all([
-    loadSchemeRegistry(),
-    loadJSON('data/slots.json'),
-    loadJSON('data/lexicon.json'),
-    loadJSON('data/samples.json'),
-  ]);
+  let registry, slotsDoc, lexicon, samplesDoc;
+  try {
+    [registry, slotsDoc, lexicon, samplesDoc] = await Promise.all([
+      loadSchemeRegistry(),
+      loadJSON('data/slots.json'),
+      loadJSON('data/lexicon.json'),
+      loadJSON('data/samples.json'),
+    ]);
+  } catch (err) {
+    console.error('app: failed to load discovery-flow data:', err);
+    addBotBubble(t('chat.load_error'));
+    queryInputEl.disabled = true;
+    composerEl.querySelector('button[type="submit"]').disabled = true;
+    discoverBtnEl.disabled = true;
+    return;
+  }
   state.schemes = registry.schemes;
   state.slotsDoc = slotsDoc;
   state.lexicon = lexicon;

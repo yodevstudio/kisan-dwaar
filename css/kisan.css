@@ -386,7 +386,7 @@ img, svg { max-width: 100%; height: auto; }
   gap: 24px;
 }
 @media (max-width: 719px) {
-  .two-col { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: minmax(0, 1fr); }
 }
 
 .doc-list-title {
@@ -469,6 +469,7 @@ img, svg { max-width: 100%; height: auto; }
 
 .composer input[type="text"] {
   flex: 1;
+  min-width: 0;
 }
 
 /* ===== K20: feedback widget ===== */
@@ -527,6 +528,7 @@ img, svg { max-width: 100%; height: auto; }
 }
 
 .cms-field input, .cms-field textarea, .cms-field select {
+  width: 100%;
   min-height: 48px;
   padding: 8px 12px;
   border-radius: 8px;

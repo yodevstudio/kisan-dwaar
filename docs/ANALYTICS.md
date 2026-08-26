@@ -3,7 +3,7 @@
 
 Ships in the repository at `docs/ANALYTICS.md` and is linked from the README and the disclosure panel (K12), since K12 must state on the same page what analytics never collects.
 
-**Status: specification.** This document describes what S3 (services layer, not yet built) must implement and what it must never do. It is written ahead of the build, per the Day-7 gate for S3, so the build has a fixed target rather than a set of habits that drift. Where a term below ("session token," "event") names a mechanism, that is this spec proposing an implementation, not a description of code that already exists.
+**Status: live.** S3 (`services/telemetry.js`) has been built and is live in production, matching this specification. This document was originally written ahead of the build, per the Day-7 gate for S3, so the build had a fixed target rather than a set of habits that drift — that history is why the spec reads as a set of requirements rather than a changelog. Where a term below ("session token," "event") names a mechanism, it now describes code that exists, not a proposal.
 
 ---
 

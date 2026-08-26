@@ -9,6 +9,7 @@
 // static-core surface.
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
+import { labelFor, labelForEn } from '../../js/assemble.js';
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -60,7 +61,8 @@ function renderSlotRanking(container, ranking) {
   top.forEach((entry) => {
     const row = el('div', 'insight-scheme-row');
     const head = el('div', 'insight-scheme-head');
-    head.appendChild(el('span', cls, entry.slot));
+    const slotLabel = getLang() === 'en' ? labelForEn(entry.slot) : labelFor(entry.slot);
+    head.appendChild(el('span', cls, slotLabel));
     head.appendChild(el('span', 'citation', `${Math.round(entry.share * 1000) / 10}%`));
     row.appendChild(head);
     const bar = el('div', 'insight-bar');
