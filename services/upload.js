@@ -16,7 +16,9 @@ import { app } from './firebase-app.js';
 import { getSession } from './session.js';
 import { UPLOAD_MAX_FILE_BYTES } from '../js/policy.js';
 import { getStorage, ref, uploadBytes } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import {
+  getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp,
+} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const storage = getStorage(app);
 const db = getFirestore(app);
@@ -80,6 +82,17 @@ export async function preflightCheck(file) {
 // meaningful virus scan can run in-browser before the bytes ever leave
 // the device.
 
+// T10: a short, human-shareable reference — not a government application
+// number (this prototype has no application system to issue one from,
+// and never claims to). Date-prefixed so two references never look
+// alike by coincidence; a citizen or operator can quote it if they
+// contact e-Mitra staff about this specific upload.
+function generateReference() {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const suffix = crypto.randomUUID().slice(0, 6).toUpperCase();
+  return `KD-${date}-${suffix}`;
+}
+
 export async function uploadDocument(docId, file) {
   const session = getSession();
   if (!session) throw new Error('uploadDocument: no active session — S2 is auth-gated');
@@ -92,16 +105,40 @@ export async function uploadDocument(docId, file) {
   const path = `uploads/${session.uid}/${docId}/${file.name}`;
   await uploadBytes(ref(storage, path), file, { contentType: file.type });
 
+  const reference = generateReference();
+
   // Append-only audit trail — firestore.rules refuses update/delete on
-  // this collection even for the document's own owner.
+  // this collection even for the document's own owner. This is also the
+  // exact record pages/status/ reads back (via listMyUploads below) to
+  // show a citizen their own real uploads, so `reference` has to live
+  // here, not just in the return value below.
   await addDoc(collection(db, 'uploads_audit', session.uid, 'events'), {
     uid: session.uid,
     docId,
     fileName: file.name,
     contentType: file.type,
     size: file.size,
+    reference,
     uploadedAt: serverTimestamp(),
   });
 
-  return { path };
+  return { path, reference };
+}
+
+// T10: every upload recorded under the currently authenticated identity —
+// the same append-only trail uploadDocument() writes to, read back via
+// firestore.rules' owner-only rule (no new permission needed). This is
+// what pages/status/ calls for its "real records" section.
+//
+// Known, stated limit: S6's "upload on behalf" (admin/operator/
+// operator.js) records under the logged-in OPERATOR's uid, since this
+// prototype has no separate farmer identity to attribute it to instead —
+// pages/status/ says so plainly rather than implying a farmer can look up
+// an upload an operator made for them.
+export async function listMyUploads() {
+  const session = getSession();
+  if (!session) return [];
+  const q = query(collection(db, 'uploads_audit', session.uid, 'events'), orderBy('uploadedAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

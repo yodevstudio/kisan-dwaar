@@ -8,6 +8,12 @@ import { getLang, t } from '../../js/i18n.js';
 // real. scheme_id below references real, verified records in
 // data/schemes.json; application_id, submitted_on and current_stage are
 // fabricated for demonstration only, never real citizen data.
+//
+// T10: the section above this demo one is the opposite case — real
+// records, so it IS gated behind login (services/session.js, services/
+// upload.js's listMyUploads()), loaded dynamically so a Firebase/CDN
+// outage degrades to "can't check real uploads right now" without ever
+// touching the demo timelines below, which have no service dependency at all.
 
 const STAGES = [
   { key: 'submitted', i18nKey: 'status.stage.submitted' },
@@ -56,6 +62,92 @@ function renderTimeline(app, schemeNames) {
   return card;
 }
 
+function formatBytes(n) {
+  if (typeof n !== 'number') return '';
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// Real record, visually distinct from renderTimeline's demo cards: green
+// (bg-verdict) border instead of the plain default, every field read
+// straight from the uploads_audit event uploadDocument() wrote — nothing
+// here is a guess or a placeholder.
+function renderRealUpload(record) {
+  const lang = getLang();
+  const card = el('div', langClass('card bg-verdict'));
+  card.appendChild(el('div', 'answer-headline', record.fileName || record.docId || record.id));
+  const when = record.uploadedAt && record.uploadedAt.toDate
+    ? record.uploadedAt.toDate().toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')
+    : '…';
+  const sizeText = formatBytes(record.size);
+  card.appendChild(el('p', 'citation',
+    `${t('status.real_reference')}: ${record.reference || '—'} · ${t('status.real_uploaded_on')}: ${when}${sizeText ? ' · ' + sizeText : ''}`));
+  return card;
+}
+
+function initRealUploads() {
+  const gateEl = document.getElementById('real-upload-gate');
+  const listEl = document.getElementById('real-uploads');
+  let sessionModule = null;
+  let uploadModule = null;
+
+  const ready = Promise.all([
+    import('../../services/session.js').then((m) => { sessionModule = m; }),
+    import('../../services/upload.js').then((m) => { uploadModule = m; }),
+  ]).catch((err) => console.warn('status: real-uploads service layer unavailable (non-fatal, demo section unaffected):', err));
+
+  ready.then(() => {
+    if (!sessionModule || !uploadModule) {
+      gateEl.innerHTML = '';
+      gateEl.appendChild(el('p', 'hi term-warning', '⚠ सेवा-स्तर अभी उपलब्ध नहीं — असली अपलोड यहाँ नहीं दिखाए जा सकते; नीचे दी गई डेमो सूची पर कोई असर नहीं।'));
+      return;
+    }
+
+    let lastSession = null;
+    let lastRecords = null;
+
+    const renderGate = () => {
+      gateEl.innerHTML = '';
+      listEl.innerHTML = '';
+      if (!lastSession) {
+        gateEl.appendChild(el('p', 'hi', t('status.real_login_prompt')));
+        const btn = el('button', 'button hi', 'Google से लॉग-इन करें');
+        btn.type = 'button';
+        btn.addEventListener('click', () => sessionModule.login());
+        gateEl.appendChild(btn);
+        return;
+      }
+      gateEl.appendChild(el('p', 'hi citation', `✅ लॉग-इन है — uid: ${lastSession.uid}`));
+      if (lastRecords === null) return; // still loading — filled in once the fetch below resolves
+      if (lastRecords.length === 0) {
+        listEl.appendChild(el('p', 'hi citation', t('status.real_none')));
+        return;
+      }
+      lastRecords.forEach((r) => listEl.appendChild(renderRealUpload(r)));
+    };
+
+    // Re-render on a language toggle using whatever was already fetched —
+    // never re-fetches just because the citizen switched languages.
+    window.addEventListener('kisan:langchange', renderGate);
+
+    sessionModule.onSessionChange((session) => {
+      lastSession = session;
+      lastRecords = null;
+      renderGate();
+      if (!session) return;
+      uploadModule.listMyUploads()
+        .then((records) => { lastRecords = records; renderGate(); })
+        .catch((err) => {
+          console.error('status: listMyUploads failed:', err);
+          lastRecords = [];
+          renderGate();
+          listEl.appendChild(el('p', 'hi term-warning', 'असली अपलोड लोड नहीं हो सके।'));
+        });
+    });
+  });
+}
+
 async function init() {
   const container = document.getElementById('timelines');
   let schemes = [];
@@ -83,3 +175,4 @@ async function init() {
 }
 
 init();
+initRealUploads();

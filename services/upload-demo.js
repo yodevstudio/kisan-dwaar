@@ -10,10 +10,17 @@ const preflightResultEl = document.getElementById('preflight-result');
 const uploadBtn = document.getElementById('upload-btn');
 const uploadResultEl = document.getElementById('upload-result');
 const retentionLineEl = document.getElementById('retention-line');
+const scanLineEl = document.getElementById('scan-line');
 const fileHintLineEl = document.getElementById('file-hint-line');
 
 const maxMb = Math.round(UPLOAD_MAX_FILE_BYTES / (1024 * 1024));
 retentionLineEl.innerHTML = `<strong>प्रतिधारण अवधि:</strong> अपलोड की गई फ़ाइलें ${UPLOAD_RETENTION_DAYS} दिन बाद स्वतः हटा दी जाती हैं। (यह डिफ़ॉल्ट नीति है — असली तैनाती से पहले विभाग की वास्तविक नीति से पुष्टि करें।)`;
+// T10: stated here, not only in services/upload.js's own comment — a
+// citizen deciding whether to upload a real document should not have to
+// read source code to learn this. Pre-flight (type/size/page-count) is
+// real and runs before every upload; a virus scan is documented as a
+// planned Cloud Storage trigger (see that file) but does not exist yet.
+scanLineEl.innerHTML = '<strong>वायरस स्कैनिंग:</strong> अभी लागू नहीं है — डिज़ाइन में तय है, पर इस प्रोटोटाइप में बनाई नहीं गई। फ़ाइल की जाँच अभी सिर्फ़ प्रकार, आकार व पृष्ठ-संख्या तक सीमित है।';
 fileHintLineEl.textContent = `फ़ाइल चुनें (${UPLOAD_ALLOWED_TYPES_HI}, अधिकतम ${maxMb}MB):`;
 
 let currentSession = null;
@@ -81,8 +88,8 @@ uploadBtn.addEventListener('click', async () => {
   uploadBtn.disabled = true;
   setText(uploadResultEl, 'अपलोड हो रहा है…');
   try {
-    const { path } = await uploadDocument('demo_doc', currentFile);
-    setText(uploadResultEl, `✅ अपलोड सफल: ${path}`, 'hi result-line');
+    const { reference } = await uploadDocument('demo_doc', currentFile);
+    setText(uploadResultEl, `✅ अपलोड सफल — संदर्भ: ${reference}`, 'hi result-line');
   } catch (err) {
     console.error('upload failed:', err);
     setText(uploadResultEl, `⚠ अपलोड विफल: ${err.code || err.message}`, 'hi term-warning');

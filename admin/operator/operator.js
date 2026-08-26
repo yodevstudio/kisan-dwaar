@@ -15,6 +15,7 @@ import { resolvePath } from '../../js/paths.js';
 import { RAJASTHAN_DISTRICTS } from '../../js/router.js';
 import { evaluate } from '../../js/eligibility.js';
 import { assemble } from '../../js/assemble.js';
+import { UPLOAD_RETENTION_DAYS } from '../../js/policy.js';
 
 let sessionModule = null;
 let uploadModule = null;
@@ -148,8 +149,8 @@ function renderUploadRow(container, farmer, doc) {
       // overwrite each other under storage.rules' uploads/{uid}/{docId}/…
       // path — {docId} there is one opaque path segment, so this is a
       // purely client-side choice, no rule change needed.
-      const { path } = await uploadModule.uploadDocument(`${doc.doc_id}_op${farmer.id}`, file);
-      status.textContent = `✅ अपलोड सफल: ${path}`;
+      const { reference } = await uploadModule.uploadDocument(`${doc.doc_id}_op${farmer.id}`, file);
+      status.textContent = `✅ अपलोड सफल — संदर्भ: ${reference}`;
     } catch (err) {
       console.error('operator: upload failed:', err);
       status.textContent = `⚠ अपलोड विफल: ${err.message || err.code}`;
@@ -347,6 +348,13 @@ async function init() {
   document.getElementById('print-all-btn').addEventListener('click', () => {
     printFarmers(state.farmers);
   });
+
+  // T10: stated here, before any file is chosen — same discipline as
+  // services/upload-demo.html's own consent panel, since this screen (not
+  // that dev-only one) is the upload path a real farmer's document
+  // actually goes through today.
+  document.getElementById('upload-scan-line').textContent =
+    `प्रतिधारण अवधि: ${UPLOAD_RETENTION_DAYS} दिन बाद स्वतः हटाई जाती है। वायरस स्कैनिंग: अभी लागू नहीं है — डिज़ाइन में तय है, पर बनाई नहीं गई; जाँच अभी सिर्फ़ प्रकार, आकार व पृष्ठ-संख्या तक सीमित है।`;
 
   const statusEl = document.getElementById('upload-session-status');
   uploadReady.then(() => {

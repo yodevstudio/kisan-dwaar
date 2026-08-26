@@ -234,6 +234,26 @@ const STRINGS = {
 
   'status.title': { hi: 'आवेदन की स्थिति — किसान द्वार', en: 'Application Status — KISAN DWAAR' },
   'status.h1': { hi: 'आवेदन की स्थिति', en: 'Application Status' },
+  // T10: the real-uploads section — visually and textually distinct from
+  // the demo section below it.
+  'status.real_title': { hi: 'असली अपलोड — इस प्रोटोटाइप में दर्ज', en: 'Real uploads — recorded in this prototype' },
+  'status.real_body_before': {
+    hi: 'जब भी आप लॉग-इन करके इस प्रोटोटाइप के ज़रिए कोई फ़ाइल अपलोड करते हैं, वह यहाँ, आपके ही खाते के तहत, एक असली रिकॉर्ड के रूप में दिखती है — नीचे दी गई डेमो सूची से अलग।',
+    en: "Whenever you log in and upload a file through this prototype, it shows up here, under your own account, as a real record — separate from the demo list below.",
+  },
+  'status.real_body_strong': { hi: 'यह किसी विभागीय आवेदन प्रणाली से नहीं जुड़ा', en: 'This is not connected to any departmental application system' },
+  'status.real_body_after': {
+    hi: '— यह केवल यह पुष्टि करता है कि फ़ाइल इस प्रोटोटाइप में सफलतापूर्वक अपलोड व दर्ज हुई।',
+    en: '— it only confirms the file was successfully uploaded and recorded in this prototype.',
+  },
+  'status.real_operator_note': {
+    hi: 'ऑपरेटर मोड (S6) से "किसान की ओर से" किया गया अपलोड, ऑपरेटर के अपने खाते में दर्ज होता है — इस प्रोटोटाइप में किसान की कोई अलग पहचान नहीं है, इसलिए वह अपलोड यहाँ किसान के लॉग-इन में नहीं दिखेगा।',
+    en: 'An "on behalf of the farmer" upload from Operator Mode (S6) is recorded under the operator\'s own account — this prototype has no separate farmer identity, so that upload will not show up here under the farmer\'s own login.',
+  },
+  'status.real_login_prompt': { hi: 'अपने असली अपलोड देखने के लिए लॉग-इन करें।', en: 'Log in to see your real uploads.' },
+  'status.real_none': { hi: 'इस खाते से अभी तक कोई असली अपलोड दर्ज नहीं हुआ।', en: 'No real uploads have been recorded from this account yet.' },
+  'status.real_reference': { hi: 'संदर्भ', en: 'Reference' },
+  'status.real_uploaded_on': { hi: 'अपलोड किया गया', en: 'Uploaded on' },
   'status.demo_title': { hi: 'डेमो डेटा', en: 'Demo data' },
   'status.demo_body_before': { hi: 'यहाँ दिखाए गए सभी आवेदन', en: 'Every application shown here' },
   'status.demo_body_strong': { hi: 'बनावटी उदाहरण हैं', en: 'is a fabricated example' },
