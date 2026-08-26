@@ -9,22 +9,79 @@
 <body>
   <header class="site-header">
     <h1 class="hi" data-i18n="index.h1">किसान द्वार</h1>
-    <span class="badge hi" data-i18n="common.badge_rules">🔒 नियम-आधारित · कोई AI मॉडल नहीं</span>
   </header>
   <div id="site-nav"></div>
 
   <main class="container">
-    <div id="chat" class="chat" role="log" aria-live="polite" aria-label="बातचीत" data-i18n-aria-label="index.chat_aria_label"></div>
 
-    <div class="chips">
-      <button id="discover-btn" type="button" class="button hi">सभी योजनाएं देखें</button>
-    </div>
+    <section class="hero">
+      <p class="hi hero-lead" data-i18n="home.hero_lead">राजस्थान की कृषि योजनाओं के लिए एक नागरिक-केंद्रित प्रवेश द्वार — बिना खाता बनाए, बिना लॉग-इन किए।</p>
+      <div class="hero-actions">
+        <a class="button hi" id="hero-primary" href="pages/check/index.html" data-i18n="home.hero_primary">मेरी पात्रता जांचें</a>
+        <a class="chip hi" id="hero-secondary" href="pages/schemes/index.html" data-i18n="home.hero_secondary">सभी योजनाएं देखें</a>
+      </div>
+    </section>
 
-    <form id="composer" class="composer">
-      <label for="query-input" class="hi" style="position:absolute;left:-9999px;">अपना सवाल टाइप करें</label>
-      <input id="query-input" class="hi" type="text" placeholder="अपना सवाल टाइप करें…">
-      <button type="submit" class="button hi">भेजें</button>
-    </form>
+    <section>
+      <h2 class="hi" data-i18n="home.services_title">सेवाएं</h2>
+      <div class="card-grid">
+        <a class="card service-card hi" id="service-check" href="pages/check/index.html">
+          <div class="answer-headline" data-i18n="home.service_check_title">पात्रता जांचें</div>
+          <p data-i18n="home.service_check_body">छह सवालों में जानें आप किस योजना के लिए पात्र हैं।</p>
+        </a>
+
+        <a class="card service-card hi" id="service-calculator" href="pages/check/index.html">
+          <div class="answer-headline" data-i18n="home.service_calculator_title">अनुदान की गणना</div>
+          <p id="service-calculator-body" class="hi">लोड हो रहा है…</p>
+        </a>
+
+        <a class="card service-card hi" id="service-documents" href="pages/documents/index.html">
+          <div class="answer-headline" data-i18n="home.service_documents_title">दस्तावेज़</div>
+          <p data-i18n="home.service_documents_body">हर योजना के लिए ज़रूरी दस्तावेज़ों की सूची, कहाँ से मिलेंगे सहित।</p>
+        </a>
+
+        <a class="card service-card hi" id="service-status" href="pages/status/index.html">
+          <div class="answer-headline" data-i18n="home.service_status_title">आवेदन की स्थिति</div>
+          <p data-i18n="home.service_status_body">अभी डेमो डेटा पर आधारित — असली आवेदन प्रणाली से नहीं जुड़ा।</p>
+        </a>
+
+        <a class="card service-card hi" id="service-notices" href="pages/notices/index.html">
+          <div class="answer-headline" data-i18n="home.service_notices_title">सूचनाएं</div>
+          <p data-i18n="home.service_notices_body">हर योजना का स्रोत परिपत्र/वेब पेज, जाँच-तिथि व मशीन-पठनीयता सहित।</p>
+        </a>
+
+        <a class="card service-card hi" id="service-help" href="#help">
+          <div class="answer-headline" data-i18n="home.service_help_title">सहायता</div>
+          <p data-i18n="home.service_help_body">ई-मित्र व राजस्थान संपर्क (181) — नीचे देखें।</p>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2 class="hi" data-i18n="schemes.agriculture_heading">कृषि योजनाएं</h2>
+        <a class="hi" href="pages/schemes/index.html" data-i18n="home.schemes_view_all">सभी देखें</a>
+      </div>
+      <div id="agri-scheme-cards" class="card-grid">
+        <p class="hi" data-i18n="common.loading">लोड हो रहा है…</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2 class="hi" data-i18n="home.notices_title">हाल की सूचनाएं</h2>
+        <a class="hi" href="pages/notices/index.html" data-i18n="home.notices_view_all">सभी सूचनाएं देखें</a>
+      </div>
+      <div id="notices-strip">
+        <p class="hi" data-i18n="common.loading">लोड हो रहा है…</p>
+      </div>
+    </section>
+
+    <section id="help" class="card hi">
+      <div class="answer-headline" data-i18n="home.help_title">सहायता चाहिए?</div>
+      <p data-i18n="home.help_emitra">अपने नज़दीकी ई-मित्र केंद्र पर जाएं।</p>
+      <p data-i18n="home.help_sampark">राजस्थान संपर्क को 181 पर कॉल करें।</p>
+    </section>
 
     <div id="disclosure-panel"></div>
   </main>
@@ -34,9 +91,7 @@
     <div id="site-footer-links"></div>
   </footer>
 
-  <div id="print-area" class="print-only"></div>
-
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/home.js"></script>
   <script type="module">
     import { renderNav, renderFooterStaffLink } from './js/nav.js';
     import { renderDisclosurePanel } from './js/disclosure.js';

@@ -83,7 +83,7 @@ async function init() {
           card.appendChild(el('p', `citation ${cls}`.trim(), t('notices.linked_scheme')));
           const schemeLink = document.createElement('a');
           schemeLink.className = `button ${cls}`.trim();
-          schemeLink.href = `${resolvePath('index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
+          schemeLink.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
           schemeLink.textContent = t('schemes.check_eligibility');
           card.appendChild(schemeLink);
         }

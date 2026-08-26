@@ -13,7 +13,7 @@
 //
 // K8: bilingual — re-renders on 'kisan:langchange' so the panel switches
 // language instantly, same as every other static-core surface.
-import { getLang } from './i18n.js';
+import { getLang, t } from './i18n.js';
 import { loadSchemeRegistry } from './registry-source.js';
 import {
   UPLOAD_RETENTION_DAYS,
@@ -97,6 +97,12 @@ export async function renderDisclosurePanel(containerId = 'disclosure-panel') {
 
     const body = el('div', 'disclosure-body');
     const cls = lang === 'hi' ? 'hi' : '';
+
+    // T7: the "🔒 rules-based, no AI model" badge moved off every citizen
+    // screen's header — it now lives only here and on pages/about/, both
+    // places a citizen would actually go looking for what this system is,
+    // rather than repeated chrome on every page.
+    body.appendChild(el('p', 'badge hi', t('common.badge_rules')));
 
     body.appendChild(el('h3', cls, c.dataBasisTitle));
     body.appendChild(el('p', cls, schemeCounts !== null ? c.dataBasisFound(schemeCounts.agriculture, schemeCounts.relatedWelfare) : c.dataBasisMissing));

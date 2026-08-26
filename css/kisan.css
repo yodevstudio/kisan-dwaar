@@ -309,6 +309,44 @@ img, svg { max-width: 100%; height: auto; }
 
 .card-icon { font-size: 1.25em; }
 
+/* T7: portal home (index.html) — hero, service-card grid, and the
+   section-heading + "view all" link row the scheme/notices previews
+   share. .container's own 640px cap still holds; the grid just lets two
+   narrow cards sit side by side once there's room, one per row otherwise. */
+.hero { padding: 8px 0 16px; text-align: center; }
+.hero-lead { font-size: 1.1rem; margin: 0 0 16px; }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.hero-actions a { text-decoration: none; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.service-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.service-card:hover, .service-card:focus-visible { border-color: var(--field); }
+.service-card .answer-headline { font-size: 22px; }
+.service-card p { margin: 0; }
+
 .doc-list-title {
   font-weight: 700;
   margin: 12px 0 4px;

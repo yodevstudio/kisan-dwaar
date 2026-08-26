@@ -67,6 +67,38 @@ const STRINGS = {
   'index.discover_btn': { hi: 'सभी योजनाएं देखें', en: 'See all schemes' },
   'index.chat_aria_label': { hi: 'बातचीत', en: 'Conversation' },
 
+  // T7: portal home (index.html) — hero, service cards, agriculture-scheme
+  // and notices previews, and the help block. The chat itself now lives at
+  // pages/check/ (index.chat_aria_label above stays there, unrenamed —
+  // the key name is just an identifier, js/app.js doesn't care which page
+  // hosts it).
+  'home.hero_lead': {
+    hi: 'राजस्थान की कृषि योजनाओं के लिए एक नागरिक-केंद्रित प्रवेश द्वार — बिना खाता बनाए, बिना लॉग-इन किए।',
+    en: "A citizen-centred gateway to Rajasthan's agriculture schemes — no account, no login.",
+  },
+  'home.hero_primary': { hi: 'मेरी पात्रता जांचें', en: 'Check my eligibility' },
+  'home.hero_secondary': { hi: 'सभी योजनाएं देखें', en: 'See all schemes' },
+  'home.services_title': { hi: 'सेवाएं', en: 'Services' },
+  'home.service_check_title': { hi: 'पात्रता जांचें', en: 'Check eligibility' },
+  'home.service_check_body': { hi: 'छह सवालों में जानें आप किस योजना के लिए पात्र हैं।', en: 'Find out which scheme you qualify for in six questions.' },
+  'home.service_calculator_title': { hi: 'अनुदान की गणना', en: 'Subsidy calculator' },
+  'home.service_status_title': { hi: 'आवेदन की स्थिति', en: 'Application status' },
+  'home.service_status_body': { hi: 'अभी डेमो डेटा पर आधारित — असली आवेदन प्रणाली से नहीं जुड़ा।', en: 'Currently based on demo data — not connected to the real application system.' },
+  'home.service_documents_title': { hi: 'दस्तावेज़', en: 'Documents' },
+  'home.service_documents_body': { hi: 'हर योजना के लिए ज़रूरी दस्तावेज़ों की सूची, कहाँ से मिलेंगे सहित।', en: 'The checklist of documents each scheme needs, and where to get them.' },
+  'home.service_notices_title': { hi: 'सूचनाएं', en: 'Notices' },
+  'home.service_notices_body': { hi: 'हर योजना का स्रोत परिपत्र/वेब पेज, जाँच-तिथि व मशीन-पठनीयता सहित।', en: "Each scheme's source circular/web page, with verification date and machine-readability." },
+  'home.service_help_title': { hi: 'सहायता', en: 'Help' },
+  'home.service_help_body': { hi: 'ई-मित्र व राजस्थान संपर्क (181) — नीचे देखें।', en: 'e-Mitra and Rajasthan Sampark (181) — see below.' },
+  'home.schemes_view_all': { hi: 'सभी देखें', en: 'View all' },
+  'home.notices_title': { hi: 'हाल की सूचनाएं', en: 'Recent notices' },
+  'home.notices_view_all': { hi: 'सभी सूचनाएं देखें', en: 'See all notices' },
+  'home.notices_load_error': { hi: 'सूचनाएं लोड नहीं हो सकीं।', en: 'Could not load notices.' },
+  'home.schemes_load_error': { hi: 'योजना सूची लोड नहीं हो सकी।', en: 'Could not load the scheme list.' },
+  'home.help_title': { hi: 'सहायता चाहिए?', en: 'Need help?' },
+  'home.help_emitra': { hi: 'अपने नज़दीकी ई-मित्र केंद्र पर जाएं।', en: 'Visit your nearest e-Mitra centre.' },
+  'home.help_sampark': { hi: 'राजस्थान संपर्क को 181 पर कॉल करें।', en: 'Call Rajasthan Sampark at 181.' },
+
   // K8: js/app.js chat UI — every bubble/label the discovery flow itself
   // prints. Frozen per-bubble at creation time (see js/app.js's langClass
   // header note) — this dictionary just supplies whichever language was
@@ -138,16 +170,6 @@ const STRINGS = {
 
   'check.title': { hi: 'पात्रता जांचें — किसान द्वार', en: 'Check Eligibility — KISAN DWAAR' },
   'check.h1': { hi: 'पात्रता जांचें', en: 'Check Eligibility' },
-  'check.card1_title': { hi: 'छह सवालों में अपनी पात्रता जानें', en: 'Know your eligibility in six questions' },
-  'check.card1_body': {
-    hi: 'कोई खाता या लॉग-इन ज़रूरी नहीं। अपनी उम्र, व्यवसाय, आय, श्रेणी व ज़िला बताएं — इंजन बताएगा कि आप किस योजना के लिए पात्र हैं, कौनसा दस्तावेज़ चाहिए, और अनुदान की राशि की गणना भी दिखाएगा जहाँ संभव हो।',
-    en: "No account or login needed. Tell us your age, occupation, income, category and district — the engine will tell you which scheme you're eligible for, which documents you need, and will show the subsidy amount calculation where possible.",
-  },
-  'check.card1_body2': { hi: 'आप कोई योजना का नाम टाइप करके भी सीधे पूछ सकते हैं — जैसे "तारबंदी योजना चाहिए"।', en: 'You can also type a scheme name directly — like "I need the fencing scheme".' },
-  'check.card1_cta': { hi: 'अभी शुरू करें', en: 'Start now' },
-  'check.card2_title': { hi: 'या सूची में से चुनें', en: 'Or choose from the list' },
-  'check.card2_body': { hi: 'सभी 12 योजनाओं की सूची, हर एक के स्रोत सहित, यहाँ देखें:', en: 'See the list of all 12 schemes, each with its source, here:' },
-  'check.card2_cta': { hi: 'सभी योजनाएं देखें', en: 'See all schemes' },
 
   'documents.title': { hi: 'दस्तावेज़ — किसान द्वार', en: 'Documents — KISAN DWAAR' },
   'documents.h1': { hi: 'दस्तावेज़', en: 'Documents' },

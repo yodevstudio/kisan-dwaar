@@ -24,7 +24,7 @@ function renderCard(scheme, cls, lang) {
 
   const link = document.createElement('a');
   link.className = `button ${cls}`.trim();
-  link.href = `${resolvePath('index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
+  link.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
   link.textContent = t('schemes.check_eligibility');
   card.appendChild(link);
   return card;
