@@ -54,15 +54,20 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
 
-    // "Published" here means "finalised inside the CMS," never "live to
-    // citizens" — the static core reads data/schemes.json, a git-tracked
-    // file, never Firestore (CONTEXT.md constraint 1). Publishing from
-    // the CMS produces registry-valid JSON a human still commits by hand;
-    // this is where that JSON and its version history live in the
-    // meantime. Versions are append-only, same discipline as S2's
-    // upload audit trail.
+    // T4: read is public — js/registry-source.js's boot-sequence fallback
+    // (attempt this, race a 3-second timeout, fall back to the git-tracked
+    // data/schemes.json) reads this collection with no session, the same
+    // way S3's analytics counters are open for the same reason: nothing
+    // here carries anything an anonymous citizen shouldn't see, since
+    // validate-data.mjs's own rules already gate what can reach this
+    // collection at all. Write stays authenticated-only — only a logged-in
+    // officer can publish. Versions stay authenticated-only too; that
+    // history is a CMS-internal audit trail, not something the public
+    // boot path ever reads. Same append-only discipline as S2's upload
+    // audit trail.
     match /cms_published/{schemeId} {
-      allow read, write: if request.auth != null;
+      allow read: if true;
+      allow write: if request.auth != null;
 
       match /versions/{versionId} {
         allow read: if request.auth != null;

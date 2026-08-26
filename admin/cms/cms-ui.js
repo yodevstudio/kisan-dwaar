@@ -78,6 +78,43 @@ function formatValueForInput(value) {
   return JSON.stringify(value);
 }
 
+// T4: field-by-field diff between two published snapshots of the same
+// scheme, for the CMS's version-history display. Recurses into plain
+// objects and arrays so a nested change (e.g. one eligibility condition's
+// value) is reported at its own leaf path, not just "eligibility changed".
+function diffRecords(before, after, prefix = '') {
+  const changes = [];
+  const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const keys = new Set([
+    ...(isPlainObject(before) ? Object.keys(before) : []),
+    ...(isPlainObject(after) ? Object.keys(after) : []),
+  ]);
+  if (isPlainObject(before) && isPlainObject(after)) {
+    keys.forEach((key) => {
+      changes.push(...diffRecords(before[key], after[key], prefix ? `${prefix}.${key}` : key));
+    });
+    return changes;
+  }
+  if (Array.isArray(before) && Array.isArray(after)) {
+    const maxLen = Math.max(before.length, after.length);
+    for (let i = 0; i < maxLen; i += 1) {
+      changes.push(...diffRecords(before[i], after[i], `${prefix}[${i}]`));
+    }
+    return changes;
+  }
+  if (JSON.stringify(before) !== JSON.stringify(after)) {
+    changes.push({ path: prefix || '(root)', before, after });
+  }
+  return changes;
+}
+
+function formatDiffValue(value) {
+  if (value === undefined) return '—';
+  if (value === null) return 'null';
+  if (typeof value === 'string') return value;
+  return JSON.stringify(value);
+}
+
 // ===== Section 1: basics =====
 function renderBasics() {
   const container = document.getElementById('form-basics');
@@ -87,7 +124,7 @@ function renderBasics() {
     ['name_hi', 'नाम (हिन्दी)'],
     ['name_en', 'नाम (अंग्रेज़ी)'],
     ['department', 'विभाग'],
-    ['dataset_version', 'dataset_version (YYYY.MM.DD-N)'],
+    ['dataset_version', 'dataset_version (YYYY.MM.DD-N) — validate के लिए कोई भी मान्य प्रारूप भरें; प्रकाशित होने पर असली मान स्वतः यहीं अपडेट हो जाएगा'],
     ['source_url', 'स्रोत URL'],
     ['last_verified', 'जाँचा गया (YYYY-MM-DD)'],
     ['next_review_due', 'अगली समीक्षा तिथि (YYYY-MM-DD)'],
@@ -660,8 +697,10 @@ async function init() {
     const ok = await runValidate();
     if (!ok) { alert('प्रकाशित करने से पहले सभी जाँचें पास करनी होंगी।'); return; }
     try {
-      await publish(record.scheme_id, record);
-      alert('प्रकाशित — अब इसे डेवलपर data/schemes.json में जोड़कर कमिट करे। यह टूल सीधे लाइव रजिस्ट्री नहीं बदलता (CONTEXT.md: static core की read-path कभी भी किसी सेवा-कॉल पर निर्भर नहीं होती)।');
+      const published = await publish(record.scheme_id, record);
+      record.dataset_version = published.dataset_version;
+      renderBasics();
+      alert(`प्रकाशित — dataset_version ${published.dataset_version}। अगला पेज-लोड इसे लाइव रजिस्ट्री से सीधे देख सकता है (js/registry-source.js), पर committed data/schemes.json में डेवलपर द्वारा जोड़े व कमिट किए बिना यह फ़ाइल-आधारित फ़ॉलबैक (सेवा-स्तर बंद होने पर) में नहीं दिखेगा — दोनों को मिलाना अब भी ज़रूरी है।`);
     } catch (err) {
       alert(`प्रकाशित नहीं हो सका: ${err.message}`);
     }
@@ -679,12 +718,26 @@ async function init() {
     const host = document.getElementById('version-history');
     host.innerHTML = '';
     if (versions.length === 0) { host.appendChild(el('p', 'hi', 'कोई प्रकाशित संस्करण नहीं।')); return; }
-    const list = el('ul', 'doc-list');
     versions.forEach((v) => {
       const when = v.published_at && v.published_at.toDate ? v.published_at.toDate().toLocaleString('hi-IN') : '…';
-      list.appendChild(el('li', '', `${when} — ${v.published_by}`));
+      const entry = el('div', 'cms-version-entry');
+      entry.appendChild(el('p', 'result-line', `${when} — ${v.published_by} — dataset_version ${v.data && v.data.dataset_version}`));
+      if (!v.previous_data) {
+        entry.appendChild(el('p', 'citation hi', 'पहला प्रकाशन — कोई पिछला संस्करण नहीं।'));
+      } else {
+        const changes = diffRecords(v.previous_data, v.data);
+        if (changes.length === 0) {
+          entry.appendChild(el('p', 'citation hi', 'पिछले प्रकाशित संस्करण से कोई अंतर नहीं।'));
+        } else {
+          const list = el('ul', 'doc-list');
+          changes.forEach(({ path, before, after }) => {
+            list.appendChild(el('li', '', `${path}: ${formatDiffValue(before)} → ${formatDiffValue(after)}`));
+          });
+          entry.appendChild(list);
+        }
+      }
+      host.appendChild(entry);
     });
-    host.appendChild(list);
   });
 }
 

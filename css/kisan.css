@@ -457,6 +457,12 @@ img, svg { max-width: 100%; height: auto; }
 
 .cms-condition-group { margin-bottom: 16px; }
 
+.cms-version-entry {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--field);
+}
+.cms-version-entry:last-child { border-bottom: none; }
+
 .cms-condition-row {
   display: flex;
   flex-wrap: wrap;

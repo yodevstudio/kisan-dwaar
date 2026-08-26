@@ -5,6 +5,7 @@ import { evaluate, evaluateAll } from './eligibility.js';
 import { assemble, assembleEn, explainGapEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
+import { loadSchemeRegistry } from './registry-source.js';
 
 // K5: presentation only — every verdict, every rupee figure and every
 // missing-slot prompt below comes from eligibility.js / assemble.js /
@@ -640,13 +641,13 @@ function applyComposerLabels() {
 }
 
 async function init() {
-  const [schemes, slotsDoc, lexicon, samplesDoc] = await Promise.all([
-    loadJSON('data/schemes.json'),
+  const [registry, slotsDoc, lexicon, samplesDoc] = await Promise.all([
+    loadSchemeRegistry(),
     loadJSON('data/slots.json'),
     loadJSON('data/lexicon.json'),
     loadJSON('data/samples.json'),
   ]);
-  state.schemes = schemes;
+  state.schemes = registry.schemes;
   state.slotsDoc = slotsDoc;
   state.lexicon = lexicon;
 
