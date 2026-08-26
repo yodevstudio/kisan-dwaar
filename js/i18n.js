@@ -106,6 +106,16 @@ const STRINGS = {
   'chat.unknown_query': { hi: 'मेरे पास इसकी पक्की जानकारी नहीं है। "सभी योजनाएं देखें" दबाएं, या नज़दीकी ई-मित्र से पूछें।', en: 'I don\'t have confirmed information on this. Press "See all schemes", or ask at your nearest e-Mitra.' },
   'chat.samples_intro': { hi: 'कुछ उदाहरण, आज़माने के लिए:', en: 'Some examples to try:' },
   'chat.checking_eligibility_for': { hi: '{{scheme}} की पात्रता जांचते हैं।', en: "Checking eligibility for {{scheme}}." },
+
+  // T6: the auditable-decision panel under every verdict card.
+  'chat.audit_panel_summary': { hi: 'यह निर्णय कैसे लिया गया', en: 'How this decision was made' },
+  'chat.audit_none_stated': { hi: 'इस योजना के लिए अभी तक कोई जानकारी दर्ज नहीं है।', en: 'No information has been given yet for this scheme.' },
+  'chat.audit_rule': { hi: 'नियम क्या कहता है', en: 'What the rule says' },
+  'chat.audit_decision': { hi: 'निर्णय', en: 'Decision' },
+  'chat.audit_decision_eligible': { hi: 'सभी लागू शर्तें पूरी हुईं — आप इस योजना के लिए पात्र हैं।', en: 'All applicable conditions were met — you are eligible for this scheme.' },
+  'chat.audit_decision_generic_not_eligible': { hi: 'कम से कम एक शर्त पूरी नहीं हुई।', en: 'At least one condition was not met.' },
+  'chat.audit_listen': { hi: 'सुनें', en: 'Listen' },
+  'chat.audit_print': { hi: 'प्रिंट करें', en: 'Print' },
   'chat.greeting': {
     hi: 'नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।',
     en: 'Hello! I am KISAN DWAAR — for Rajasthan\'s agriculture schemes. You can type your question, or press "See all schemes".',

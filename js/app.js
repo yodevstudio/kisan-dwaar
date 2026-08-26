@@ -1,8 +1,8 @@
 import { resolvePath } from './paths.js';
 import { normalise } from './normalise.js';
 import { route, RAJASTHAN_DISTRICTS, RAJASTHAN_DISTRICTS_EN } from './router.js';
-import { evaluate, evaluateAll } from './eligibility.js';
-import { assemble, assembleEn, explainGapEn } from './assemble.js';
+import { evaluate, evaluateAll, formatRangeValue, parseBounds } from './eligibility.js';
+import { assemble, assembleEn, explainGap, explainGapEn, labelFor, labelForEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
 import { loadSchemeRegistry } from './registry-source.js';
@@ -316,6 +316,220 @@ function docWhereFor(doc) {
   return getLang() === 'en' && doc.where_to_get_en ? doc.where_to_get_en : doc.where_to_get_hi;
 }
 
+// T6: the auditable-decision panel under every verdict. Every value below
+// is read straight off evaluate()'s own output (js/eligibility.js) or
+// formatted through assemble.js's existing explainGap/explainGapEn and
+// label dictionaries — nothing here re-runs a single eligibility
+// condition. The four functions below build the four required sections;
+// buildAuditPanelSections() assembles them in order and is called from
+// both the live, collapsible on-screen panel and the print view, so the
+// two can never drift apart.
+
+function slotLabelFor(slot) {
+  return getLang() === 'en' ? labelForEn(slot) : labelFor(slot);
+}
+
+// Projects an already-known slot value for display — never recomputes
+// anything, just formats a value evaluate()'s clauses already carried.
+function formatSlotValue(slot, value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'object' && !Array.isArray(value) && ('min' in value || 'max' in value)) {
+    return formatRangeValue(value);
+  }
+  const def = findSlotDef(slot);
+  if (def && Array.isArray(def.options)) {
+    const opt = def.options.find((o) => o.value === value);
+    if (opt) return labelForOption(opt);
+  }
+  return typeof value === 'number' ? value.toLocaleString('en-IN') : String(value);
+}
+
+// K8: eligibility.js's own opLabelFor/formatReason are Hindi-only by
+// design (matching evaluation.reasons, which this panel uses verbatim in
+// Hindi mode) — English mode needs its own mirror, built from the same
+// clause fields evaluate() already returns, not a re-evaluation.
+function isWildcardValue(value) {
+  return value === '*' || (Array.isArray(value) && value.includes('*'));
+}
+
+function opLabelForEn(op, value) {
+  switch (op) {
+    case 'in': return `must be one of: [${value.join(', ')}]`;
+    case 'gte': return `must be >= ${value}`;
+    case 'lte': return `must be <= ${value}`;
+    case 'eq': return `must be = ${value}`;
+    case 'between': {
+      const { min, max } = parseBounds(value);
+      return `must be between ${min} and ${max}`;
+    }
+    default: return '';
+  }
+}
+
+function clauseResultSuffixEn(clause) {
+  if (clause.result === 'unknown') return 'information needed';
+  if (clause.kind === 'exclusion') return clause.result ? 'exclusion applies (not eligible)' : 'exclusion does not apply (ok)';
+  return clause.result ? 'condition met' : 'condition failed';
+}
+
+function clauseLineEn(clause) {
+  const label = slotLabelFor(clause.slot);
+  if (clause.result === 'unknown') return `${label}: not yet stated — ${clauseResultSuffixEn(clause)}`;
+  const requirement = isWildcardValue(clause.required) ? '(no specific condition)' : opLabelForEn(clause.op, clause.required);
+  const actualText = formatSlotValue(clause.slot, clause.actual);
+  return `${label}: stated ${actualText}, ${requirement} — ${clauseResultSuffixEn(clause)}`;
+}
+
+// आपने बताया — every slot the citizen has already answered that this
+// scheme's conditions actually reference, deduped by slot (a gender-
+// branched any_of can reference the same slot twice). Reads clause.actual
+// directly; never touches state.slots itself so it can never show a value
+// this scheme's own evaluation didn't already see.
+function buildStatedInputsSection(evaluation) {
+  const wrap = el('div', 'audit-section');
+  wrap.appendChild(el('h4', langClass(''), t('chat.you_stated')));
+  const seen = new Map();
+  evaluation.clauses.forEach((c) => {
+    if (c.actual === null || c.actual === undefined) return;
+    if (!seen.has(c.slot)) seen.set(c.slot, c.actual);
+  });
+  if (seen.size === 0) {
+    wrap.appendChild(el('p', langClass('citation'), t('chat.audit_none_stated')));
+    return wrap;
+  }
+  const list = el('ul', 'doc-list');
+  seen.forEach((value, slot) => {
+    list.appendChild(el('li', langClass(''), `${slotLabelFor(slot)}: ${formatSlotValue(slot, value)}`));
+  });
+  wrap.appendChild(list);
+  return wrap;
+}
+
+// नियम क्या कहता है — every clause evaluate() actually checked. Hindi mode
+// uses evaluation.reasons verbatim (already exactly this, already tested);
+// English mode builds the same information from evaluation.clauses, since
+// eligibility.js's reasons carry no English counterpart.
+function buildRuleSection(evaluation) {
+  const wrap = el('div', 'audit-section');
+  wrap.appendChild(el('h4', langClass(''), t('chat.audit_rule')));
+  const list = el('ul', 'doc-list');
+  if (getLang() === 'en') {
+    evaluation.clauses.forEach((c) => list.appendChild(el('li', '', clauseLineEn(c))));
+  } else {
+    evaluation.reasons.forEach((r) => list.appendChild(el('li', 'hi', r)));
+  }
+  wrap.appendChild(list);
+  return wrap;
+}
+
+// निर्णय — which clause decided it. NOT_ELIGIBLE names the blocking
+// gap(s) via assemble.js's own explainGap/explainGapEn (D6, already
+// guarded by assertNoUnsourcedNumber); NEED_MORE_INFO names the missing
+// slot and its catalogue question, with an inline "अभी बताएं" that reuses
+// askCatalogSlot exactly as resolveScheme's own loop does; ELIGIBLE states
+// the plain, digit-free confirmation. `opts.interactive` is false for the
+// print view — a printed page has no click or speech to offer.
+function buildDecisionSection(scheme, evaluation, opts) {
+  const { interactive, onSlotAnswered } = opts || {};
+  const lang = getLang();
+  const wrap = el('div', 'audit-section');
+  wrap.appendChild(el('h4', langClass(''), t('chat.audit_decision')));
+  const decisionLines = [];
+
+  if (evaluation.verdict === 'NOT_ELIGIBLE') {
+    evaluation.gaps.forEach((gap) => {
+      try {
+        decisionLines.push(lang === 'en' ? explainGapEn(gap, scheme) : explainGap(gap, scheme));
+      } catch (err) {
+        console.error('audit panel: explainGap failed:', err);
+      }
+    });
+    if (decisionLines.length === 0) decisionLines.push(t('chat.audit_decision_generic_not_eligible'));
+  } else if (evaluation.verdict === 'NEED_MORE_INFO') {
+    evaluation.missing_slots.forEach((slot) => {
+      const def = findSlotDef(slot);
+      const question = def ? questionFor(def) : slotLabelFor(slot);
+      decisionLines.push(`${slotLabelFor(slot)} — ${question}`);
+    });
+  } else {
+    decisionLines.push(t('chat.audit_decision_eligible'));
+  }
+
+  decisionLines.forEach((line) => wrap.appendChild(el('p', langClass('result-line'), line)));
+
+  if (interactive && evaluation.verdict === 'NEED_MORE_INFO' && onSlotAnswered) {
+    evaluation.missing_slots.forEach((slot) => {
+      const btn = el('button', langClass('chip'), t('chat.tell_now'));
+      btn.type = 'button';
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        await askCatalogSlot(slot);
+        onSlotAnswered();
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  if (interactive && decisionLines.length && window.speechSynthesis) {
+    const speakBtn = el('button', langClass('chip'), `🔊 ${t('chat.audit_listen')}`);
+    speakBtn.type = 'button';
+    speakBtn.addEventListener('click', () => {
+      const utterance = new SpeechSynthesisUtterance(decisionLines.join('. '));
+      utterance.lang = lang === 'en' ? 'en-IN' : 'hi-IN';
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    });
+    wrap.appendChild(speakBtn);
+  }
+
+  return wrap;
+}
+
+// स्रोत — same citation assemble()/assembleEn() already attach to output
+// (source_url + last_verified), plus the subsidy_rule's own captured
+// quote when this scheme has one — same field, same pattern already used
+// in renderExplainerResult() below.
+function buildSourceSection(scheme, output) {
+  const lang = getLang();
+  const wrap = el('div', 'audit-section');
+  wrap.appendChild(el('h4', langClass(''), t('chat.source')));
+  const rule = scheme.subsidy_rule;
+  if (rule && rule.source_quote_hi) {
+    const quoteLabel = lang === 'en' ? t('chat.original_hindi_text') : '';
+    wrap.appendChild(el('p', 'source-quote', `${quoteLabel ? quoteLabel + ': ' : ''}"${rule.source_quote_hi}"`));
+  }
+  if (output.citation) {
+    wrap.appendChild(el('p', 'citation', `${t('chat.source')}: ${output.citation.url} · ${t('chat.verified_on')}: ${output.citation.last_verified}`));
+  }
+  return wrap;
+}
+
+function buildAuditPanelSections(scheme, evaluation, output, opts) {
+  const frag = document.createDocumentFragment();
+  frag.appendChild(buildStatedInputsSection(evaluation));
+  frag.appendChild(buildRuleSection(evaluation));
+  frag.appendChild(buildDecisionSection(scheme, evaluation, opts));
+  frag.appendChild(buildSourceSection(scheme, output));
+  return frag;
+}
+
+// Populates the shared #print-area (same pattern admin/operator/operator.js
+// already uses for its own print flow) and calls window.print() — the
+// global print stylesheet (css/kisan.css) hides everything else on the
+// page, so only this scheme's verdict and audit panel appear on paper.
+function printAuditCard(scheme, evaluation, output) {
+  const area = document.getElementById('print-area');
+  if (!area) { window.print(); return; }
+  area.innerHTML = '';
+  const section = el('div', 'print-audit-card');
+  section.appendChild(el('h2', langClass(''), schemeNameFor(scheme)));
+  section.appendChild(el('p', 'answer-headline', verdictIcon(evaluation.verdict).word));
+  section.appendChild(el('p', langClass(''), outputText(output)));
+  section.appendChild(buildAuditPanelSections(scheme, evaluation, output, { interactive: false }));
+  area.appendChild(section);
+  window.print();
+}
+
 function renderVerdictCard(scheme, evaluation, output) {
   track('trackVerdictIssued', evaluation.verdict);
   track('trackSchemeSurfaced', scheme.scheme_id);
@@ -349,6 +563,23 @@ function renderVerdictCard(scheme, evaluation, output) {
   }
 
   card.appendChild(renderFeedbackWidget());
+
+  const auditDetails = el('details', 'audit-panel');
+  const auditSummary = document.createElement('summary');
+  auditSummary.className = langClass('');
+  auditSummary.textContent = t('chat.audit_panel_summary');
+  auditDetails.appendChild(auditSummary);
+  const rerenderAfterAnswer = () => {
+    const freshEvaluation = evaluate(state.slots, scheme);
+    const freshOutput = assembleForLang(freshEvaluation.verdict, scheme, freshEvaluation);
+    renderVerdictCard(scheme, freshEvaluation, freshOutput);
+  };
+  auditDetails.appendChild(buildAuditPanelSections(scheme, evaluation, output, { interactive: true, onSlotAnswered: rerenderAfterAnswer }));
+  const printBtn = el('button', langClass('chip'), `🖨️ ${t('chat.audit_print')}`);
+  printBtn.type = 'button';
+  printBtn.addEventListener('click', () => printAuditCard(scheme, evaluation, output));
+  auditDetails.appendChild(printBtn);
+  card.appendChild(auditDetails);
 
   chatEl.appendChild(card);
   scrollToBottom();

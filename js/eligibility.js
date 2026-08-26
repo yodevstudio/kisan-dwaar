@@ -223,7 +223,28 @@ export function evaluate(slots, scheme) {
     ...toGaps(noneOfResult.leaves, 'exclusion'),
   ];
 
-  return { verdict, reasons, missing_slots: [...new Set(final.missing)], gaps };
+  // T6: every leaf clause actually evaluated, structured rather than
+  // pre-formatted into `reasons`' prose — an audit panel needs the raw
+  // slot/op/required/actual fields (e.g. to list what the citizen stated,
+  // deduped by slot) that `reasons`' strings don't expose without
+  // re-parsing them. Same three groups, same kind tagging as `gaps` above
+  // — nothing here is computed by re-running any condition.
+  const toClause = (leaf, kind) => ({
+    slot: leaf.condition.slot,
+    op: leaf.condition.op,
+    required: leaf.condition.value,
+    actual: leaf.actual,
+    result: leaf.result,
+    message: leaf.message,
+    kind,
+  });
+  const clauses = [
+    ...allOfResult.leaves.map((l) => toClause(l, 'requirement')),
+    ...anyOfResult.leaves.map((l) => toClause(l, 'requirement')),
+    ...noneOfResult.leaves.map((l) => toClause(l, 'exclusion')),
+  ];
+
+  return { verdict, reasons, missing_slots: [...new Set(final.missing)], gaps, clauses };
 }
 
 // Batch form of evaluate() — every screen that needs a full eligibility

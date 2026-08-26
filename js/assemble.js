@@ -125,11 +125,14 @@ const SLOT_LABELS_EN = {
   pension_monthly_inr: 'monthly pension amount',
 };
 
-function labelFor(slot) {
+// T6: exported so the audit panel (js/app.js) can label a slot the same
+// way every other message in this file already does, instead of keeping a
+// second copy of these dictionaries.
+export function labelFor(slot) {
   return SLOT_LABELS_HI[slot] || slot;
 }
 
-function labelForEn(slot) {
+export function labelForEn(slot) {
   return SLOT_LABELS_EN[slot] || slot;
 }
 
