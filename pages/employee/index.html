@@ -25,6 +25,7 @@
         <a class="button hi" id="cms-link" href="../../admin/cms/index.html" data-i18n="employee.cms_link">नियम-लेखन उपकरण (CMS)</a>
         <a class="button hi" id="operator-link" href="../../admin/operator/index.html" data-i18n="employee.operator_link">ऑपरेटर मोड (S6)</a>
         <a class="button hi" id="session-link" href="../../services/session-demo.html" data-i18n="employee.session_link">सेशन जाँच (S1)</a>
+        <a class="button hi" id="analytics-link" href="../../services/analytics-dashboard.html" data-i18n="employee.analytics_link">एनालिटिक्स डैशबोर्ड (S3)</a>
       </div>
     </div>
   </main>
@@ -40,6 +41,7 @@
     document.getElementById('cms-link').href = resolvePath('admin/cms/index.html');
     document.getElementById('operator-link').href = resolvePath('admin/operator/index.html');
     document.getElementById('session-link').href = resolvePath('services/session-demo.html');
+    document.getElementById('analytics-link').href = resolvePath('services/analytics-dashboard.html');
     document.getElementById('home-link').href = resolvePath('index.html');
     renderLangToggle();
     applyTranslations();

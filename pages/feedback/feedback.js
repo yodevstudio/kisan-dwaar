@@ -21,7 +21,7 @@ const REASONS = {
 };
 
 let telemetryModule = null;
-const telemetryReady = import('../../services/telemetry.js')
+import('../../services/telemetry.js')
   .then((m) => { telemetryModule = m; })
   .catch((err) => console.warn('feedback page: telemetry unavailable (non-fatal):', err));
 
@@ -82,6 +82,3 @@ function renderWidget() {
 }
 
 renderWidget();
-
-// Page view for this page too — same as every other static-core page.
-telemetryReady.then(() => { if (telemetryModule) telemetryModule.trackPageView(location.pathname); });

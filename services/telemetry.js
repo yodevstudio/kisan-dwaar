@@ -76,3 +76,13 @@ export function trackSchemeSurfaced(schemeId) {
 export function trackFeedbackVote(direction, reasonChip) {
   return record('feedback_vote', `${direction}:${reasonChip}`);
 }
+
+// T8: the sixth counter — added for the officer dashboard's "Hindi vs
+// English" usage split, which docs/ANALYTICS.md §2's original five never
+// covered. Same shape as every other counter here: a discriminator
+// ('hi'/'en') and nothing else, deduped per tab per page so a language
+// toggle mid-page doesn't recount the same page view. See docs/ANALYTICS.md
+// §2 (updated alongside this) for the formal entry.
+export function trackLanguageActive(lang) {
+  return record('language_active', lang, `language_active:${lang}:${sessionId}`);
+}

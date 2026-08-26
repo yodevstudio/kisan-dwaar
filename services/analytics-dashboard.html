@@ -13,16 +13,76 @@
   </header>
 
   <main class="container">
-    <p class="hi">वास्तविक उपयोग से लिए गए आँकड़े — <code>data/schemes.json</code> जैसी बनावटी सूची नहीं। पूरी माप-पद्धति: <a href="../docs/ANALYTICS.md">docs/ANALYTICS.md</a></p>
-
-    <section id="counts" class="card hi"><p>लोड हो रहा है…</p></section>
+    <p class="hi">वास्तविक उपयोग से लिए गए आँकड़े — बनावटी या उदाहरण के तौर पर कोई संख्या नहीं। पूरी माप-पद्धति: <a href="../docs/ANALYTICS.md">docs/ANALYTICS.md</a></p>
 
     <section class="card bg-verdict hi">
       <div class="card-head"><span class="card-icon">🔒</span><span class="card-word">कभी संग्रहीत नहीं किया जाता</span></div>
+      <p class="citation hi">यह सूची लॉग-इन से स्वतंत्र है — यह एक गोपनीयता प्रतिबद्धता है, कोई स्टाफ़-केवल आँकड़ा नहीं; कोई भी इसे बिना लॉग-इन जाँच सकता है।</p>
       <ul id="never-collected-list" class="doc-list"></ul>
+      <p class="citation hi">पूरी माप-पद्धति व सत्यापन के तरीके: <a href="../docs/ANALYTICS.md">docs/ANALYTICS.md</a></p>
     </section>
 
     <p class="hi result-note">जाँचें: DevTools → Network खोलें, कोई भी सवाल जवाब दें, भेजे गए request का payload देखें — ऊपर की सूची में से कुछ भी वहाँ नहीं मिलेगा।</p>
+
+    <div class="answer-headline hi" style="margin-top:24px;">आगे — केवल स्टाफ़ के लिए वास्तविक उपयोग व परिचालन आँकड़े</div>
+    <div id="session-gate" class="card hi"><p>सेशन जाँच हो रही है…</p></div>
+
+    <div id="dashboard-body" style="display:none;">
+
+      <section class="card hi">
+        <div class="answer-headline">उपयोग</div>
+        <div id="usage-summary"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">पात्रता जांच — शुरू बनाम पूर्ण</div>
+        <div id="funnel"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">नतीजे (प्रकार के अनुसार)</div>
+        <div id="verdicts"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">सबसे ज़्यादा दिखाई गई योजनाएं</div>
+        <div id="schemes-surfaced"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">सवाल-दर-सवाल छोड़ने की दर</div>
+        <p class="citation hi">मुख्य 6-सवाल क्रम (data/slots.json) में हर सवाल कितनी बार जवाब दिया गया — क्रमांक-दर-क्रमांक गिरावट वहाँ है जहाँ नागरिक रुक गए।</p>
+        <div id="dropoff"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">हिन्दी बनाम अंग्रेज़ी</div>
+        <div id="language-split"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card hi">
+        <div class="answer-headline">प्रतिक्रिया</div>
+        <div id="feedback-split"><p>लोड हो रहा है…</p></div>
+      </section>
+
+      <section class="card bg-attention hi">
+        <div class="card-head"><span class="card-icon">⚙️</span><span class="card-word">परिचालन — कोई नागरिक-डेटा नहीं</span></div>
+        <p class="citation hi">यह पूरा सेक्शन data/schemes.json (रजिस्ट्री) व CMS के अपने Firestore संग्रह से सीधे पढ़ा जाता है — किसी घटना/इवेंट से नहीं, इसलिए कोई भी संख्या शून्य ट्रैफ़िक पर भी सार्थक है।</p>
+
+        <div class="doc-list-title">समीक्षा-अवधि (verification_interval_days) पार कर चुकी योजनाएं</div>
+        <div id="overdue-verification"><p>लोड हो रहा है…</p></div>
+
+        <div class="doc-list-title">जिनकी next_review_due तारीख़ निकल चुकी है</div>
+        <div id="overdue-review"><p>लोड हो रहा है…</p></div>
+
+        <div class="doc-list-title">null आँकड़े वाले रिकॉर्ड, उनकी rate_policy सहित</div>
+        <div id="null-figures"><p>लोड हो रहा है…</p></div>
+
+        <div class="doc-list-title">लंबित CMS ड्राफ़्ट</div>
+        <div id="pending-drafts"><p>लोड हो रहा है…</p></div>
+      </section>
+
+    </div>
   </main>
 
   <script type="module" src="./analytics-dashboard.js"></script>

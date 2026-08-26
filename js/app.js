@@ -882,8 +882,6 @@ async function init() {
   state.slotsDoc = slotsDoc;
   state.lexicon = lexicon;
 
-  track('trackPageView', location.pathname);
-
   applyComposerLabels();
   window.addEventListener('kisan:langchange', applyComposerLabels);
 

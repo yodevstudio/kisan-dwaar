@@ -70,6 +70,18 @@ export function renderNav(containerId = 'site-nav') {
 
   render();
   window.addEventListener('kisan:langchange', render);
+
+  // T8: page_view and language_active both fire once here, the one place
+  // every page already calls — not re-fired on a langchange re-render,
+  // since a toggle mid-visit isn't a new page view. Dynamic import, same
+  // degrade-gracefully idiom js/app.js's own telemetry call already uses:
+  // a missing or unreachable services layer must never affect nav itself.
+  import('../services/telemetry.js')
+    .then((m) => {
+      m.trackPageView(location.pathname);
+      m.trackLanguageActive(getLang());
+    })
+    .catch((err) => console.warn('nav: telemetry unavailable (non-fatal):', err));
 }
 
 // Deliberately separate from renderNav and visually secondary (see

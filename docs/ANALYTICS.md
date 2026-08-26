@@ -19,7 +19,7 @@ Everything below is that sentence, expanded into a measurable spec — what "no 
 
 ## 2 — What is measured
 
-Five counters, matching the S3 task description in `BUILD_GUIDE_V2.md` and the live dashboard it specifies:
+Six counters. The first five match the S3 task description in `BUILD_GUIDE_V2.md`; `language_active` was added for T8's officer dashboard (a Hindi-vs-English usage split), on the same mechanism and under the same never-collected discipline as the rest of this table:
 
 | Event | Fires when | What is recorded |
 |---|---|---|
@@ -28,6 +28,9 @@ Five counters, matching the S3 task description in `BUILD_GUIDE_V2.md` and the l
 | `verdict_issued` | `eligibility.js: evaluate()` returns a verdict | The verdict type only — `ELIGIBLE`, `NOT_ELIGIBLE`, or `NEED_MORE_INFO` — never the scheme name or the slots that produced it |
 | `scheme_surfaced` | A scheme appears in a discovery result or an explainer view | `scheme_id` only |
 | `feedback_vote` | K20's thumbs + reason chip is submitted | Thumbs direction and the selected reason chip only — never free text (K20 offers no free-text field for exactly this reason) |
+| `language_active` | Any static-core page loads | Which UI language was active — `hi` or `en` — nothing else; this is the toggle state already visible on screen, not a new inference about the citizen |
+
+`page_view` and `language_active` now both fire from `js/nav.js`'s shared `renderNav()` — every page calls it, so this is the first point at which "any static-core page loads" (this table's own stated trigger since before either counter existed) is actually true site-wide, not just on the two pages that happened to call `trackPageView` directly.
 
 Each event is one write: a counter increment keyed by `{event_type, discriminator, date}` (e.g. `verdict_issued / ELIGIBLE / 2026-08-21`). The store holds running totals, not a per-event log — there is nothing to replay into a session, because nothing resembling a session is persisted server-side.
 
@@ -62,6 +65,13 @@ Because the store holds only aggregate counters keyed by `{event_type, discrimin
 ## 5 — What the dashboard shows
 
 Per the S3 task description: page views, questions answered (by slot), verdicts issued (by type), schemes surfaced (by `scheme_id`), and feedback votes (thumbs by reason chip) — each as a real running count from real usage, not seeded or placeholder data. Unlike S4's application-status timeline, nothing on this dashboard is demo data, so it carries no "seeded" label; it is the one live number in the services layer from day one.
+
+**T8** turned this into the officer-facing dashboard proper, at the same URL (`services/analytics-dashboard.html`), gated behind the same Google sign-in S5's CMS already uses (no new auth mechanism):
+
+- **Usage**, from the six counters above: visits by page, eligibility checks started (a `page_view` on the check page) vs completed (a `verdict_issued`, of any type), verdicts by type, schemes surfaced most often, drop-off by question number (`question_answered` counts for each of `data/slots.json`'s six `core_sequence` slots, in order — a fall in count between two consecutive slots is where citizens stopped), Hindi vs English (`language_active`), and the feedback split (thumbs totals, then by reason chip).
+- **Operational**, needing no citizen data and no event at all — read straight from `data/schemes.json` and the CMS's own Firestore collections: schemes past their `verification_interval_days`, every record with a `null` benefit figure alongside its `rate_policy`, pending CMS drafts (`cms_drafts` — why this section needs sign-in, since that collection isn't publicly readable), and records whose `next_review_due` has passed.
+
+A metric with no events yet reads as a real zero, captioned as such — this is a low-traffic prototype, not a broken dashboard.
 
 ---
 

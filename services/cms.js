@@ -33,6 +33,17 @@ export async function loadDraft(schemeId) {
   return snap.exists() ? snap.data().data : null;
 }
 
+// T8: every open draft, for the officer dashboard's "pending CMS drafts"
+// count — this is why that section needs sign-in: cms_drafts has no
+// public-read rule (firestore.rules), unlike cms_published/analytics_
+// counters. Requires a session for the same reason every other read in
+// this file that touches drafts does.
+export async function listDrafts() {
+  requireSession();
+  const snap = await getDocs(collection(db, 'cms_drafts'));
+  return snap.docs.map((d) => ({ scheme_id: d.id, ...d.data() }));
+}
+
 export async function saveDraft(schemeId, schemeData) {
   const session = requireSession();
   await setDoc(doc(db, 'cms_drafts', schemeId), {
