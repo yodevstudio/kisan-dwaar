@@ -1,5 +1,6 @@
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
+import { iconSpan } from '../../js/icons.js';
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -57,18 +58,23 @@ async function init() {
       : `${agricultureCount} कृषि व ${relatedWelfareCount} अन्य कल्याण योजनाओं (कुल ${schemes.length}) ${t('documents.intro_suffix')}`;
 
     listEl.innerHTML = '';
+    const grid = el('div', 'card-grid');
     [...byDocId.values()]
       .sort((a, b) => b.schemeRefs.length - a.schemeRefs.length)
       .forEach((doc) => {
-        const card = el('div', `card ${cls}`.trim());
-        card.appendChild(el('div', 'answer-headline', docLabelFor(doc)));
+        const card = el('div', `card service-card ${cls}`.trim());
+        const head = el('div', 'card-head');
+        head.appendChild(iconSpan('document'));
+        head.appendChild(el('span', 'answer-headline', docLabelFor(doc)));
+        card.appendChild(head);
         card.appendChild(el('p', '', `${t('documents.where_to_get')}: ${docWhereFor(doc)}`));
         card.appendChild(el('p', 'doc-list-title', `${t('documents.for_schemes')} (${doc.schemeRefs.length}):`));
         const schemeList = el('ul', 'doc-list');
         doc.schemeRefs.forEach((scheme) => schemeList.appendChild(el('li', '', nameFor(scheme))));
         card.appendChild(schemeList);
-        listEl.appendChild(card);
+        grid.appendChild(card);
       });
+    listEl.appendChild(grid);
   };
 
   render();

@@ -1,5 +1,6 @@
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
+import { iconSpan } from '../../js/icons.js';
 
 // T5: docs/audit-evidence/ contains no captured circulars or source
 // documents (only a codebase hardening audit, unrelated to any scheme's
@@ -58,13 +59,17 @@ async function init() {
       : `इन ${schemes.length} स्रोत दस्तावेज़ों में से ${unreadableCount} ऐसी स्कैन की गई तस्वीरें हैं जिन्हें कोई सॉफ़्टवेयर पढ़ नहीं सकता — जहाँ ऐसे दस्तावेज़ से कोई नियम निकाला गया, वह हाथ से ट्रांसक्राइब किया गया।`;
 
     listEl.innerHTML = '';
+    const grid = el('div', 'card-grid');
     schemes
       .slice()
       .sort((a, b) => (a.last_verified < b.last_verified ? 1 : a.last_verified > b.last_verified ? -1 : 0))
       .forEach((scheme) => {
         const badge = badgeFor(scheme);
-        const card = el('div', `card ${cls}`.trim());
-        card.appendChild(el('div', 'answer-headline', nameFor(scheme)));
+        const card = el('div', `card service-card ${cls}`.trim());
+        const head = el('div', 'card-head');
+        head.appendChild(iconSpan('scheme'));
+        head.appendChild(el('span', 'answer-headline', nameFor(scheme)));
+        card.appendChild(head);
         card.appendChild(el('p', 'badge hi', `${badge.icon} ${t(badge.key)}`));
 
         const sourceP = el('p', 'citation');
@@ -88,8 +93,9 @@ async function init() {
           card.appendChild(schemeLink);
         }
 
-        listEl.appendChild(card);
+        grid.appendChild(card);
       });
+    listEl.appendChild(grid);
   };
 
   render();

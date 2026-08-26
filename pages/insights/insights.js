@@ -74,6 +74,7 @@ function renderSlotRanking(container, ranking) {
 
 async function init() {
   const summaryEl = document.getElementById('insight-summary');
+  const leadTextEl = document.getElementById('insight-lead-text');
   const schemesEl = document.getElementById('insight-schemes');
   const slotsEl = document.getElementById('insight-slots');
   const headlineEl = document.getElementById('insight-headline');
@@ -105,10 +106,28 @@ async function init() {
       : `${data.scheme_count} ${t('insights.generated_summary')}`;
     summaryEl.innerHTML = '';
     summaryEl.appendChild(el('p', cls,
-      `${countLine} · ${t('insights.unreachable_count')}: ${data.unreachable_scheme_ids.length} · ${t('insights.built_at')}: ${new Date(data.generated_at).toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')}`));
+      `${countLine} · ${t('insights.built_at')}: ${new Date(data.generated_at).toLocaleString(lang === 'en' ? 'en-IN' : 'hi-IN')}`));
     summaryEl.appendChild(el('p', `citation ${cls}`.trim(), methodologyNote));
-    if (data.unreachable_scheme_ids.length > 0) {
-      summaryEl.appendChild(el('p', `${cls} term-warning`.trim(), `⚠ ${t('insights.unreachable_warning')}: ${data.unreachable_scheme_ids.join(', ')}`));
+
+    // T9: the good finding leads the page — 0 unreachable schemes is a
+    // real, checkable claim (every eligibility condition in the registry
+    // actually resolves), not filler, so it gets the first section rather
+    // than a clause buried in the summary line. Only claims "good" when
+    // that's actually true; a genuine unreachable scheme still turns this
+    // red and names it, exactly as the old inline warning did.
+    const leadSection = document.getElementById('insight-lead');
+    const unreachable = data.unreachable_scheme_ids;
+    leadSection.classList.remove('bg-verdict', 'bg-halt');
+    if (unreachable.length === 0) {
+      leadSection.classList.add('bg-verdict');
+      leadSection.querySelector('.card-icon').textContent = '✅';
+      leadTextEl.textContent = lang === 'en'
+        ? `All ${data.scheme_count} schemes are fully reachable by the engine — none is blocked by a broken condition in the data.`
+        : `सभी ${data.scheme_count} योजनाएं इंजन से पूरी तरह जांची जा सकती हैं — डेटा में किसी टूटी शर्त के कारण कोई भी अगम्य नहीं है।`;
+    } else {
+      leadSection.classList.add('bg-halt');
+      leadSection.querySelector('.card-icon').textContent = '⚠';
+      leadTextEl.textContent = `${t('insights.unreachable_warning')}: ${unreachable.join(', ')}`;
     }
 
     schemesEl.innerHTML = '';

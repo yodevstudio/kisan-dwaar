@@ -6,6 +6,12 @@
 // the widget silently declines to record anything (see track() below).
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
+import { ANALYTICS_NEVER_COLLECTED_HI, ANALYTICS_NEVER_COLLECTED_EN } from '../../js/policy.js';
+import { ICONS } from '../../js/icons.js';
+
+document.querySelectorAll('[data-icon]').forEach((span) => {
+  span.innerHTML = ICONS[span.dataset.icon] || '';
+});
 
 const REASONS = {
   up: [
@@ -82,3 +88,24 @@ function renderWidget() {
 }
 
 renderWidget();
+
+// T9: the page was too sparse — this restates the same real, already-
+// published never-collected list (js/policy.js, same source K12's
+// disclosure panel and the S3 dashboard use) directly here, since privacy
+// is exactly what a citizen giving feedback would want reassurance on,
+// and points to pages/check/ for per-scheme feedback with a real button
+// rather than an inline text mention.
+function renderNeverCollected() {
+  const host = document.getElementById('feedback-never-collected');
+  const render = () => {
+    const lines = getLang() === 'en' ? ANALYTICS_NEVER_COLLECTED_EN : ANALYTICS_NEVER_COLLECTED_HI;
+    const cls = getLang() === 'hi' ? 'hi' : '';
+    host.innerHTML = '';
+    lines.forEach((line) => host.appendChild(el('li', cls, line)));
+  };
+  render();
+  window.addEventListener('kisan:langchange', render);
+}
+
+renderNeverCollected();
+document.getElementById('per-scheme-link').href = resolvePath('pages/check/index.html');

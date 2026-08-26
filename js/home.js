@@ -8,6 +8,17 @@
 // disagree about which badge a scheme gets.
 import { resolvePath } from './paths.js';
 import { getLang, t } from './i18n.js';
+import { iconSpan, ICONS } from './icons.js';
+
+// The six static service cards carry their icon as a data-icon attribute
+// right in index.html's markup — filled in once here rather than
+// duplicating each card's SVG inline, same icon set the dynamic cards
+// below use via iconSpan().
+function fillStaticIcons() {
+  document.querySelectorAll('[data-icon]').forEach((span) => {
+    span.innerHTML = ICONS[span.dataset.icon] || '';
+  });
+}
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -45,7 +56,10 @@ function renderAgricultureCards(schemes) {
       const link = document.createElement('a');
       link.className = `card service-card ${cls}`.trim();
       link.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
-      link.appendChild(el('div', 'answer-headline', nameFor(scheme)));
+      const head = el('div', 'card-head');
+      head.appendChild(iconSpan('scheme'));
+      head.appendChild(el('span', 'answer-headline', nameFor(scheme)));
+      link.appendChild(head);
       link.appendChild(el('p', `citation ${cls}`.trim(), `${t('chat.verified_on')}: ${scheme.last_verified}`));
       container.appendChild(link);
     });
@@ -69,10 +83,9 @@ function renderCalculatorCard(schemes) {
         : 'फिलहाल रजिस्ट्री में किसी भी योजना का अनुदान-नियम गणना योग्य नहीं है।';
       return;
     }
-    const joined = names.join(lang === 'en' ? ' and ' : ' व ');
     bodyEl.textContent = lang === 'en'
-      ? `Available for ${names.length} scheme${names.length > 1 ? 's' : ''} whose rule is already in the registry — ${joined}. Check eligibility first; the calculator appears there. There is no separate calculator page yet.`
-      : `उन ${names.length} योजनाओं के लिए उपलब्ध जिनका नियम पहले से रजिस्ट्री में है — ${joined}। पहले पात्रता जांचें; कैलकुलेटर वहीं दिखेगा। एक अलग कैलकुलेटर पन्ना अभी नहीं बनाया गया है।`;
+      ? `Appears after checking eligibility, for ${names.length} scheme${names.length > 1 ? 's' : ''} with a rule in the registry.`
+      : `पात्रता जांचने के बाद दिखता है — उन ${names.length} योजनाओं के लिए जिनका नियम रजिस्ट्री में है।`;
   };
 
   render();
@@ -114,6 +127,7 @@ async function init() {
     console.error('home: failed to load data/schemes.json:', err);
     schemes = [];
   }
+  fillStaticIcons();
   renderAgricultureCards(schemes);
   renderCalculatorCard(schemes);
   renderNoticesStrip(schemes);

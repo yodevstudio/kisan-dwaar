@@ -1,5 +1,6 @@
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
+import { iconSpan } from '../../js/icons.js';
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -13,8 +14,11 @@ function nameFor(scheme) {
 }
 
 function renderCard(scheme, cls, lang) {
-  const card = el('div', `card ${cls}`.trim());
-  card.appendChild(el('div', 'answer-headline', nameFor(scheme)));
+  const card = el('div', `card service-card ${cls}`.trim());
+  const head = el('div', 'card-head');
+  head.appendChild(iconSpan('scheme'));
+  head.appendChild(el('span', 'answer-headline', nameFor(scheme)));
+  card.appendChild(head);
   card.appendChild(el('p', '', scheme.department));
   const keywords = lang === 'en' && scheme.keywords_en ? scheme.keywords_en : scheme.keywords_hi;
   if (keywords && keywords.length) {
@@ -62,13 +66,17 @@ async function init() {
 
     if (agriculture.length > 0) {
       listEl.appendChild(el('h2', cls, `${t('schemes.agriculture_heading')} (${agriculture.length})`));
-      agriculture.forEach((scheme) => listEl.appendChild(renderCard(scheme, cls, lang)));
+      const grid = el('div', 'card-grid');
+      agriculture.forEach((scheme) => grid.appendChild(renderCard(scheme, cls, lang)));
+      listEl.appendChild(grid);
     }
 
     if (relatedWelfare.length > 0) {
       listEl.appendChild(el('h2', cls, `${t('schemes.related_welfare_heading')} (${relatedWelfare.length})`));
       listEl.appendChild(el('p', `citation ${cls}`.trim(), t('schemes.related_welfare_note')));
-      relatedWelfare.forEach((scheme) => listEl.appendChild(renderCard(scheme, cls, lang)));
+      const grid = el('div', 'card-grid');
+      relatedWelfare.forEach((scheme) => grid.appendChild(renderCard(scheme, cls, lang)));
+      listEl.appendChild(grid);
     }
   };
 

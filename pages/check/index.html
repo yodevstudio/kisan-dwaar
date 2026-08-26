@@ -13,17 +13,28 @@
   <div id="site-nav"></div>
 
   <main class="container">
-    <div id="chat" class="chat" role="log" aria-live="polite" aria-label="बातचीत" data-i18n-aria-label="index.chat_aria_label"></div>
+    <div class="two-col">
+      <div>
+        <div id="chat" class="chat" role="log" aria-live="polite" aria-label="बातचीत" data-i18n-aria-label="index.chat_aria_label"></div>
 
-    <div class="chips">
-      <button id="discover-btn" type="button" class="button hi">सभी योजनाएं देखें</button>
+        <div class="chips">
+          <button id="discover-btn" type="button" class="button hi">सभी योजनाएं देखें</button>
+        </div>
+
+        <form id="composer" class="composer">
+          <label for="query-input" class="hi" style="position:absolute;left:-9999px;">अपना सवाल टाइप करें</label>
+          <input id="query-input" class="hi" type="text" placeholder="अपना सवाल टाइप करें…">
+          <button type="submit" class="button hi">भेजें</button>
+        </form>
+      </div>
+
+      <aside class="card hi">
+        <div class="answer-headline" data-i18n="check.sidebar_title">यह कैसे काम करता है</div>
+        <p data-i18n="check.sidebar_body">कोई खाता या लॉग-इन ज़रूरी नहीं। अपनी उम्र, व्यवसाय, आय, श्रेणी व ज़िला बताएं — इंजन बताएगा आप किस योजना के लिए पात्र हैं, कौनसा दस्तावेज़ चाहिए, और जहाँ संभव हो अनुदान की राशि की गणना भी दिखाएगा।</p>
+        <p data-i18n="check.sidebar_tip">किसी योजना का नाम सीधे टाइप करके भी पूछ सकते हैं — जैसे "तारबंदी योजना चाहिए"।</p>
+        <p class="citation hi"><a id="sidebar-documents-link" href="../documents/index.html" data-i18n="check.sidebar_documents_link">ज़रूरी दस्तावेज़ों की सूची पहले से देखें</a></p>
+      </aside>
     </div>
-
-    <form id="composer" class="composer">
-      <label for="query-input" class="hi" style="position:absolute;left:-9999px;">अपना सवाल टाइप करें</label>
-      <input id="query-input" class="hi" type="text" placeholder="अपना सवाल टाइप करें…">
-      <button type="submit" class="button hi">भेजें</button>
-    </form>
   </main>
 
   <footer class="site-footer">
@@ -35,8 +46,10 @@
 
   <script type="module" src="../../js/app.js"></script>
   <script type="module">
+    import { resolvePath } from '../../js/paths.js';
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
     import { applyTranslations } from '../../js/i18n.js';
+    document.getElementById('sidebar-documents-link').href = resolvePath('pages/documents/index.html');
     renderNav();
     renderFooterStaffLink();
     applyTranslations();

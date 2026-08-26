@@ -164,12 +164,31 @@ button, .button {
    clipping, nothing traps scroll. */
 .container {
   width: 100%;
-  max-width: 640px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 16px;
 }
 
+/* T9: a page whose content is a single column of prose or a chat thread
+   (about, status, feedback, check, employee, the service demo pages) adds
+   this alongside .container so lines stay a readable width instead of
+   stretching across a wide desktop viewport — .container itself stays
+   wide for the pages that actually have grid content to put there. */
+.container-prose { max-width: 700px; }
+
 img, svg { max-width: 100%; height: auto; }
+
+/* T9: inline SVG icons (js/icons.js) — sized to sit comfortably next to
+   a card heading at this system's type scale, colour inherited from
+   whatever text colour the caller already set (never a hard-coded
+   colour here, so an icon on a bg-verdict/bg-halt card stays legible). */
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+.icon svg { width: 100%; height: 100%; }
 
 /* Audio-pairing every text block (CONTEXT.md's type floor) is a behaviour
    this stylesheet cannot provide on its own — it belongs to speech.js and
@@ -328,14 +347,22 @@ img, svg { max-width: 100%; height: auto; }
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
   gap: 16px;
   margin: 12px 0;
+}
+
+/* T9: explicit, rather than left to auto-fit's own arithmetic — a 700px+
+   two-up row can still fit at some in-between widths auto-fit alone would
+   allow, and the task fixes 720px as the single-column floor. */
+@media (max-width: 719px) {
+  .card-grid { grid-template-columns: 1fr; }
 }
 
 .service-card {
@@ -344,8 +371,23 @@ img, svg { max-width: 100%; height: auto; }
   color: inherit;
 }
 .service-card:hover, .service-card:focus-visible { border-color: var(--field); }
-.service-card .answer-headline { font-size: 22px; }
+.service-card .card-head { margin-bottom: 10px; }
+.service-card .answer-headline { font-size: 22px; margin: 0; }
 .service-card p { margin: 0; }
+
+/* T9: main content + a real companion column instead of the main column
+   simply stretching — used where content is naturally single-column (a
+   chat thread) but there's genuine supplementary material to sit beside
+   it on a wide screen. Single column below 720px, same floor as .card-grid. */
+.two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 24px;
+}
+@media (max-width: 719px) {
+  .two-col { grid-template-columns: 1fr; }
+}
 
 .doc-list-title {
   font-weight: 700;
@@ -593,7 +635,7 @@ img, svg { max-width: 100%; height: auto; }
    Native <details>/<summary> — expand/collapse with zero JS, keyboard-
    operable and screen-reader-friendly by default. */
 .disclosure-panel {
-  margin: 24px 0;
+  margin: 16px 0;
   border: 2px solid var(--field);
   border-radius: 12px;
   padding: 12px 16px;

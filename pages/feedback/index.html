@@ -11,11 +11,23 @@
     <h1 class="hi" data-i18n="feedback.h1">प्रतिक्रिया</h1>  </header>
   <div id="site-nav"></div>
 
-  <main class="container">
+  <main class="container container-prose">
     <div class="card hi">
-      <p><span data-i18n="feedback.intro_before">यह पोर्टल समग्र रूप से कैसा लगा? कोई खाता ज़रूरी नहीं, और यहाँ कोई पहचान संग्रहीत नहीं होती — देखें</span> <a href="../../docs/ANALYTICS.md">docs/ANALYTICS.md</a><span data-i18n="feedback.intro_after">। किसी एक योजना के जवाब पर प्रतिक्रिया देने के लिए, पात्रता जांच के दौरान वहीं मौजूद बटन इस्तेमाल करें।</span></p>
+      <div class="answer-headline" data-i18n="feedback.h1_lead">आपकी राय मायने रखती है</div>
+      <p><span data-i18n="feedback.intro_before">यह पोर्टल समग्र रूप से कैसा लगा? कोई खाता ज़रूरी नहीं, और यहाँ कोई पहचान संग्रहीत नहीं होती — देखें</span> <a href="../../docs/ANALYTICS.md">docs/ANALYTICS.md</a><span data-i18n="feedback.intro_after">।</span></p>
       <div id="feedback-widget"></div>
     </div>
+
+    <section class="card hi">
+      <div class="card-head"><span class="icon" data-icon="help"></span><span class="card-word" data-i18n="feedback.privacy_title">यहां क्या कभी संग्रहीत नहीं होता</span></div>
+      <ul id="feedback-never-collected" class="doc-list"></ul>
+    </section>
+
+    <section class="card hi">
+      <div class="card-head"><span class="icon" data-icon="checkCircle"></span><span class="answer-headline" data-i18n="feedback.per_scheme_title">किसी एक योजना पर प्रतिक्रिया देनी है?</span></div>
+      <p data-i18n="feedback.per_scheme_body">पात्रता जांच के दौरान हर नतीजे के साथ वही 👍/👎 बटन मौजूद है — वहीं से दें, ताकि वह सीधे उस योजना से जुड़ जाए।</p>
+      <a class="button hi" id="per-scheme-link" href="../check/index.html" data-i18n="feedback.per_scheme_cta">पात्रता जांचें पर जाएं</a>
+    </section>
   </main>
 
   <footer class="site-footer">

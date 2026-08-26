@@ -170,6 +170,16 @@ const STRINGS = {
 
   'check.title': { hi: 'पात्रता जांचें — किसान द्वार', en: 'Check Eligibility — KISAN DWAAR' },
   'check.h1': { hi: 'पात्रता जांचें', en: 'Check Eligibility' },
+  'check.sidebar_title': { hi: 'यह कैसे काम करता है', en: 'How this works' },
+  'check.sidebar_body': {
+    hi: 'कोई खाता या लॉग-इन ज़रूरी नहीं। अपनी उम्र, व्यवसाय, आय, श्रेणी व ज़िला बताएं — इंजन बताएगा आप किस योजना के लिए पात्र हैं, कौनसा दस्तावेज़ चाहिए, और जहाँ संभव हो अनुदान की राशि की गणना भी दिखाएगा।',
+    en: "No account or login needed. Tell it your age, occupation, income, category and district — the engine tells you which scheme you qualify for, which documents you need, and shows the subsidy calculation where possible.",
+  },
+  'check.sidebar_tip': {
+    hi: 'किसी योजना का नाम सीधे टाइप करके भी पूछ सकते हैं — जैसे "तारबंदी योजना चाहिए"।',
+    en: 'You can also type a scheme name directly — like "I need the fencing scheme".',
+  },
+  'check.sidebar_documents_link': { hi: 'ज़रूरी दस्तावेज़ों की सूची पहले से देखें', en: 'See the document checklist in advance' },
 
   'documents.title': { hi: 'दस्तावेज़ — किसान द्वार', en: 'Documents — KISAN DWAAR' },
   'documents.h1': { hi: 'दस्तावेज़', en: 'Documents' },
@@ -198,14 +208,19 @@ const STRINGS = {
 
   'feedback.title': { hi: 'प्रतिक्रिया — किसान द्वार', en: 'Feedback — KISAN DWAAR' },
   'feedback.h1': { hi: 'प्रतिक्रिया', en: 'Feedback' },
+  'feedback.h1_lead': { hi: 'आपकी राय मायने रखती है', en: 'Your opinion matters' },
   'feedback.intro_before': {
     hi: 'यह पोर्टल समग्र रूप से कैसा लगा? कोई खाता ज़रूरी नहीं, और यहाँ कोई पहचान संग्रहीत नहीं होती — देखें',
     en: 'How was the portal overall? No account needed, and no identity is stored here — see',
   },
-  'feedback.intro_after': {
-    hi: '। किसी एक योजना के जवाब पर प्रतिक्रिया देने के लिए, पात्रता जांच के दौरान वहीं मौजूद बटन इस्तेमाल करें।',
-    en: ". To give feedback on one scheme's answer, use the button that appears right there during eligibility checking.",
+  'feedback.intro_after': { hi: '।', en: '.' },
+  'feedback.privacy_title': { hi: 'यहां क्या कभी संग्रहीत नहीं होता', en: 'What is never collected here' },
+  'feedback.per_scheme_title': { hi: 'किसी एक योजना पर प्रतिक्रिया देनी है?', en: 'Want to give feedback on one scheme?' },
+  'feedback.per_scheme_body': {
+    hi: 'पात्रता जांच के दौरान हर नतीजे के साथ वही 👍/👎 बटन मौजूद है — वहीं से दें, ताकि वह सीधे उस योजना से जुड़ जाए।',
+    en: "The same 👍/👎 button appears with every result during eligibility checking — use it there so your feedback links to that scheme directly.",
   },
+  'feedback.per_scheme_cta': { hi: 'पात्रता जांचें पर जाएं', en: 'Go to check eligibility' },
   'feedback.prompt': { hi: 'क्या यह पोर्टल आपके लिए मददगार रहा?', en: 'Was this portal helpful for you?' },
   'feedback.prompt_up': { hi: 'क्या अच्छा लगा?', en: 'What did you like?' },
   'feedback.prompt_down': { hi: 'क्या समस्या हुई?', en: 'What was the problem?' },
@@ -269,10 +284,16 @@ const STRINGS = {
   'insights.generated_summary': { hi: 'योजनाओं का विश्लेषण', en: 'schemes analysed' },
   'insights.agriculture_label': { hi: 'कृषि', en: 'agriculture' },
   'insights.related_welfare_label': { hi: 'अन्य कल्याण', en: 'related welfare' },
-  'insights.unreachable_count': { hi: 'अप्राप्य', en: 'unreachable' },
   'insights.built_at': { hi: 'बना', en: 'built' },
   'insights.out_of_profiles': { hi: 'यथार्थ प्रोफ़ाइलों में से', en: 'real profiles' },
   'insights.reference_slots': { hi: 'सन्दर्भ स्लॉट', en: 'reference slots' },
+  // T9: the leading section — the good finding (0 unreachable schemes)
+  // stated first, per the visual-density pass's own re-presentation ask.
+  'insights.section_lead_title': { hi: 'सबसे पहली बात', en: 'The headline finding' },
+  'insights.section_schemes_legend': {
+    hi: 'ज़्यादातर पट्टियां लाल दिखेंगी — यह अपेक्षित है: परीक्षण सूची में डॉक्टर, इंजीनियर, विधायक जैसे कई गैर-किसान पेशे भी शामिल हैं ताकि इंजन की पूरी जाँच हो सके। असली किसानों के लिए वास्तविक पात्रता दर कहीं बेहतर है।',
+    en: 'Most bars will read mostly red — that is expected: the test list deliberately includes many non-farmer occupations (doctors, engineers, MLAs) to exercise the engine fully. Real farmers see a far better actual eligibility rate.',
+  },
 
   'about.title': { hi: 'परिचय — किसान द्वार', en: 'About — KISAN DWAAR' },
   'about.h1': { hi: 'परिचय', en: 'About' },
