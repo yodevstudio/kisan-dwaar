@@ -44,7 +44,7 @@ No rupee figure is stated here that this project did not itself verify, per `CON
 
 **The mechanism, stated without a fabricated number:** every one of those abandonments is a farmer who was very possibly eligible for real money — ₹6,000/year under PM-KISAN alone, verified from `pmkisan.gov.in` (`data/schemes.json`, `RJ_PMKISAN`) — and did not receive it, not because they were ineligible, but because the eligibility question itself was unanswerable without a login they could not or would not complete. That is the cost of inaction: not a portal defect, but foregone entitlement, at a scale this document will not guess at.
 
-`[NEEDS SOURCE: an estimate of the average cost (time, transport fare) of a round trip from a representative rural Rajasthan village to the nearest e-Mitra kiosk or block agriculture office — for a concrete, sourced per-farmer cost of the "ask in person instead" fallback. Likely sources: NSSO/Periodic Labour Force Survey rural mobility data, or RISL's own published e-Mitra kiosk density figures (see MARKET.md rung 1).]`
+`[NEEDS SOURCE: an estimate of the average cost (time, transport fare) of a round trip from a representative rural Rajasthan village to the nearest e-Mitra kiosk or block agriculture office — for a concrete, sourced per-farmer cost of the "ask in person instead" fallback. Likely source: NSSO/Periodic Labour Force Survey rural mobility data, combined with `docs/MARKET.md` rung 1's now-sourced count of 25,000 Mini e-Mitra operators (Rajasthan Budget 2026-27) for a per-kiosk density estimate.]`
 
 ---
 
