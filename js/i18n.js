@@ -154,15 +154,15 @@ const STRINGS = {
 
   'notices.title': { hi: 'सूचनाएं — किसान द्वार', en: 'Notices — KISAN DWAAR' },
   'notices.h1': { hi: 'सूचनाएं', en: 'Notices' },
-  'notices.card_title': { hi: 'निर्माणाधीन', en: 'Under construction' },
-  'notices.card_body1': {
-    hi: 'यह पन्ना जानबूझकर खाली रखा गया है — यहाँ कोई बनावटी सूचना नहीं दिखाई गई है, क्योंकि विभाग की कोई असली, सत्यापित सूचना अभी इस प्रोटोटाइप में शामिल नहीं की गई है।',
-    en: 'This page is deliberately left empty — no fabricated notice is shown here, because no real, verified notice from the Department has been included in this prototype yet.',
+  'notices.load_error': { hi: 'सूचना सूची लोड नहीं हो सकी।', en: 'Could not load the notice list.' },
+  'notices.legend': {
+    hi: '🟢 मशीन-पठनीय (नियम रजिस्ट्री में निकाले गए) · 🟡 टेक्स्ट PDF / वेब पेज · 🔴 स्कैन की गई तस्वीर (नियम हाथ से ट्रांसक्राइब किए गए)',
+    en: '🟢 Machine-readable (rules extracted into the registry) · 🟡 Text PDF / web page · 🔴 Scanned image (rules transcribed by hand)',
   },
-  'notices.card_body2': {
-    hi: 'असली सूचनाएं आने पर, वे यहाँ स्रोत व तारीख़ सहित दिखेंगी — ठीक उसी अनुशासन के साथ जो योजना के आँकड़ों के लिए इस्तेमाल होता है (हर सूचना का एक स्रोत URL व जाँच-तिथि)।',
-    en: 'When real notices are added, they will show here with a source and date — under the same discipline used for scheme data (every notice with a source URL and verification date).',
-  },
+  'notices.badge_registry': { hi: 'मशीन-पठनीय', en: 'Machine-readable' },
+  'notices.badge_text_source': { hi: 'टेक्स्ट PDF / वेब पेज', en: 'Text PDF / web page' },
+  'notices.badge_scanned': { hi: 'स्कैन की गई तस्वीर', en: 'Scanned image' },
+  'notices.linked_scheme': { hi: 'इस दस्तावेज़ के नियम इस योजना में दर्ज हैं', en: "This document's rules are on record for this scheme" },
 
   'feedback.title': { hi: 'प्रतिक्रिया — किसान द्वार', en: 'Feedback — KISAN DWAAR' },
   'feedback.h1': { hi: 'प्रतिक्रिया', en: 'Feedback' },

@@ -14,11 +14,9 @@
   <div id="site-nav"></div>
 
   <main class="container">
-    <div class="card bg-attention hi">
-      <div class="card-head"><span class="card-icon">⚠️</span><span class="card-word" data-i18n="notices.card_title">निर्माणाधीन</span></div>
-      <p data-i18n="notices.card_body1">यह पन्ना जानबूझकर खाली रखा गया है — यहाँ कोई बनावटी सूचना नहीं दिखाई गई है, क्योंकि विभाग की कोई असली, सत्यापित सूचना अभी इस प्रोटोटाइप में शामिल नहीं की गई है।</p>
-      <p data-i18n="notices.card_body2">असली सूचनाएं आने पर, वे यहाँ स्रोत व तारीख़ सहित दिखेंगी — ठीक उसी अनुशासन के साथ जो योजना के आँकड़ों के लिए इस्तेमाल होता है (हर सूचना का एक स्रोत URL व जाँच-तिथि)।</p>
-    </div>
+    <p id="intro-line" class="hi">लोड हो रहा है…</p>
+    <p id="legend-line" class="citation hi" data-i18n="notices.legend">🟢 मशीन-पठनीय (नियम रजिस्ट्री में निकाले गए) · 🟡 टेक्स्ट PDF / वेब पेज · 🔴 स्कैन की गई तस्वीर (नियम हाथ से ट्रांसक्राइब किए गए)</p>
+    <div id="notice-list"><p class="hi" data-i18n="common.loading">लोड हो रहा है…</p></div>
   </main>
 
   <footer class="site-footer">
@@ -26,6 +24,7 @@
     <div id="site-footer-links"></div>
   </footer>
 
+  <script type="module" src="./notices.js"></script>
   <script type="module">
     import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
     import { applyTranslations } from '../../js/i18n.js';
