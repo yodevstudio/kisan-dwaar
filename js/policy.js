@@ -13,6 +13,15 @@
 // carries a comment pointing back here; keeping the two numbers in sync
 // is manual until that function is ever actually deployed.
 
+// R8: the one place this URL is written. The government's own portal
+// advertises a "Kiosk Locator" nav item, but it links back to its own
+// homepage (href="/") rather than an actual locator — checked directly,
+// not assumed. Linking a broken page and calling it a locator would be
+// exactly the kind of invented claim CONTEXT.md constraint 3 rules out,
+// so this links the portal homepage itself and every citizen-facing
+// string built from it says "e-Mitra portal", never "locator".
+export const EMITRA_PORTAL_URL = 'https://emitra.rajasthan.gov.in/';
+
 export const UPLOAD_RETENTION_DAYS = 30;
 export const UPLOAD_MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 export const UPLOAD_ALLOWED_TYPES_HI = 'JPG, PNG या PDF';

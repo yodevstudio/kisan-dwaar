@@ -1,12 +1,27 @@
 import { resolvePath } from '../../js/paths.js';
 import { getLang, t } from '../../js/i18n.js';
 import { iconSpan } from '../../js/icons.js';
+import { EMITRA_PORTAL_URL } from '../../js/policy.js';
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
   if (className) e.className = className;
   if (text !== undefined && text !== null) e.textContent = text;
   return e;
+}
+
+// R8: same pattern as js/app.js's own appendEmitraNote — a labelled link
+// to the government's e-Mitra portal, never a "locator" this project has
+// no verified kiosk data to back (CONTEXT.md constraint 3).
+function appendEmitraNote(parent, beforeKey, afterKey) {
+  parent.appendChild(document.createTextNode(t(beforeKey)));
+  const link = document.createElement('a');
+  link.href = EMITRA_PORTAL_URL;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = t('common.emitra_link_label');
+  parent.appendChild(link);
+  parent.appendChild(document.createTextNode(t(afterKey)));
 }
 
 function nameFor(scheme) {
@@ -56,6 +71,11 @@ async function init() {
     introEl.textContent = lang === 'en'
       ? `Documents from ${agricultureCount} agriculture and ${relatedWelfareCount} related-welfare schemes (${schemes.length} total) ${t('documents.intro_suffix')}`
       : `${agricultureCount} कृषि व ${relatedWelfareCount} अन्य कल्याण योजनाओं (कुल ${schemes.length}) ${t('documents.intro_suffix')}`;
+
+    const emitraNoteEl = document.getElementById('emitra-note');
+    emitraNoteEl.className = `${cls} citation`.trim();
+    emitraNoteEl.innerHTML = '';
+    appendEmitraNote(emitraNoteEl, 'documents.emitra_before', 'documents.emitra_after');
 
     listEl.innerHTML = '';
     const grid = el('div', 'card-grid');

@@ -43,6 +43,12 @@ const STRINGS = {
   'common.badge_staff': { hi: '🔒 सेवा-स्तर · स्टाफ़ केवल', en: '🔒 Service layer · Staff only' },
   'common.footer_disclosure': { hi: 'प्रस्ताव प्रोटोटाइप — YoDevStudio', en: 'Proposal Prototype — YoDevStudio' },
   'common.loading': { hi: 'लोड हो रहा है…', en: 'Loading…' },
+  // R8: the one label for the one link — js/policy.js's EMITRA_PORTAL_URL.
+  // Never "locator": the government's own site advertises a "Kiosk
+  // Locator" nav item that links back to its own homepage (href="/"), not
+  // an actual locator — checked directly. This says what the link truly
+  // is, not what would sound better.
+  'common.emitra_link_label': { hi: 'ई-मित्र पोर्टल', en: 'e-Mitra portal' },
 
   'nav.home': { hi: 'मुख्य पृष्ठ', en: 'Home' },
   'nav.schemes': { hi: 'योजनाएं', en: 'Schemes' },
@@ -128,13 +134,20 @@ const STRINGS = {
   'chat.max_you_could_get': { hi: 'आपको अधिकतम मिल सकता है', en: 'You could get at most' },
   'chat.min_you_will_get': { hi: 'आपको कम से कम मिलेगा', en: 'You will get at least' },
   'chat.exact_amount_needs_more_info': { hi: 'सही राशि ऊपर बताई गई जानकारी दिए बिना नहीं बताई जा सकती।', en: 'The exact amount cannot be given without the information mentioned above.' },
+  // R8: PARTIAL state — a bound is known, the exact figure isn't. Split
+  // around common.emitra_link_label, same pattern as documents.emitra_*.
+  'chat.partial_emitra_before': { hi: 'सटीक राशि जानने के लिए नज़दीकी ', en: 'For the exact amount, confirm at your nearest ' },
+  'chat.partial_emitra_after': { hi: ' पर पुष्टि करें।', en: '.' },
   'chat.amount_needs_more_info': { hi: 'राशि बताने के लिए अभी पर्याप्त जानकारी नहीं है।', en: 'There is not enough information yet to state the amount.' },
   'chat.calculation_not_applicable': { hi: 'यह गणना इस स्थिति पर लागू नहीं होती।', en: 'This calculation does not apply to this situation.' },
   'chat.original_hindi_text': { hi: '', en: 'Original text (Hindi)' },
   'chat.calculation_error': { hi: 'माफ़ कीजिए, गणना में एक समस्या आई। नज़दीकी ई-मित्र पर सही राशि पूछें।', en: 'Sorry, there was a problem with the calculation. Ask at your nearest e-Mitra for the correct amount.' },
   'chat.load_error': { hi: '⚠ अभी लोड नहीं हो सका। कृपया पेज को दोबारा लोड करें, या थोड़ी देर बाद कोशिश करें।', en: '⚠ Could not load right now. Please reload the page, or try again in a moment.' },
   'chat.discovery_start': { hi: 'ठीक है, कुछ सवाल पूछता हूँ ताकि आपके लिए सही योजनाएं ढूंढ सकूं।', en: "Alright, I'll ask a few questions so I can find the right schemes for you." },
-  'chat.no_scheme_found': { hi: 'दिए गए विवरण के अनुसार, फिलहाल कोई योजना आपके लिए उपयुक्त नहीं लग रही। नज़दीकी ई-मित्र पर पूरी जानकारी के लिए पूछें।', en: 'Based on the details given, no scheme currently looks suitable for you. Ask at your nearest e-Mitra for full information.' },
+  // R8: split around common.emitra_link_label so "e-Mitra" in this
+  // sentence is the actual link, not restated a second time nearby.
+  'chat.no_scheme_found_before': { hi: 'दिए गए विवरण के अनुसार, फिलहाल कोई योजना आपके लिए उपयुक्त नहीं लग रही। नज़दीकी ', en: 'Based on the details given, no scheme currently looks suitable for you. Ask at your nearest ' },
+  'chat.no_scheme_found_after': { hi: ' पर पूरी जानकारी के लिए पूछें।', en: ' for full information.' },
   'chat.need_info_intro': { hi: 'इनके लिए थोड़ी और जानकारी चाहिए — किसी एक का नाम टाइप करके पूछें:', en: 'These need a bit more information — type one\'s name to ask about it:' },
   'chat.unknown_query': { hi: 'मेरे पास इसकी पक्की जानकारी नहीं है। "सभी योजनाएं देखें" दबाएं, या नज़दीकी ई-मित्र से पूछें।', en: 'I don\'t have confirmed information on this. Press "See all schemes", or ask at your nearest e-Mitra.' },
   'chat.samples_intro': { hi: 'कुछ उदाहरण, आज़माने के लिए:', en: 'Some examples to try:' },
@@ -198,6 +211,10 @@ const STRINGS = {
   },
   'documents.load_error': { hi: 'दस्तावेज़ सूची लोड नहीं हो सकी।', en: 'Could not load the document list.' },
   'documents.where_to_get': { hi: 'कहाँ से मिलेगा', en: 'Where to get it' },
+  // R8: split around common.emitra_link_label so the link sits inside a
+  // natural sentence in both languages, not appended as an afterthought.
+  'documents.emitra_before': { hi: 'किसी दस्तावेज़ में मदद चाहिए? नज़दीकी ', en: 'Need help with any of these documents? Visit the ' },
+  'documents.emitra_after': { hi: ' पर जाएं।', en: '.' },
   'documents.for_schemes': { hi: 'किन योजनाओं के लिए', en: 'Needed for schemes' },
 
   'notices.title': { hi: 'सूचनाएं — किसान द्वार', en: 'Notices — KISAN DWAAR' },

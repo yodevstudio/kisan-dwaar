@@ -6,6 +6,7 @@ import { assemble, assembleEn, explainGap, explainGapEn, labelFor, labelForEn } 
 import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
 import { loadSchemeRegistry, checkForNewerRegistry } from './registry-source.js';
+import { EMITRA_PORTAL_URL } from './policy.js';
 
 // K5: presentation only — every verdict, every rupee figure and every
 // missing-slot prompt below comes from eligibility.js / assemble.js /
@@ -119,6 +120,31 @@ syncChatBottomPadding();
 
 function addBotBubble(text) {
   const bubble = el('div', langClass('bubble bubble-bot'), text);
+  chatEl.appendChild(bubble);
+  scrollToBottom();
+  return bubble;
+}
+
+// R8: appends "<before><e-Mitra portal link><after>" to an already-created
+// element, so the same government-portal link (never a locator this
+// project has no verified data for — CONTEXT.md constraint 3) can sit
+// inside a natural sentence wherever the flow already tells a citizen to
+// visit an e-Mitra. `el()` can't do this itself — it only ever sets one
+// text node — so this stays a small, separate builder.
+function appendEmitraNote(parent, beforeKey, afterKey) {
+  parent.appendChild(document.createTextNode(t(beforeKey)));
+  const link = document.createElement('a');
+  link.href = EMITRA_PORTAL_URL;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = t('common.emitra_link_label');
+  parent.appendChild(link);
+  parent.appendChild(document.createTextNode(t(afterKey)));
+}
+
+function addBotBubbleWithEmitraLink(beforeKey, afterKey) {
+  const bubble = el('div', langClass('bubble bubble-bot'));
+  appendEmitraNote(bubble, beforeKey, afterKey);
   chatEl.appendChild(bubble);
   scrollToBottom();
   return bubble;
@@ -584,6 +610,9 @@ function renderVerdictCard(scheme, evaluation, output) {
       list.appendChild(el('li', '', `${docLabelFor(d)} — ${docWhereFor(d)}`));
     });
     card.appendChild(list);
+    const emitraNote = el('p', langClass('citation'));
+    appendEmitraNote(emitraNote, 'documents.emitra_before', 'documents.emitra_after');
+    card.appendChild(emitraNote);
   }
 
   if (output.citation) {
@@ -748,6 +777,9 @@ function renderExplainerResult(scheme, output) {
     const phrase = output.bound.type === 'upper' ? t('chat.max_you_could_get') : t('chat.min_you_will_get');
     card.appendChild(el('p', 'result-line', `${phrase}: ${formatInr(output.bound.value.value)}`));
     card.appendChild(el('p', 'result-note', t('chat.exact_amount_needs_more_info')));
+    const emitraNote = el('p', langClass('citation'));
+    appendEmitraNote(emitraNote, 'chat.partial_emitra_before', 'chat.partial_emitra_after');
+    card.appendChild(emitraNote);
   } else if (output.status === 'NEED_MORE_INFO') {
     card.appendChild(el('p', 'result-note', t('chat.amount_needs_more_info')));
   } else if (output.status === 'NOT_APPLICABLE') {
@@ -820,7 +852,7 @@ async function runDiscovery() {
   const needInfo = results.filter((r) => r.evaluation.verdict === 'NEED_MORE_INFO');
 
   if (eligible.length === 0 && needInfo.length === 0) {
-    addBotBubble(t('chat.no_scheme_found'));
+    addBotBubbleWithEmitraLink('chat.no_scheme_found_before', 'chat.no_scheme_found_after');
     return;
   }
 
