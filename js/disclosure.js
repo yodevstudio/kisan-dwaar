@@ -4,17 +4,20 @@
 // the system actually does. The upload/analytics facts come from
 // js/policy.js's plain constants.
 //
-// T4: the scheme count and its source line come from the same
-// loadSchemeRegistry() attempt-then-fallback js/app.js's boot uses — this
-// panel runs its own independent attempt rather than reading js/app.js's
-// state, so it stays reusable on a page that never runs app.js at all,
-// same reasoning as this file's own K12 comment always claimed. Either
-// way it degrades gracefully: loadSchemeRegistry() itself never throws.
+// T4, inverted by R5: the scheme count and its source line come from the
+// same loadSchemeRegistry()/checkForNewerRegistry() pair js/app.js's boot
+// uses — this panel runs its own independent attempt rather than reading
+// js/app.js's state, so it stays reusable on a page that never runs app.js
+// at all, same reasoning as this file's own K12 comment always claimed.
+// It renders from the committed file first, instantly, then upgrades in
+// place — never blocked or delayed by the Firebase SDK, and the source
+// line only ever says "live" once that upgrade has actually happened, not
+// as a promise it's about to.
 //
 // K8: bilingual — re-renders on 'kisan:langchange' so the panel switches
 // language instantly, same as every other static-core surface.
 import { getLang, t } from './i18n.js';
-import { loadSchemeRegistry } from './registry-source.js';
+import { loadSchemeRegistry, checkForNewerRegistry } from './registry-source.js';
 import {
   UPLOAD_RETENTION_DAYS,
   UPLOAD_MAX_FILE_BYTES,
@@ -31,19 +34,14 @@ function el(tag, className, text) {
   return e;
 }
 
-async function getSchemeCounts() {
-  try {
-    const { schemes, source, dataset_version } = await loadSchemeRegistry();
-    return {
-      total: schemes.length,
-      agriculture: schemes.filter((s) => s.scheme_group === 'agriculture').length,
-      relatedWelfare: schemes.filter((s) => s.scheme_group === 'related_welfare').length,
-      source,
-      dataset_version,
-    };
-  } catch {
-    return null; // never blocks the panel from rendering — see renderDisclosurePanel
-  }
+function toCounts(schemes, source, dataset_version) {
+  return {
+    total: schemes.length,
+    agriculture: schemes.filter((s) => s.scheme_group === 'agriculture').length,
+    relatedWelfare: schemes.filter((s) => s.scheme_group === 'related_welfare').length,
+    source,
+    dataset_version,
+  };
 }
 
 const COPY = {
@@ -77,7 +75,17 @@ export async function renderDisclosurePanel(containerId = 'disclosure-panel') {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const schemeCounts = await getSchemeCounts();
+  // R5: instant, from the committed file — never blocked on the Firebase
+  // SDK. `schemeCounts` is reassigned, not re-fetched, if the upgrade
+  // below succeeds, so `render()` (defined below, reading this by
+  // closure) always reflects whichever source actually loaded.
+  let schemeCounts = null;
+  try {
+    const { schemes, source, dataset_version } = await loadSchemeRegistry();
+    schemeCounts = toCounts(schemes, source, dataset_version);
+  } catch {
+    schemeCounts = null; // never blocks the panel from rendering — see render() below
+  }
   const maxMb = Math.round(UPLOAD_MAX_FILE_BYTES / (1024 * 1024));
 
   const render = () => {
@@ -128,4 +136,17 @@ export async function renderDisclosurePanel(containerId = 'disclosure-panel') {
 
   render();
   window.addEventListener('kisan:langchange', render);
+
+  // R5: fired after the panel has already shown accurate figures from the
+  // committed file — never awaited above, never delays the first render.
+  // Re-renders once, in place, only if a genuinely newer published
+  // registry turns out to be reachable; the source line only ever claims
+  // "live" once this has actually resolved, never as a pending promise.
+  if (schemeCounts) {
+    checkForNewerRegistry(schemeCounts.dataset_version).then((upgraded) => {
+      if (!upgraded) return;
+      schemeCounts = toCounts(upgraded.schemes, upgraded.source, upgraded.dataset_version);
+      render();
+    });
+  }
 }

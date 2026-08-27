@@ -5,7 +5,7 @@ import { evaluate, evaluateAll, formatRangeValue, parseBounds } from './eligibil
 import { assemble, assembleEn, explainGap, explainGapEn, labelFor, labelForEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
-import { loadSchemeRegistry } from './registry-source.js';
+import { loadSchemeRegistry, checkForNewerRegistry } from './registry-source.js';
 
 // K5: presentation only — every verdict, every rupee figure and every
 // missing-slot prompt below comes from eligibility.js / assemble.js /
@@ -922,6 +922,16 @@ async function init() {
   state.schemes = registry.schemes;
   state.slotsDoc = slotsDoc;
   state.lexicon = lexicon;
+
+  // R5: fired here, after the citizen already has a working chat in front
+  // of them — never awaited, never blocking the render above. If a
+  // CMS-published registry newer than what just booted turns out to be
+  // reachable, later questions in this same conversation evaluate against
+  // it; if it never resolves (offline, timeout, nothing newer), nothing
+  // about this page changes or waits on it.
+  checkForNewerRegistry(registry.dataset_version).then((upgraded) => {
+    if (upgraded) state.schemes = upgraded.schemes;
+  });
 
   applyComposerLabels();
   window.addEventListener('kisan:langchange', applyComposerLabels);
