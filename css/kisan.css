@@ -124,6 +124,8 @@ a { color: var(--field); }
    Every interactive element clears 64px on the shorter axis, so a shaking
    hand, a work glove, or a cracked screen doesn't cost a mis-tap. */
 button, .button, input, select, textarea, a.tappable {
+  display: inline-block;
+  box-sizing: border-box;
   min-height: var(--touch-target);
   min-width: var(--touch-target);
   padding: 0.75em 1.25em;
