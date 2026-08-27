@@ -625,6 +625,13 @@ img, svg { max-width: 100%; height: auto; }
 
 .site-nav .lang-toggle-btn.site-nav-lang-toggle {
   margin-left: auto;
+  /* R3: margin-left:auto alone leaves the toggle exactly at .site-nav's
+     own 16px padding edge, whether it wraps onto its own row or shares
+     one with the last link — same value at every width, mobile included.
+     A dedicated margin here is deliberate breathing room the toggle owns,
+     not shared with the rest of the row's generic edge padding, so it
+     never reads as flush against the boundary at any breakpoint. */
+  margin-right: 8px;
 }
 
 .footer-staff-link {

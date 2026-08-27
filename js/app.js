@@ -82,9 +82,40 @@ function el(tag, className, text) {
   return e;
 }
 
+// R3: #chat is not a scroll container of its own (no overflow/fixed height
+// — it grows with the page, like the rest of the static core), so
+// `chatEl.scrollTop = chatEl.scrollHeight` was a no-op: it set scrollTop on
+// an element that never scrolls, and a new bubble could land off-screen
+// with nothing bringing it into view. The page itself is what scrolls, so
+// scroll the most recently added element into view instead — this also
+// naturally accounts for the sticky composer sitting on top of the
+// viewport's bottom edge, once .chat reserves space for it (see below).
 function scrollToBottom() {
-  chatEl.scrollTop = chatEl.scrollHeight;
+  // Scroll #chat's own edge, not its last child's — #chat's bottom padding
+  // (synced to the composer's real height, below) is part of #chat's own
+  // border-box, so aligning #chat's bottom with the viewport reserves that
+  // space automatically. Aligning a child's bottom instead would ignore
+  // the parent's padding and land the child right behind the sticky
+  // composer, exactly the bug this fix exists to prevent.
+  chatEl.scrollIntoView({ block: 'end', behavior: 'auto' });
 }
+
+// R3: the composer is `position: sticky; bottom: 0`, so it visually sits
+// on top of whatever's beneath it in the viewport rather than pushing it
+// up — normal flow reserves the composer's own box further down the page,
+// but nothing reserved that same height at the *end* of the scrollable
+// chat content itself. Scrolling a bubble's bottom edge to the bottom of
+// the viewport (scrollIntoView's job above) would land it exactly where
+// the sticky composer is drawn, unless #chat's own bottom padding already
+// matches the composer's real height. Computed, not hard-coded, so this
+// stays correct if the composer grows (a longer placeholder, a wrapped
+// label, a future second control) without anyone needing to remember to
+// update a magic number here.
+function syncChatBottomPadding() {
+  chatEl.style.paddingBottom = `${composerEl.getBoundingClientRect().height}px`;
+}
+new ResizeObserver(syncChatBottomPadding).observe(composerEl);
+syncChatBottomPadding();
 
 function addBotBubble(text) {
   const bubble = el('div', langClass('bubble bubble-bot'), text);
