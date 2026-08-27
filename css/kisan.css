@@ -24,11 +24,12 @@
 }
 
 /* ===== Self-hosted type =====
-   assets/fonts/ has no woff2 files committed yet — only this port's CSS.
-   These @font-face rules point at the paths the design system expects; a
-   missing file just fails the font fetch and falls through to the system
-   stack already listed in --font-devanagari / --font-latin, so nothing
-   breaks in the meantime. Do not point these at a CDN — self-hosted only. */
+   R4: static Regular/Bold instances of both families, self-hosted here —
+   assets/fonts/*.woff2, each family's OFL.txt alongside it. Pulled as
+   static (non-variable) woff2 files specifically, not the variable-font
+   default Google Fonts serves to modern browsers, since a single @font-face
+   per weight is what this design system's own font-weight rules expect.
+   Do not point these at a CDN — self-hosted only, per CONTEXT.md. */
 @font-face {
   font-family: "Noto Sans Devanagari";
   src: url("../assets/fonts/NotoSansDevanagari-Regular.woff2") format("woff2");
