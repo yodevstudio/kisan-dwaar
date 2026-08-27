@@ -82,6 +82,23 @@ function loadAllOldSchemeRecords() {
   return byId;
 }
 
+// R10: closes an open question from T14 — README.md was asked to state
+// scheme counts as digits specifically so a consistency check could read
+// them; none existed. Reads the same two counts straight out of README.md's
+// own prose and fails the build if either disagrees with data/schemes.json,
+// the same discipline the structural validation below already applies to
+// a record. Runs on every build, not just when the data changes, so a
+// README edit that drifts from the data is caught immediately.
+function checkReadmeCounts(agricultureCount, relatedWelfareCount) {
+  const readme = readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  const ag = readme.match(/\*\*(\d+) schemes?\*\* are Rajasthan Department of Agriculture records/);
+  const wel = readme.match(/\*\*(\d+) schemes?\*\* are related-welfare records/);
+  if (!ag || !wel || Number(ag[1]) !== agricultureCount || Number(wel[1]) !== relatedWelfareCount) {
+    console.error(`build-registry: FAILED — README.md's stated scheme counts (agriculture: ${ag?.[1] ?? '?'}, related-welfare: ${wel?.[1] ?? '?'}) don't match data/schemes.json (${agricultureCount}, ${relatedWelfareCount}).`);
+    process.exit(1);
+  }
+}
+
 function main() {
   if (!existsSync(SCHEMES_PATH)) {
     console.error(`build-registry: ${SCHEMES_PATH} does not exist.`);
@@ -89,6 +106,10 @@ function main() {
   }
   const schemes = JSON.parse(readFileSync(SCHEMES_PATH, 'utf8'));
   const ratePolicyValues = parseRatePolicyVocabulary(readFileSync(SPEC_PATH, 'utf8'));
+  checkReadmeCounts(
+    schemes.filter((s) => s.scheme_group === 'agriculture').length,
+    schemes.filter((s) => s.scheme_group === 'related_welfare').length,
+  );
 
   let totalErrors = 0;
   for (const scheme of schemes) {
