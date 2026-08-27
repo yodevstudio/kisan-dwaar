@@ -172,7 +172,7 @@ Its header still reads *"S3 (services layer, not yet built)"*, written ahead of 
 
 ## 7 — What production on Department infrastructure would change
 
-Everything above describes a prototype built on Firebase's Spark plan, evaluated on `netlify.app`/`github.io` origins, authenticating against a personal Google account framed as OIDC. None of that is what a Department deployment would actually run. Stated explicitly, as a forward-looking design intent — **not** a description of anything built today:
+Everything above describes a prototype built on Firebase's Spark plan, evaluated on `github.io`/`netlify.app` origins, authenticating against a personal Google account framed as OIDC. None of that is what a Department deployment would actually run. Stated explicitly, as a forward-looking design intent — **not** a description of anything built today:
 
 ### 7.1 SAML/SSO integration, and real role-based access
 

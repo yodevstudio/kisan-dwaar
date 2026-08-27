@@ -6,7 +6,8 @@
 
 ## Try it in three minutes
 
-**Live:** <https://kisan-dwaar.netlify.app/>
+**Live:** <https://yodevstudio.github.io/kisan-dwaar/>
+**Mirror:** <https://kisan-dwaar.netlify.app/>
 
 **Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → answer as a small farmer → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
 
@@ -85,7 +86,7 @@ Everything a reviewer might want, in one place, each linked once:
 
 ```
 ┌─────────────────────── STATIC CORE ───────────────────────┐
-│  Deployed to TWO origins (Netlify primary, Pages mirror)  │
+│  Deployed to TWO origins (Pages primary, Netlify mirror)  │
 │  Zero dependencies · no build step · no framework · no CDN │
 │  Works offline after first load · nothing to 502            │
 │                                                            │
