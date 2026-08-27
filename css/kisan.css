@@ -392,6 +392,17 @@ img, svg { max-width: 100%; height: auto; }
   .two-col { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* R9: vertical stack with real spacing between children — used for a
+   .two-col side rail holding more than one card (each card keeps its own
+   border/padding; this only supplies the gap between them, the same job
+   margin-bottom would do less consistently). Layout only — no new token,
+   no type-scale change. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .doc-list-title {
   font-weight: 700;
   margin: 12px 0 4px;
@@ -723,7 +734,11 @@ img, svg { max-width: 100%; height: auto; }
 }
 
 /* ===== S6: operator mode ===== */
-.operator-layout { max-width: 900px; }
+/* R9: 900px read as an unfinished narrow column at 1440px on a page that's
+   a working form, not prose — widened to match .container's own 1100px so
+   .cms-form-grid's two-column fields (below) get real width instead of a
+   cramped 430px-ish half of 900px. */
+.operator-layout { max-width: 1100px; }
 
 .operator-tabs {
   display: flex;
