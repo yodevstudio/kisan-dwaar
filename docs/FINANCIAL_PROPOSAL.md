@@ -41,13 +41,26 @@ Both ranges are wide because they multiply two independent ranges (hours and rat
 
 **The mechanism.** `js/eligibility.js`, `js/assemble.js` and `js/explainer.js` run **in the citizen's own browser** — every eligibility computation is client-side JavaScript against a JSON file already downloaded, not a server-side query per citizen (`CONTEXT.md` constraint 1). The registry itself, `api/v1/`, is static JSON served from a CDN, not a database queried per request. There is no per-transaction server compute to bill for, because there is no server in that path at all.
 
-**Measured evidence of how light that path actually is.** `docs/audit-evidence/K14_HARDENING_AUDIT.md` §3.1 measured the homepage's full critical-path weight directly (`wc -c` / `gzip -c | wc -c`, not estimated): **~291 KB raw, ~75 KB gzipped**, for HTML, CSS, every statically-imported JS module, and all four `data/*.json` files combined. *(That measurement predates this submission's later visual and portal-structure passes; the true current figure will differ modestly — re-measure with the same commands before quoting it precisely, the same caveat that audit itself states.)*
+**Measured evidence of how light that path actually is — re-measured, not re-cited.** `docs/audit-evidence/K14_HARDENING_AUDIT.md` §3.1's original **~75 KB gzipped** figure predated two later changes that both moved real weight: R4 self-hosted the two font families that used to 404 silently (zero bytes, but broken), and R5 moved the Firebase SDK out of the boot-critical path entirely rather than racing it against the citizen's first render. Re-measured directly (`gzip -c | wc -c` for compressible files, real transfer size for the already-compressed font files — same method K14 used, not an estimate), homepage first load, by what each byte actually is and when it's fetched:
 
-**What that buys on free-tier static hosting.** Using the ~75 KB figure and Netlify's published free-tier bandwidth allowance:
+| | Bytes | What it is | When it's fetched |
+|---|---|---|---|
+| **Own code** | 49,236 B (~48 KB) | HTML, CSS, every statically-imported JS module, `data/schemes.json` | Before the portal is interactive — this is the entire dependency list, per `CONTEXT.md` constraint 1 |
+| **Self-hosted fonts** (R4) | 152,420 B (~149 KB) | Inter + Noto Sans Devanagari, static Regular/Bold, OFL | Immediately alongside the page — real weight, but non-blocking (`font-display: swap` shows fallback text instantly, swaps in place) |
+| **Third-party SDK** (deferred by R5) | 181,603 B (~177 KB) | Firebase SDK (`app`/`auth`/`firestore`, Google's CDN) + this project's own thin wrapper files | Only *after* first render, and only if `navigator.onLine` reports a network at all (`js/registry-source.js`'s `checkForNewerRegistry()`) — never awaited, never blocking |
+| **Total, honest, online** | **383,259 B (~374 KB)** | Sum of all three | A typical first-time visit that lets everything finish |
+| **Offline-safe portion** | 201,656 B (~197 KB) | Own code + fonts only | What a citizen with no network access, or one who navigates away before the lazy request lands, actually downloads — the whole point of `CONTEXT.md` constraint 1 |
 
-> 100 GB ÷ 75 KB ≈ **~1.4 million first-time page loads per month**, before any hosting cost is incurred at all — and a repeat visit costs far less than that, since the static core is designed to work fully offline after first load (`CONTEXT.md` constraint 1), meaning a returning citizen's browser serves most of that weight from its own cache, not from the network again.
+The own-code figure is genuinely smaller than K14's original 75 KB, not larger — it no longer counts the Firebase SDK a citizen's browser used to wait on before rendering anything. The **total** is larger than the original 75 KB claim ever was, because that claim never counted fonts or the SDK at all; stating the honest total here, arithmetic visible, is the correction R6 asks for, not a smaller number chosen to look better.
 
-`[NEEDS SOURCE: confirm Netlify's and GitHub Pages' currently published free-tier bandwidth limits before quoting the 100 GB figure — platform free tiers change.]` The specific number may move; the structural point does not: at any bandwidth limit a static host actually publishes, this site's per-citizen cost is a small fraction of a rupee, because the entire read path — discovery, eligibility, the explainer, the document checklist, the registry — is exactly the class of workload static hosting is priced to serve for free at meaningful scale.
+**What that buys on free-tier static hosting.** Using Netlify's published free-tier bandwidth allowance (100 GiB = 107,374,182,400 bytes):
+
+> 107,374,182,400 ÷ 383,259 (full total, online) ≈ **~280,000 first-time page loads per month**, worst case — every citizen online, every lazy byte landing.
+> 107,374,182,400 ÷ 201,656 (own code + fonts) ≈ **~532,000 first-time page loads per month**, for the offline-safe portion alone.
+
+Both numbers are before any hosting cost is incurred at all, and a repeat visit costs far less than either, since a returning citizen's browser caches the fonts and own-code files and serves most of that weight without touching the network again (`CONTEXT.md` constraint 1).
+
+`[NEEDS SOURCE: confirm Netlify's and GitHub Pages' currently published free-tier bandwidth limits before quoting the 100 GiB figure — platform free tiers change.]` The specific number may move; the structural point does not: at any bandwidth limit a static host actually publishes, this site's per-citizen cost is a small fraction of a rupee, because the entire read path — discovery, eligibility, the explainer, the document checklist, the registry — is exactly the class of workload static hosting is priced to serve for free at meaningful scale.
 
 ---
 
