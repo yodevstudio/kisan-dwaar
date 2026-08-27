@@ -141,12 +141,17 @@ const STRINGS = {
   'chat.checking_eligibility_for': { hi: '{{scheme}} की पात्रता जांचते हैं।', en: "Checking eligibility for {{scheme}}." },
 
   // T6: the auditable-decision panel under every verdict card.
-  'chat.audit_panel_summary': { hi: 'यह निर्णय कैसे लिया गया', en: 'How this decision was made' },
+  // R7: named as what it is — an explainability (XAI) layer, not branding.
+  // The distinction from a confidence score is stated in README.md and
+  // docs/DPI.md; this heading and the NEED_MORE_INFO framing line below
+  // are the only two places that wording reaches the panel itself.
+  'chat.audit_panel_summary': { hi: 'यह निर्णय कैसे लिया गया — व्याख्या-योग्य निर्णय (XAI)', en: 'How this decision was made — an explainability (XAI) layer' },
   'chat.audit_none_stated': { hi: 'इस योजना के लिए अभी तक कोई जानकारी दर्ज नहीं है।', en: 'No information has been given yet for this scheme.' },
   'chat.audit_rule': { hi: 'नियम क्या कहता है', en: 'What the rule says' },
   'chat.audit_decision': { hi: 'निर्णय', en: 'Decision' },
   'chat.audit_decision_eligible': { hi: 'सभी लागू शर्तें पूरी हुईं — आप इस योजना के लिए पात्र हैं।', en: 'All applicable conditions were met — you are eligible for this scheme.' },
   'chat.audit_decision_generic_not_eligible': { hi: 'कम से कम एक शर्त पूरी नहीं हुई।', en: 'At least one condition was not met.' },
+  'chat.audit_human_review_framing': { hi: 'मानव समीक्षा हेतु चिह्नित — भरोसा-स्कोर देने वाला सिस्टम इसे "कम भरोसा" कहेगा; यहाँ ठीक वही जानकारी बताई गई है जो अब भी चाहिए, कोई अनुमान नहीं:', en: 'Flagged for human review — a confidence-scored system would call this "low confidence"; here is exactly what information is still missing, not a guess:' },
   'chat.audit_listen': { hi: 'सुनें', en: 'Listen' },
   'chat.audit_print': { hi: 'प्रिंट करें', en: 'Print' },
   'chat.greeting': {

@@ -477,6 +477,10 @@ function buildDecisionSection(scheme, evaluation, opts) {
     });
     if (decisionLines.length === 0) decisionLines.push(t('chat.audit_decision_generic_not_eligible'));
   } else if (evaluation.verdict === 'NEED_MORE_INFO') {
+    // R7: NEED_MORE_INFO is this engine's explicit, named form of the XAI
+    // concept "human review required" — stated as such here, not just
+    // implied by the state's own name.
+    decisionLines.push(t('chat.audit_human_review_framing'));
     evaluation.missing_slots.forEach((slot) => {
       const def = findSlotDef(slot);
       const question = def ? questionFor(def) : slotLabelFor(slot);

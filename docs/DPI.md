@@ -31,7 +31,17 @@ The equivalent failure mode in scheme delivery is what `docs/EVIDENCE_LEDGER.md`
 
 ---
 
-## 3 — What "forkable" actually means here, concretely
+## 3 — Explainability (XAI), not just confidence
+
+Infrastructure other applications build on has to hand off a decision they can check, not just a number they have to trust. That is the same property this project's own citizen-facing verdict already carries, stated here explicitly because "verifiable, not trust-based" (§2's table) deserves a name a procurement panel already has a category for: this is an explainability (XAI) layer, not a confidence-scored one.
+
+The distinction is concrete, not rhetorical. A probabilistic confidence score states how sure a model is and stops there — a citizen or a second application receiving a "92% confident" verdict has no way to check the other 8%. Every verdict this registry's engine produces instead carries, and the auditable-decision panel under every verdict on the portal itself shows: **the exact clause of the rule that decided the outcome**, **the citizen input it was evaluated against**, and **the source document with its verification date**. Any one of those three is independently re-checkable — that is what "the two guards" in `CONTEXT.md` actually enforce structurally, not merely display. A consuming application built on `api/v1/` inherits that same reproducibility, not a confidence number it would have to take on faith.
+
+`NEED_MORE_INFO` — the engine's third verdict state, alongside `ELIGIBLE` and `NOT_ELIGIBLE` — is this system's explicit, named form of the XAI concept of **"human review required."** A confidence-scored system folds an uncertain case into a low score; here it is a distinct, named state, and the panel states precisely which input is still missing rather than a probability nobody downstream can act on.
+
+---
+
+## 4 — What "forkable" actually means here, concretely
 
 Not a slogan — three specific properties, all already true of the repository as built:
 
@@ -43,6 +53,6 @@ What is **not** yet true, and should be named rather than implied: the repositor
 
 ---
 
-## 4 — Why this belongs to Government, not to one vendor
+## 5 — Why this belongs to Government, not to one vendor
 
 The pitch this document exists to support is not "buy our app." It is: **the Department should own an open, versioned scheme-rules registry the way NPCI owns the UPI protocol — as infrastructure other things get built on, including things this team doesn't build.** A citizen-facing portal that later gets replaced, redesigned, or built by a different vendor should not require re-deriving the eligibility logic from scanned PDFs a second time. That derivation — the actual expensive, auditable work — is what `api/v1/` preserves independently of any one front end's fate.

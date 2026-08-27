@@ -125,6 +125,14 @@ Two independently-enforced mechanisms are why no figure a citizen sees can be in
 
 ---
 
+## The explainability layer (XAI)
+
+Every verdict a citizen sees carries an auditable-decision panel underneath it — collapsed by default, one tap to open, printable, and read aloud by the same speaker button every other answer uses. This is explainable AI in the literal sense the term names, not the marketing sense: a probabilistic confidence score states how sure a model is and stops there; this panel instead names **the exact clause of the rule that decided the outcome**, **the citizen input it was evaluated against**, and **the source document with its verification date** — every one of the three things a reviewer would need to reproduce the decision by hand, not merely trust a number. Reproducibility is a stronger claim than confidence, and it's the one this system can actually back with a re-run, not a probability.
+
+`NEED_MORE_INFO` — the third verdict state alongside `ELIGIBLE` and `NOT_ELIGIBLE` — is this system's explicit, named form of what an XAI framework calls **"human review required."** A confidence-scored system would fold that case into a low score and move on; here it is its own state, and the panel names precisely which input is still missing rather than reporting a number a citizen has no way to act on.
+
+---
+
 ## Data provenance
 
 The registry holds **12 schemes** today (`data/schemes.json`, `api/v1/index.json`), split by `scheme_group`: **6 schemes** are Rajasthan Department of Agriculture records, and a separate **6 schemes** are related-welfare records from other departments (Social Justice & Empowerment, Rural Development, Health, Food, and Petroleum & Natural Gas via Oil Marketing Companies) that a farming household also depends on — the two counts are kept and reported separately, never silently summed into one undifferentiated total, because they answer different questions (how deep is agriculture coverage, versus how far has the same engine already reached beyond it).
