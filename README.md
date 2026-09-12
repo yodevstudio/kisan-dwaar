@@ -4,6 +4,14 @@
 
 **This is a challenge-submission prototype built by YoDevStudio for the Rajasthan Innovation Challenge. It is not a deployed government service, it does not impersonate the Department of Agriculture or any Rajasthan government entity, and no real citizen data is processed anywhere in it.** Every page carries this disclosure in the interface itself, not only here (`CONTEXT.md` constraint 7).
 
+## Rajasthan Innovation Challenge — Final Submission
+
+- **Live prototype:** https://yodevstudio.github.io/kisan-dwaar/
+- **Proposal deck:** [PDF](submission/Kisan_Dwaar_Rajasthan_Innovation_Challenge_Proposal.pdf)
+- **Submission film:** https://github.com/yodevstudio/kisan-dwaar/releases/download/ric-submission-2026-09-12/Kisan_Dwaar_Rajasthan_Innovation_Challenge_Film_1080p.mp4
+- **Submission release:** https://github.com/yodevstudio/kisan-dwaar/releases/tag/ric-submission-2026-09-12
+- **Submission manifest:** [submission/README.md](submission/README.md)
+
 ---
 
 ## Try it in three minutes
