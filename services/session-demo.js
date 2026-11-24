@@ -1,3 +1,4 @@
+import { applyTranslations } from '../js/i18n.js';
 import { login, logout, onSessionChange, whenRedirectHandled, getLastLoginError } from './session.js';
 
 const statusEl = document.getElementById('status');
@@ -42,3 +43,5 @@ logoutBtn.addEventListener('click', async () => {
   await logout();
   logoutBtn.disabled = false;
 });
+
+applyTranslations();

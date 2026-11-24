@@ -247,6 +247,7 @@ const STRINGS = {
     hi: 'यह पोर्टल समग्र रूप से कैसा लगा? कोई खाता ज़रूरी नहीं, और यहाँ कोई पहचान संग्रहीत नहीं होती — देखें',
     en: 'How was the portal overall? No account needed, and no identity is stored here — see',
   },
+  'feedback.privacy_link': { hi: 'नीचे की सूची', en: 'the list below' },
   'feedback.intro_after': { hi: '।', en: '.' },
   'feedback.privacy_title': { hi: 'यहां क्या कभी संग्रहीत नहीं होता', en: 'What is never collected here' },
   'feedback.per_scheme_title': { hi: 'किसी एक योजना पर प्रतिक्रिया देनी है?', en: 'Want to give feedback on one scheme?' },
@@ -398,6 +399,35 @@ const STRINGS = {
   'employee.session_link': { hi: 'सेशन जाँच (S1)', en: 'Session check (S1)' },
   'employee.analytics_link': { hi: 'एनालिटिक्स डैशबोर्ड (S3)', en: 'Analytics dashboard (S3)' },
   'employee.home_link': { hi: '← मुख्य पृष्ठ पर वापस जाएं', en: '← Back to home' },
+
+  // Button labels and status lines shared by the staff and services pages.
+  'chat.more_options': { hi: 'और विकल्प', en: 'More options' },
+  'common.login_google': { hi: 'Google से लॉग-इन करें', en: 'Log in with Google' },
+  'common.logout': { hi: 'लॉग-आउट करें', en: 'Log out' },
+  'status.service_unavailable': {
+    hi: '⚠ सेवा-स्तर अभी उपलब्ध नहीं — असली अपलोड यहाँ नहीं दिखाए जा सकते; नीचे दी गई डेमो सूची पर कोई असर नहीं।',
+    en: '⚠ The service layer is not available right now — real uploads cannot be shown here; the demo list below is not affected.',
+  },
+  'status.logged_in': { hi: '✅ लॉग-इन है — uid:', en: '✅ Logged in — uid:' },
+  'status.session_checking': { hi: 'सेशन जाँच हो रही है…', en: 'Checking session…' },
+  'status.real_load_failed': { hi: 'असली अपलोड लोड नहीं हो सके।', en: 'Could not load your real uploads.' },
+  'admin.cms.load_draft': { hi: 'ड्राफ़्ट लोड करें', en: 'Load draft' },
+  'admin.cms.load_published': { hi: 'प्रकाशित संस्करण लोड करें', en: 'Load published version' },
+  'admin.cms.new': { hi: 'नया शुरू करें', en: 'Start new' },
+  'admin.cms.toggle_subsidy_rule': { hi: 'subsidy_rule जोड़ें / हटाएं', en: 'Add / remove subsidy_rule' },
+  'admin.cms.add_document': { hi: '+ दस्तावेज़ जोड़ें', en: '+ Add document' },
+  'admin.cms.validate': { hi: 'जाँचें (Validate)', en: 'Validate' },
+  'admin.cms.save_draft': { hi: 'ड्राफ़्ट सहेजें', en: 'Save draft' },
+  'admin.cms.publish': { hi: 'प्रकाशित करें', en: 'Publish' },
+  'admin.cms.load_versions': { hi: 'इतिहास देखें', en: 'View history' },
+  'admin.cms.add_condition_in': { hi: '+ {group} में शर्त जोड़ें', en: '+ Add condition to {group}' },
+  'admin.cms.remove_condition': { hi: '✕ शर्त हटाएं', en: '✕ Remove condition' },
+  'admin.cms.add_input': { hi: '+ input जोड़ें', en: '+ Add input' },
+  'admin.cms.add_term': { hi: '+ शर्त जोड़ें', en: '+ Add term' },
+  'admin.operator.add_farmer': { hi: '+ नया किसान जोड़ें', en: '+ Add farmer' },
+  'admin.operator.print_active': { hi: 'इस किसान का सारांश प्रिंट करें', en: 'Print this farmer’s summary' },
+  'admin.operator.print_all': { hi: 'सभी किसानों का सारांश प्रिंट करें (बैच)', en: 'Print all farmers’ summaries (batch)' },
+  'services.upload.btn': { hi: 'अपलोड करें', en: 'Upload' },
 };
 
 export function t(key) {

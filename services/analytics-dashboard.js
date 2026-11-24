@@ -9,6 +9,7 @@
 // scoring path.
 import { app } from './firebase-app.js';
 import { resolvePath } from '../js/paths.js';
+import { t } from '../js/i18n.js';
 import { ANALYTICS_NEVER_COLLECTED_HI } from '../js/policy.js';
 import { onSessionChange, login } from './session.js';
 import { listDrafts } from './cms.js';
@@ -266,7 +267,7 @@ onSessionChange((session) => {
     });
   } else {
     sessionGate.appendChild(el('p', 'hi', 'यह डैशबोर्ड केवल लॉग-इन स्टाफ़ के लिए है।'));
-    const btn = el('button', 'button hi', 'Google से लॉग-इन करें');
+    const btn = el('button', 'button hi', t('common.login_google'));
     btn.type = 'button';
     btn.addEventListener('click', () => login());
     sessionGate.appendChild(btn);

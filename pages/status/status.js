@@ -100,7 +100,7 @@ function initRealUploads() {
   ready.then(() => {
     if (!sessionModule || !uploadModule) {
       gateEl.innerHTML = '';
-      gateEl.appendChild(el('p', 'hi term-warning', '⚠ सेवा-स्तर अभी उपलब्ध नहीं — असली अपलोड यहाँ नहीं दिखाए जा सकते; नीचे दी गई डेमो सूची पर कोई असर नहीं।'));
+      gateEl.appendChild(el('p', langClass('term-warning'), t('status.service_unavailable')));
       return;
     }
 
@@ -111,17 +111,17 @@ function initRealUploads() {
       gateEl.innerHTML = '';
       listEl.innerHTML = '';
       if (!lastSession) {
-        gateEl.appendChild(el('p', 'hi', t('status.real_login_prompt')));
-        const btn = el('button', 'button hi', 'Google से लॉग-इन करें');
+        gateEl.appendChild(el('p', getLang() === 'hi' ? 'hi' : '', t('status.real_login_prompt')));
+        const btn = el('button', langClass('button'), t('common.login_google'));
         btn.type = 'button';
         btn.addEventListener('click', () => sessionModule.login());
         gateEl.appendChild(btn);
         return;
       }
-      gateEl.appendChild(el('p', 'hi citation', `✅ लॉग-इन है — uid: ${lastSession.uid}`));
+      gateEl.appendChild(el('p', langClass('citation'), `${t('status.logged_in')} ${lastSession.uid}`));
       if (lastRecords === null) return; // still loading — filled in once the fetch below resolves
       if (lastRecords.length === 0) {
-        listEl.appendChild(el('p', 'hi citation', t('status.real_none')));
+        listEl.appendChild(el('p', langClass('citation'), t('status.real_none')));
         return;
       }
       lastRecords.forEach((r) => listEl.appendChild(renderRealUpload(r)));
@@ -142,7 +142,7 @@ function initRealUploads() {
           console.error('status: listMyUploads failed:', err);
           lastRecords = [];
           renderGate();
-          listEl.appendChild(el('p', 'hi term-warning', 'असली अपलोड लोड नहीं हो सके।'));
+          listEl.appendChild(el('p', langClass('term-warning'), t('status.real_load_failed')));
         });
     });
   });

@@ -13,17 +13,23 @@ function nameFor(scheme) {
   return getLang() === 'en' && scheme.name_en ? scheme.name_en : scheme.name_hi;
 }
 
-function renderCard(scheme, cls, lang) {
+// Two records store the department as "English / Hindi". In English mode only the
+// English half is shown, so no Devanagari is left on the page; the data is untouched.
+function departmentFor(scheme) {
+  if (getLang() === 'en') {
+    const [english, ...rest] = scheme.department.split(' / ');
+    if (rest.length && /[ऀ-ॿ]/.test(rest.join(' / '))) return english;
+  }
+  return scheme.department;
+}
+
+function renderCard(scheme, cls) {
   const card = el('div', `card service-card ${cls}`.trim());
   const head = el('div', 'card-head');
   head.appendChild(iconSpan('scheme'));
   head.appendChild(el('span', 'answer-headline', nameFor(scheme)));
   card.appendChild(head);
-  card.appendChild(el('p', 'card-dept', scheme.department));
-  const keywords = lang === 'en' && scheme.keywords_en ? scheme.keywords_en : scheme.keywords_hi;
-  if (keywords && keywords.length) {
-    card.appendChild(el('p', 'citation', keywords.join(' · ')));
-  }
+  card.appendChild(el('p', 'card-dept', departmentFor(scheme)));
   // Source as a real link, verification date on its own line — the two
   // provenance values every claim on this site rests on.
   const sourceP = el('p', 'citation');
@@ -79,7 +85,7 @@ async function init() {
     if (agriculture.length > 0) {
       listEl.appendChild(el('h2', cls, `${t('schemes.agriculture_heading')} (${agriculture.length})`));
       const grid = el('div', 'card-grid');
-      agriculture.forEach((scheme) => grid.appendChild(renderCard(scheme, cls, lang)));
+      agriculture.forEach((scheme) => grid.appendChild(renderCard(scheme, cls)));
       listEl.appendChild(grid);
     }
 
@@ -87,7 +93,7 @@ async function init() {
       listEl.appendChild(el('h2', cls, `${t('schemes.related_welfare_heading')} (${relatedWelfare.length})`));
       listEl.appendChild(el('p', `citation ${cls}`.trim(), t('schemes.related_welfare_note')));
       const grid = el('div', 'card-grid');
-      relatedWelfare.forEach((scheme) => grid.appendChild(renderCard(scheme, cls, lang)));
+      relatedWelfare.forEach((scheme) => grid.appendChild(renderCard(scheme, cls)));
       listEl.appendChild(grid);
     }
   };

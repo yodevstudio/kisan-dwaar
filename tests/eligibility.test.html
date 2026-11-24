@@ -600,7 +600,7 @@ await test('slots catalogue: no answer option straddles a threshold a scheme act
 await test('assemble: sourced benefit text ending in a full stop is not double-punctuated', async () => {
   const schemes = await (await fetch('../data/schemes.json')).json();
   const tar = schemes.find((x) => x.scheme_id === 'RJ_TARBANDI');
-  const ev = evaluate({ occupation: 'farmer', landholding_hectares: { min: 1.01, max: 2 } }, tar);
+  const ev = evaluate({ occupation: 'farmer', group_farmer_count: 3, group_landholding_hectares: 5 }, tar);
   assertEqual(ev.verdict, 'ELIGIBLE');
   const out = assemble('ELIGIBLE', tar, ev);
   assertTrue(!out.text_hi.includes('।।') && !out.text_hi.includes('..'), `got: ${out.text_hi}`);

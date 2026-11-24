@@ -12,6 +12,7 @@
 // break farmer entry, calculation, or printing — the same pattern
 // js/app.js already uses for telemetry.
 import { resolvePath } from '../../js/paths.js';
+import { t, applyTranslations } from '../../js/i18n.js';
 import { RAJASTHAN_DISTRICTS } from '../../js/router.js';
 import { evaluate } from '../../js/eligibility.js';
 import { assemble } from '../../js/assemble.js';
@@ -370,7 +371,7 @@ async function init() {
       } else {
         statusEl.innerHTML = '';
         statusEl.appendChild(document.createTextNode('अपलोड करने के लिए लॉग-इन करें: '));
-        const btn = el('button', 'button hi', 'Google से लॉग-इन करें');
+        const btn = el('button', 'button hi', t('common.login_google'));
         btn.type = 'button';
         btn.addEventListener('click', () => sessionModule.login());
         statusEl.appendChild(btn);
@@ -381,3 +382,5 @@ async function init() {
 }
 
 init();
+
+applyTranslations();

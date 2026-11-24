@@ -1,4 +1,5 @@
 import { onSessionChange, login } from './session.js';
+import { t, applyTranslations } from '../js/i18n.js';
 import { preflightCheck, uploadDocument } from './upload.js';
 import { UPLOAD_RETENTION_DAYS, UPLOAD_MAX_FILE_BYTES, UPLOAD_ALLOWED_TYPES_HI } from '../js/policy.js';
 
@@ -52,7 +53,7 @@ onSessionChange((session) => {
     const loginBtn = document.createElement('button');
     loginBtn.type = 'button';
     loginBtn.className = 'button hi';
-    loginBtn.textContent = 'Google से लॉग-इन करें';
+    loginBtn.textContent = t('common.login_google');
     loginBtn.addEventListener('click', () => login());
     sessionStatusEl.appendChild(loginBtn);
   }
@@ -97,3 +98,5 @@ uploadBtn.addEventListener('click', async () => {
     refreshUploadGate();
   }
 });
+
+applyTranslations();

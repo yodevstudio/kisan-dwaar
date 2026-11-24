@@ -1,4 +1,5 @@
 import { resolvePath } from '../../js/paths.js';
+import { t, applyTranslations } from '../../js/i18n.js';
 import { evaluate } from '../../js/eligibility.js';
 import { assemble } from '../../js/assemble.js';
 import { explain, assertDerivedFromSourced } from '../../js/explainer.js';
@@ -221,7 +222,7 @@ function renderConditionGroup(container, groupKey) {
     }
     container.appendChild(conditionRow(list, i, () => renderConditionGroup(container, groupKey)));
   });
-  const addBtn = el('button', 'chip hi', `+ ${groupKey} में शर्त जोड़ें`);
+  const addBtn = el('button', 'chip hi', t('admin.cms.add_condition_in').replace('{group}', groupKey));
   addBtn.type = 'button';
   addBtn.addEventListener('click', () => {
     list.push({ slot: '', op: 'eq', value: '' });
@@ -352,7 +353,7 @@ function renderTermRow(terms, i, refresh) {
   });
   typeSelect.addEventListener('change', () => { term.type = typeSelect.value; renderTerms(); });
 
-  const removeBtn = el('button', 'chip chip-secondary hi', '✕ शर्त हटाएं');
+  const removeBtn = el('button', 'chip chip-secondary hi', t('admin.cms.remove_condition'));
   removeBtn.type = 'button';
   removeBtn.addEventListener('click', () => { terms.splice(i, 1); refresh(); });
 
@@ -407,7 +408,7 @@ function renderSubsidyRule() {
   const inputsHost = el('div', 'cms-inputs-host');
   rule.inputs.forEach((_, i) => inputsHost.appendChild(renderSubsidyInputRow(rule.inputs, i, renderSubsidyRule)));
   container.appendChild(inputsHost);
-  const addInputBtn = el('button', 'chip hi', '+ input जोड़ें');
+  const addInputBtn = el('button', 'chip hi', t('admin.cms.add_input'));
   addInputBtn.type = 'button';
   addInputBtn.addEventListener('click', () => { rule.inputs.push({ slot: '', type: 'number', required: true, prompt_hi: '', unit_hi: '' }); renderSubsidyRule(); renderTestCitizen(); });
   container.appendChild(addInputBtn);
@@ -425,7 +426,7 @@ function renderSubsidyRule() {
   const termsHost = el('div', 'cms-terms-host');
   container.appendChild(termsHost);
   renderTerms();
-  const addTermBtn = el('button', 'chip hi', '+ शर्त जोड़ें');
+  const addTermBtn = el('button', 'chip hi', t('admin.cms.add_term'));
   addTermBtn.type = 'button';
   addTermBtn.addEventListener('click', () => {
     rule.terms.push({ id: '', label_hi: '', type: 'flat_cap', amount_inr: 0 });
@@ -641,7 +642,7 @@ async function init() {
       cmsBody.style.display = '';
     } else {
       sessionGate.appendChild(el('p', 'hi', 'S5 केवल लॉग-इन नागरिकों/स्टाफ़ के लिए है।'));
-      const btn = el('button', 'button hi', 'Google से लॉग-इन करें');
+      const btn = el('button', 'button hi', t('common.login_google'));
       btn.type = 'button';
       btn.addEventListener('click', () => login());
       sessionGate.appendChild(btn);
@@ -764,3 +765,5 @@ async function init() {
 }
 
 init();
+
+applyTranslations();

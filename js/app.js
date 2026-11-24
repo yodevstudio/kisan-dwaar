@@ -166,9 +166,17 @@ function labelForOption(opt) {
   return opt.label_hi;
 }
 
-function addChips(options, onPick) {
+// Slots with a long option list show only these values first (in this
+// order), followed by one "more options" chip that reveals every remaining
+// option. data/slots.json is untouched — all options stay in the catalogue
+// and in the build-insights coverage; this is presentation only.
+const PRIMARY_OPTION_VALUES = {
+  occupation: ['farmer', 'tenant_farmer', 'labourer', 'self_employed'],
+};
+
+function addChips(options, onPick, primaryValues) {
   const wrap = el('div', 'chips');
-  options.forEach((opt) => {
+  const addOption = (opt) => {
     const btn = el('button', langClass('chip'), labelForOption(opt));
     btn.type = 'button';
     btn.addEventListener('click', () => {
@@ -177,7 +185,25 @@ function addChips(options, onPick) {
       onPick(opt.value);
     });
     wrap.appendChild(btn);
-  });
+  };
+  const primary = primaryValues
+    ? primaryValues.map((v) => options.find((o) => o.value === v)).filter(Boolean)
+    : [];
+  if (primary.length === 0 || primary.length === options.length) {
+    options.forEach(addOption);
+  } else {
+    primary.forEach(addOption);
+    const rest = options.filter((o) => !primary.includes(o));
+    const more = el('button', langClass('chip chip-secondary'), t('chat.more_options'));
+    more.type = 'button';
+    more.setAttribute('aria-expanded', 'false');
+    more.addEventListener('click', () => {
+      more.remove();
+      rest.forEach(addOption);
+      scrollToBottom();
+    });
+    wrap.appendChild(more);
+  }
   chatEl.appendChild(wrap);
   scrollToBottom();
 }
@@ -283,7 +309,7 @@ function askCatalogSlot(slotName) {
         state.slots[slotName] = value;
         track('trackQuestionAnswered', slotName);
         resolve(value);
-      });
+      }, PRIMARY_OPTION_VALUES[slotName]);
     } else {
       addNumberPrompt(unitFor(def), true, (value) => {
         if (value !== undefined) state.slots[slotName] = value;
@@ -791,6 +817,15 @@ function renderExplainerResult(scheme, output) {
 
   const stated = describeStatedInputs(rule, state.slots);
   if (stated) card.appendChild(el('p', 'stated-inputs', `${t('chat.you_stated')}: ${stated}`));
+
+  // A figure above a unit cap is trimmed to the cap by explainer.js; say so
+  // using the cap's own published wording, nothing composed here.
+  Object.entries(rule.unit_caps || {}).forEach(([slot, cap]) => {
+    const citizenValue = state.slots[slot];
+    if (typeof citizenValue !== 'number' || typeof cap.max !== 'number' || citizenValue <= cap.max) return;
+    const label = lang === 'en' && cap.label_en ? cap.label_en : cap.label_hi;
+    card.appendChild(el('p', 'term-warning', `⚠ ${label}`));
+  });
 
   output.terms.forEach((term, i) => {
     card.appendChild(el('p', 'term-heading', `${t('chat.condition')} ${i + 1} — ${termLabelFor(term)}`));

@@ -20,9 +20,9 @@
         <label class="hi" for="scheme-id-input">योजना ID (scheme_id) — मौजूदा लोड करने या नई शुरू करने के लिए</label>
         <div class="chips">
           <input type="text" id="scheme-id-input" class="hi" placeholder="RJ_EXAMPLE_SCHEME">
-          <button id="load-draft-btn" type="button" class="button hi">ड्राफ़्ट लोड करें</button>
-          <button id="load-published-btn" type="button" class="button hi">प्रकाशित संस्करण लोड करें</button>
-          <button id="new-btn" type="button" class="button hi">नया शुरू करें</button>
+          <button id="load-draft-btn" type="button" class="button hi" data-i18n="admin.cms.load_draft">ड्राफ़्ट लोड करें</button>
+          <button id="load-published-btn" type="button" class="button hi" data-i18n="admin.cms.load_published">प्रकाशित संस्करण लोड करें</button>
+          <button id="new-btn" type="button" class="button hi" data-i18n="admin.cms.new">नया शुरू करें</button>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
       <section class="card hi">
         <h2 class="hi">4. अनुदान गणना नियम (subsidy_rule) — वैकल्पिक</h2>
         <div class="chips">
-          <button id="toggle-subsidy-rule-btn" type="button" class="button hi">subsidy_rule जोड़ें / हटाएं</button>
+          <button id="toggle-subsidy-rule-btn" type="button" class="button hi" data-i18n="admin.cms.toggle_subsidy_rule">subsidy_rule जोड़ें / हटाएं</button>
         </div>
         <div id="form-subsidy-rule" style="display:none;"></div>
       </section>
@@ -52,7 +52,7 @@
       <section class="card hi">
         <h2 class="hi">5. दस्तावेज़ (Documents)</h2>
         <div id="form-documents"></div>
-        <button id="add-document-btn" type="button" class="chip hi">+ दस्तावेज़ जोड़ें</button>
+        <button id="add-document-btn" type="button" class="chip hi" data-i18n="admin.cms.add_document">+ दस्तावेज़ जोड़ें</button>
       </section>
 
       <section class="card hi">
@@ -68,16 +68,16 @@
       <section class="card hi">
         <h2 class="hi">जाँच व सहेजें</h2>
         <div class="chips">
-          <button id="validate-btn" type="button" class="button hi">जाँचें (Validate)</button>
-          <button id="save-draft-btn" type="button" class="button hi">ड्राफ़्ट सहेजें</button>
-          <button id="publish-btn" type="button" class="button hi">प्रकाशित करें</button>
+          <button id="validate-btn" type="button" class="button hi" data-i18n="admin.cms.validate">जाँचें (Validate)</button>
+          <button id="save-draft-btn" type="button" class="button hi" data-i18n="admin.cms.save_draft">ड्राफ़्ट सहेजें</button>
+          <button id="publish-btn" type="button" class="button hi" data-i18n="admin.cms.publish">प्रकाशित करें</button>
         </div>
         <div id="validate-result"></div>
       </section>
 
       <section class="card hi">
         <h2 class="hi">संस्करण इतिहास</h2>
-        <button id="load-versions-btn" type="button" class="chip hi">इतिहास देखें</button>
+        <button id="load-versions-btn" type="button" class="chip hi" data-i18n="admin.cms.load_versions">इतिहास देखें</button>
         <div id="version-history"></div>
       </section>
 
