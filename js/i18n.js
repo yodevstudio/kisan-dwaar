@@ -176,6 +176,22 @@ const STRINGS = {
   'chat.audit_human_review_framing': { hi: 'मानव समीक्षा हेतु चिह्नित — भरोसा-स्कोर देने वाला सिस्टम इसे "कम भरोसा" कहेगा; यहाँ ठीक वही जानकारी बताई गई है जो अब भी चाहिए, कोई अनुमान नहीं:', en: 'Flagged for human review — a confidence-scored system would call this "low confidence"; here is exactly what information is still missing, not a guess:' },
   'chat.audit_listen': { hi: 'सुनें', en: 'Listen' },
   'chat.audit_print': { hi: 'प्रिंट करें', en: 'Print' },
+  // Preparation slip: one printable A4 page per verdict card, built by
+  // js/present.js. Every line of it is either one of these strings or text
+  // copied from the scheme record / the engines' own output.
+  'slip.title': { hi: 'मेरी तैयारी पर्ची', en: 'My preparation slip' },
+  'slip.stated': { hi: 'आपने बताया', en: 'You stated' },
+  'slip.rule': { hi: 'नियम क्या कहता है', en: 'What the rule says' },
+  'slip.still_unknown': { hi: 'अभी तक पता नहीं', en: 'Still unknown' },
+  'slip.documents': { hi: 'ज़रूरी दस्तावेज़ — कहाँ से मिलेंगे', en: 'Documents needed — where to get them' },
+  'slip.subsidy': { hi: 'अनुदान की गणना', en: 'Subsidy calculation' },
+  'slip.source': { hi: 'स्रोत', en: 'Source' },
+  'slip.verified_on': { hi: 'जाँचा गया', en: 'Verified on' },
+  'slip.next_step': { hi: 'अगला कदम', en: 'Next step' },
+  'slip.footer': {
+    hi: 'यह पर्ची पात्रता का अनुमान है, स्वीकृति आदेश नहीं — प्रस्ताव प्रोटोटाइप — YoDevStudio',
+    en: 'This slip is an estimate of eligibility, not a sanction order — Proposal Prototype — YoDevStudio',
+  },
   'chat.greeting': {
     hi: 'नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। ऊपर "छह सवालों से पात्रता जांचें" दबाएं, या नीचे किसी योजना का नाम लिखकर सीधे पूछें।',
     en: 'Hello! I am KISAN DWAAR — for Rajasthan\'s agriculture schemes. Press "Check eligibility in six questions" above, or ask about a scheme by name below.',
@@ -431,9 +447,16 @@ const STRINGS = {
 };
 
 export function t(key) {
+  return tIn(key, getLang());
+}
+
+// Same lookup as t(), for a language other than the one the UI is in — the
+// preparation slip prints Hindi always, with English beneath it when the UI
+// is English, so it needs both at once.
+export function tIn(key, lang) {
   const entry = STRINGS[key];
   if (!entry) return key;
-  return entry[getLang()] || entry.hi;
+  return entry[lang] || entry.hi;
 }
 
 export function applyTranslations(root = document) {

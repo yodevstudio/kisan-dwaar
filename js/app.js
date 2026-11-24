@@ -1,10 +1,21 @@
 import { resolvePath } from './paths.js';
 import { normalise } from './normalise.js';
 import { route, RAJASTHAN_DISTRICT_PAIRS } from './router.js';
-import { evaluate, evaluateAll, formatRangeValue, parseBounds } from './eligibility.js';
+import { evaluate, evaluateAll } from './eligibility.js';
 import { assemble, assembleEn, explainGap, explainGapEn, labelFor, labelForEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
+import {
+  buildSlipModel,
+  clauseLineEn,
+  describeStatedInputs as describeStatedInputsIn,
+  explainerResultParts,
+  explainerTermEntries,
+  formatSlotValue as formatSlotValueIn,
+  statedEntries,
+  unitCapNotices,
+  verdictSpeechText,
+} from './present.js';
 import { loadSchemeRegistry, checkForNewerRegistry } from './registry-source.js';
 import { EMITRA_PORTAL_URL } from './policy.js';
 
@@ -417,6 +428,16 @@ function docWhereFor(doc) {
   return getLang() === 'en' && doc.where_to_get_en ? doc.where_to_get_en : doc.where_to_get_hi;
 }
 
+// Reads `text` aloud in the language it was written in: hi-IN for Hindi,
+// en-IN for English. Used by the audit panel's and the verdict card's
+// Listen buttons, both of which are only built when speechSynthesis exists.
+function speak(text, lang) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang === 'en' ? 'en-IN' : 'hi-IN';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
 // T6: the auditable-decision panel under every verdict. Every value below
 // is read straight off evaluate()'s own output (js/eligibility.js) or
 // formatted through assemble.js's existing explainGap/explainGapEn and
@@ -431,54 +452,11 @@ function slotLabelFor(slot) {
 }
 
 // Projects an already-known slot value for display — never recomputes
-// anything, just formats a value evaluate()'s clauses already carried.
+// anything, just formats a value evaluate()'s clauses already carried. The
+// formatting itself lives in js/present.js so the audit panel and the
+// printed preparation slip cannot drift apart.
 function formatSlotValue(slot, value) {
-  if (value === null || value === undefined) return null;
-  if (typeof value === 'object' && !Array.isArray(value) && ('min' in value || 'max' in value)) {
-    return formatRangeValue(value);
-  }
-  const def = findSlotDef(slot);
-  if (def && Array.isArray(def.options)) {
-    const opt = def.options.find((o) => o.value === value);
-    if (opt) return labelForOption(opt);
-  }
-  return typeof value === 'number' ? value.toLocaleString('en-IN') : String(value);
-}
-
-// K8: eligibility.js's own opLabelFor/formatReason are Hindi-only by
-// design (matching evaluation.reasons, which this panel uses verbatim in
-// Hindi mode) — English mode needs its own mirror, built from the same
-// clause fields evaluate() already returns, not a re-evaluation.
-function isWildcardValue(value) {
-  return value === '*' || (Array.isArray(value) && value.includes('*'));
-}
-
-function opLabelForEn(op, value) {
-  switch (op) {
-    case 'in': return `must be one of: [${value.join(', ')}]`;
-    case 'gte': return `must be >= ${value}`;
-    case 'lte': return `must be <= ${value}`;
-    case 'eq': return `must be = ${value}`;
-    case 'between': {
-      const { min, max } = parseBounds(value);
-      return `must be between ${min} and ${max}`;
-    }
-    default: return '';
-  }
-}
-
-function clauseResultSuffixEn(clause) {
-  if (clause.result === 'unknown') return 'information needed';
-  if (clause.kind === 'exclusion') return clause.result ? 'exclusion applies (not eligible)' : 'exclusion does not apply (ok)';
-  return clause.result ? 'condition met' : 'condition failed';
-}
-
-function clauseLineEn(clause) {
-  const label = slotLabelFor(clause.slot);
-  if (clause.result === 'unknown') return `${label}: not yet stated — ${clauseResultSuffixEn(clause)}`;
-  const requirement = isWildcardValue(clause.required) ? '(no specific condition)' : opLabelForEn(clause.op, clause.required);
-  const actualText = formatSlotValue(clause.slot, clause.actual);
-  return `${label}: stated ${actualText}, ${requirement} — ${clauseResultSuffixEn(clause)}`;
+  return formatSlotValueIn(slot, value, getLang(), state.slotsDoc);
 }
 
 // आपने बताया — every slot the citizen has already answered that this
@@ -489,19 +467,13 @@ function clauseLineEn(clause) {
 function buildStatedInputsSection(evaluation) {
   const wrap = el('div', 'audit-section');
   wrap.appendChild(el('h4', langClass(''), t('chat.you_stated')));
-  const seen = new Map();
-  evaluation.clauses.forEach((c) => {
-    if (c.actual === null || c.actual === undefined) return;
-    if (!seen.has(c.slot)) seen.set(c.slot, c.actual);
-  });
-  if (seen.size === 0) {
+  const lines = statedEntries(evaluation, getLang(), state.slotsDoc);
+  if (lines.length === 0) {
     wrap.appendChild(el('p', langClass('citation'), t('chat.audit_none_stated')));
     return wrap;
   }
   const list = el('ul', 'doc-list');
-  seen.forEach((value, slot) => {
-    list.appendChild(el('li', langClass(''), `${slotLabelFor(slot)}: ${formatSlotValue(slot, value)}`));
-  });
+  lines.forEach((line) => list.appendChild(el('li', langClass(''), line)));
   wrap.appendChild(list);
   return wrap;
 }
@@ -515,7 +487,7 @@ function buildRuleSection(evaluation) {
   wrap.appendChild(el('h4', langClass(''), t('chat.audit_rule')));
   const list = el('ul', 'doc-list');
   if (getLang() === 'en') {
-    evaluation.clauses.forEach((c) => list.appendChild(el('li', '', clauseLineEn(c))));
+    evaluation.clauses.forEach((c) => list.appendChild(el('li', '', clauseLineEn(c, state.slotsDoc))));
   } else {
     evaluation.reasons.forEach((r) => list.appendChild(el('li', 'hi', r)));
   }
@@ -578,12 +550,7 @@ function buildDecisionSection(scheme, evaluation, opts) {
   if (interactive && decisionLines.length && window.speechSynthesis) {
     const speakBtn = el('button', langClass('chip'), `🔊 ${t('chat.audit_listen')}`);
     speakBtn.type = 'button';
-    speakBtn.addEventListener('click', () => {
-      const utterance = new SpeechSynthesisUtterance(decisionLines.join('. '));
-      utterance.lang = lang === 'en' ? 'en-IN' : 'hi-IN';
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    });
+    speakBtn.addEventListener('click', () => speak(decisionLines.join('. '), lang));
     wrap.appendChild(speakBtn);
   }
 
@@ -632,6 +599,66 @@ function printAuditCard(scheme, evaluation, output) {
   section.appendChild(el('p', langClass(''), outputText(output)));
   section.appendChild(buildAuditPanelSections(scheme, evaluation, output, { interactive: false }));
   area.appendChild(section);
+  window.print();
+}
+
+// The subsidy calculation each scheme's citizen has run so far, keyed by
+// scheme_id: the explain() output (already past assertDerivedFromSourced)
+// plus the answers it was computed from. The preparation slip copies from
+// this; it never calls explain() itself.
+const explainerRuns = new Map();
+
+// मेरी तैयारी पर्ची — one A4 page the citizen can take to an e-Mitra. Built
+// by js/present.js, drawn here into the same #print-area printAuditCard
+// uses. Nothing on it is carried by colour: the verdict is an icon plus a
+// word inside a box whose border style differs per verdict, and every
+// section is introduced by a text heading.
+function printPreparationSlip(scheme, evaluation) {
+  const area = document.getElementById('print-area');
+  const model = buildSlipModel({
+    scheme,
+    evaluation,
+    slotsDoc: state.slotsDoc,
+    uiLang: getLang(),
+    explainerRun: explainerRuns.get(scheme.scheme_id) || null,
+  });
+  if (!area || !model) return;
+  const lines = (parent, texts, className) => {
+    texts.forEach((text, i) => {
+      const line = el('p', `slip-line ${className || ''} ${i > 0 ? 'slip-en' : 'hi'}`.trim(), text);
+      parent.appendChild(line);
+    });
+  };
+
+  area.innerHTML = '';
+  const page = el('div', `print-slip slip-${model.verdict.kind.toLowerCase()}${model.langs.length > 1 ? ' slip-two-lang' : ''}`);
+  lines(page, [model.title.join(' / ')], 'slip-title');
+  lines(page, model.scheme, 'slip-scheme');
+
+  const verdictBox = el('div', 'slip-verdict');
+  verdictBox.appendChild(el('span', 'slip-verdict-icon', model.verdict.icon));
+  verdictBox.appendChild(el('span', 'slip-verdict-word hi', model.verdict.word.join(' / ')));
+  page.appendChild(verdictBox);
+  lines(page, model.sentence);
+
+  model.sections.forEach((section) => {
+    const block = el('section', `slip-section slip-section-${section.id}`);
+    block.appendChild(el('h3', 'slip-heading hi', section.heading.join(' / ')));
+    const list = el('ul', `slip-list${section.checkbox ? ' slip-checklist' : ''}`);
+    section.entries.forEach((entry) => {
+      const item = el('li', entry.strong ? 'slip-strong' : '');
+      lines(item, entry.text);
+      list.appendChild(item);
+    });
+    block.appendChild(list);
+    page.appendChild(block);
+  });
+
+  const footer = el('footer', 'slip-footer');
+  lines(footer, model.footer);
+  page.appendChild(footer);
+
+  area.appendChild(page);
   window.print();
 }
 
@@ -697,6 +724,25 @@ function renderVerdictCard(scheme, evaluation, output, opts = {}) {
     card.appendChild(btn);
   }
 
+  // Listen reads the verdict sentence and, where this card lists them, the
+  // documents — the same strings the card shows, in the card's own language.
+  // Not built at all when the browser has no speech synthesis.
+  if (window.speechSynthesis) {
+    const cardLang = getLang();
+    const docLabels = evaluation.verdict === 'ELIGIBLE' && scheme.documents ? scheme.documents.map(docLabelFor) : [];
+    const listenBtn = el('button', langClass('chip'), `🔊 ${t('chat.audit_listen')}`);
+    listenBtn.type = 'button';
+    listenBtn.addEventListener('click', () => speak(verdictSpeechText(outputText(output), docLabels, cardLang), cardLang));
+    card.appendChild(listenBtn);
+  }
+
+  if (evaluation.verdict === 'ELIGIBLE' || evaluation.verdict === 'NEED_MORE_INFO') {
+    const slipBtn = el('button', langClass('chip'), `📄 ${t('slip.title')}`);
+    slipBtn.type = 'button';
+    slipBtn.addEventListener('click', () => printPreparationSlip(scheme, evaluation));
+    card.appendChild(slipBtn);
+  }
+
   card.appendChild(renderFeedbackWidget());
 
   const auditDetails = el('details', 'audit-panel');
@@ -735,78 +781,8 @@ async function resolveScheme(scheme) {
   renderVerdictCard(scheme, evaluation, output);
 }
 
-function formatInr(n) {
-  return `₹${n.toLocaleString('en-IN')}`;
-}
-
-// Renders the "आपने बताया: X · Y · Z" opening line from docs/DATA_SPEC.md
-// §3.3's worked example — every value the citizen actually gave for this
-// rule's own inputs, echoed back exactly as they gave it.
 function describeStatedInputs(rule, slots) {
-  const parts = [];
-  for (const input of rule.inputs) {
-    const value = slots[input.slot];
-    if (value === undefined) continue;
-    if (Array.isArray(input.options)) {
-      const catalogDef = findSlotDef(input.slot);
-      const known = catalogDef && catalogDef.options && catalogDef.options.find((o) => o.value === value);
-      parts.push(known ? labelForOption(known) : String(value));
-    } else {
-      const shown = typeof value === 'number' ? value.toLocaleString('en-IN') : String(value);
-      const unit = getLang() === 'en' && input.unit_en ? input.unit_en : input.unit_hi;
-      parts.push(unit ? `${shown} ${unit}` : shown);
-    }
-  }
-  return parts.join(' · ');
-}
-
-// One arithmetic line per term, in the same "X = Y" shape as the worked
-// example — not just the answer, the working. Falls through to a plain
-// "= ₹Z" for any derivation shape not explicitly recognised, since term
-// types get added over time (docs/DATA_SPEC.md §3.1) and a term this
-// module doesn't yet know how to narrate should still show its number
-// rather than nothing.
-function formatTermMath(node) {
-  const amount = formatInr(node.value);
-  const lang = getLang();
-  if (node.from.kind === 'rule') return lang === 'en' ? `= ${amount} (fixed limit)` : `= ${amount} (तय सीमा)`;
-  if (node.from.kind === 'derived') {
-    const [a, b] = node.from.operands;
-    if (node.from.op === 'percent_of') {
-      return lang === 'en'
-        ? `${a.value}% of ${formatInr(b.value)} = ${amount}`
-        : `${formatInr(b.value)} का ${a.value}% = ${amount}`;
-    }
-    if (node.from.op === 'multiply') {
-      return `${formatInr(a.value)} × ${b.value} = ${amount}`;
-    }
-  }
-  return `= ${amount}`;
-}
-
-function combinePhrase(combineMode) {
-  if (getLang() === 'en') {
-    if (combineMode === 'min') return 'Rule: whichever is lower is payable.';
-    if (combineMode === 'max') return 'Rule: whichever is higher is payable.';
-    return 'Rule: the payable amount is the sum of every condition.';
-  }
-  if (combineMode === 'min') return 'नियम कहता है: जो भी कम हो, वही देय।';
-  if (combineMode === 'max') return 'नियम कहता है: जो भी ज़्यादा हो, वही देय।';
-  return 'नियम कहता है: सभी शर्तों को जोड़कर देय राशि तय होती है।';
-}
-
-// Which term's figure the combined result/bound actually came from — the
-// worked example's "← शर्त 2 (अधिकतम दर सीमा) लागू हुई" annotation. Only
-// meaningful for min/max (sum uses every computable term, not one winner).
-function findBindingTerm(terms, combineMode, value) {
-  if (combineMode === 'sum') return null;
-  const computable = terms.filter((t) => t.value !== null);
-  if (computable.length < 2) return null;
-  return computable.find((t) => t.value.value === value) || null;
-}
-
-function termLabelFor(term) {
-  return getLang() === 'en' && term.label_en ? term.label_en : term.label_hi;
+  return describeStatedInputsIn(rule, slots, getLang(), state.slotsDoc);
 }
 
 function renderExplainerResult(scheme, output) {
@@ -820,28 +796,20 @@ function renderExplainerResult(scheme, output) {
 
   // A figure above a unit cap is trimmed to the cap by explainer.js; say so
   // using the cap's own published wording, nothing composed here.
-  Object.entries(rule.unit_caps || {}).forEach(([slot, cap]) => {
-    const citizenValue = state.slots[slot];
-    if (typeof citizenValue !== 'number' || typeof cap.max !== 'number' || citizenValue <= cap.max) return;
-    const label = lang === 'en' && cap.label_en ? cap.label_en : cap.label_hi;
-    card.appendChild(el('p', 'term-warning', `⚠ ${label}`));
-  });
+  unitCapNotices(rule, state.slots, lang).forEach((notice) => card.appendChild(el('p', 'term-warning', notice)));
 
-  output.terms.forEach((term, i) => {
-    card.appendChild(el('p', 'term-heading', `${t('chat.condition')} ${i + 1} — ${termLabelFor(term)}`));
-    if (term.value) {
-      card.appendChild(el('p', 'term-math', formatTermMath(term.value)));
+  explainerTermEntries(rule, output, lang).forEach((term) => {
+    card.appendChild(el('p', 'term-heading', term.heading));
+    if (term.math) {
+      card.appendChild(el('p', 'term-math', term.math));
     } else {
-      const missingInputs = term.missing.map((slot) => rule.inputs.find((inp) => inp.slot === slot)).filter(Boolean);
-      const missingPrompts = missingInputs.map((inp) => (lang === 'en' && inp.prompt_en ? inp.prompt_en : inp.prompt_hi));
-      const warn = el('p', 'term-warning', `⚠ ${missingPrompts.join(' · ') || t('chat.need_more_info')}`);
-      card.appendChild(warn);
-      if (missingInputs.length) {
+      card.appendChild(el('p', 'term-warning', term.warning));
+      if (term.missingInputs.length) {
         const btn = el('button', langClass('chip'), t('chat.tell_now'));
         btn.type = 'button';
         btn.addEventListener('click', async () => {
           btn.disabled = true;
-          for (const input of missingInputs) await askExplainerInput(input);
+          for (const input of term.missingInputs) await askExplainerInput(input);
           runExplainer(scheme);
         });
         card.appendChild(btn);
@@ -849,22 +817,11 @@ function renderExplainerResult(scheme, output) {
     }
   });
 
-  if (output.status === 'OK') {
-    card.appendChild(el('p', 'result-note', combinePhrase(rule.combine)));
-    const binding = findBindingTerm(output.terms, rule.combine, output.result.value);
-    const suffix = binding ? ` ← ${termLabelFor(binding)} ${t('chat.applied')}` : '';
-    card.appendChild(el('p', 'result-line', `${t('chat.you_will_get')}: ${formatInr(output.result.value)}${suffix}`));
-  } else if (output.status === 'PARTIAL' && output.bound) {
-    const phrase = output.bound.type === 'upper' ? t('chat.max_you_could_get') : t('chat.min_you_will_get');
-    card.appendChild(el('p', 'result-line', `${phrase}: ${formatInr(output.bound.value.value)}`));
-    card.appendChild(el('p', 'result-note', t('chat.exact_amount_needs_more_info')));
+  explainerResultParts(rule, output, lang).forEach((part) => card.appendChild(el('p', part.cls, part.text)));
+  if (output.status === 'PARTIAL' && output.bound) {
     const emitraNote = el('p', langClass('citation'));
     appendEmitraNote(emitraNote, 'chat.partial_emitra_before', 'chat.partial_emitra_after');
     card.appendChild(emitraNote);
-  } else if (output.status === 'NEED_MORE_INFO') {
-    card.appendChild(el('p', 'result-note', t('chat.amount_needs_more_info')));
-  } else if (output.status === 'NOT_APPLICABLE') {
-    card.appendChild(el('p', 'result-note', t('chat.calculation_not_applicable')));
   }
 
   if (output.citation && output.citation.source_url) {
@@ -897,6 +854,7 @@ async function runExplainer(scheme) {
     addBotBubble(t('chat.calculation_error'));
     return;
   }
+  explainerRuns.set(scheme.scheme_id, { output, slots: { ...state.slots } });
   renderExplainerResult(scheme, output);
 }
 

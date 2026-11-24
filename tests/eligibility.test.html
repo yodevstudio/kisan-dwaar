@@ -62,6 +62,7 @@ import { mergePublishedRecords } from '../js/registry-source.js';
 import { parseRatePolicyVocabulary } from '../tools/validate-data-core.mjs';
 import { findAmountPolicyViolations } from '../js/amount-policy.js';
 import { explain, assertDerivedFromSourced } from '../js/explainer.js';
+import { buildSlipModel, slipStrings } from '../js/present.js';
 
 const results = [];
 
@@ -618,6 +619,94 @@ await test('registry merge: one CMS publish overrides one scheme and keeps the o
   assertEqual(mergePublishedRecords(schemes, [broken], vocab), null, 'invalid record ignored');
   const older = { ...pmk, dataset_version: '2000.01.01-1' };
   assertEqual(mergePublishedRecords(schemes, [older], vocab), null, 'older record ignored');
+});
+
+// ===== preparation slip (js/present.js: buildSlipModel) =====
+// Same tripwire as assertNoUnsourcedNumber — scan every printed string for
+// digit sequences (Latin and Devanagari) and look each up in an allowlist
+// text by substring — with a wider allowlist because the slip prints more:
+// the whole scheme record, the citizen's own answers (and the catalogue label
+// of each option they picked), and, only for the explainer section, the
+// figures in an explain() output that has just passed assertDerivedFromSourced.
+// Same known scope limit as the original: a strong tripwire, not a proof.
+
+await test('slip: no digit sequence on the slip is absent from the scheme record or the citizen\'s own inputs', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const slotsDoc = await (await fetch('../data/slots.json')).json();
+
+  const collectValues = (node, out) => {
+    if (Array.isArray(node)) { node.forEach((n) => collectValues(n, out)); return out; }
+    if (node && typeof node === 'object') {
+      Object.entries(node).forEach(([k, v]) => {
+        if (k === 'value' && typeof v === 'number') out.push(String(v));
+        collectValues(v, out);
+      });
+    }
+    return out;
+  };
+  const allowlistFor = (scheme, slots, explainerOutput) => {
+    const picked = [];
+    Object.entries(slots).forEach(([slot, value]) => {
+      const def = slotsDoc.slots.find((d) => d.slot === slot);
+      const opt = def && Array.isArray(def.options) && def.options.find((o) => JSON.stringify(o.value) === JSON.stringify(value));
+      if (opt) picked.push(opt.label_hi || '', opt.label_en || '');
+    });
+    return [
+      JSON.stringify(scheme),
+      JSON.stringify(slots),
+      ...picked,
+      ...(explainerOutput ? collectValues(explainerOutput, []) : []),
+    ].join(' | ');
+  };
+  const scan = (strings, allowlist, label) => {
+    for (const text of strings) {
+      for (const seq of (text || '').match(/[\d०-९]+/g) || []) {
+        if (!allowlist.includes(seq)) throw new Error(`${label}: "${seq}" on the slip is not traceable — in: ${text}`);
+      }
+    }
+  };
+
+  const base = { occupation: 'farmer', employment_sector: 'none', is_income_tax_payer: false, pension_monthly_inr: { min: 0, max: 0 } };
+  const profiles = [
+    { slots: {} },
+    { slots: { occupation: 'farmer', age: 40, gender: 'male', landholding_hectares: { min: 1.01, max: 2 } } },
+    { slots: { occupation: 'farmer', age: 60, gender: 'female', landholding_category: 'small', has_regular_income_source: false } },
+    { slots: { ...base, landholding_hectares: { min: 0.01, max: 0.19 } } },
+    { slots: { occupation: 'farmer', group_farmer_count: 3, group_landholding_hectares: 5 } },
+    // the two subsidy_rule schemes, with the explainer run on top
+    { id: 'RJ_DRIP_SPRINKLER', slots: { occupation: 'farmer', landholding_hectares: 1, landholding_category: 'marginal', drip_area_hectares: 2, quoted_cost_inr: 100000 }, explain: true },
+    { id: 'RJ_TARBANDI', slots: { occupation: 'farmer', group_farmer_count: 3, group_landholding_hectares: 5, landholding_hectares: 1, fencing_metres: 300, quoted_cost_inr: 50000 }, explain: true },
+  ];
+
+  const seen = { ELIGIBLE: 0, NEED_MORE_INFO: 0, withExplainer: 0, built: 0 };
+  let sample = null;
+  for (const scheme of schemes) {
+    for (const p of profiles) {
+      if (p.id && p.id !== scheme.scheme_id) continue;
+      const evaluation = evaluate(p.slots, scheme);
+      let explainerRun = null;
+      let derived = null;
+      if (p.explain && scheme.subsidy_rule && evaluation.verdict === 'ELIGIBLE') {
+        const output = explain(scheme, p.slots);
+        assertDerivedFromSourced(output, scheme, p.slots);
+        explainerRun = { output, slots: p.slots };
+        derived = output;
+      }
+      for (const uiLang of ['hi', 'en']) {
+        const model = buildSlipModel({ scheme, evaluation, slotsDoc, uiLang, explainerRun });
+        if (evaluation.verdict === 'NOT_ELIGIBLE') { assertEqual(model, null, `${scheme.scheme_id}: no slip for a NOT_ELIGIBLE verdict`); continue; }
+        seen.built += 1;
+        seen[evaluation.verdict] += 1;
+        if (explainerRun) seen.withExplainer += 1;
+        scan(slipStrings(model), allowlistFor(scheme, p.slots, derived), `${scheme.scheme_id}/${uiLang}`);
+        if (!sample) sample = { model, allow: allowlistFor(scheme, p.slots, derived) };
+      }
+    }
+  }
+  assertTrue(seen.ELIGIBLE > 0 && seen.NEED_MORE_INFO > 0, `slips built for both verdicts: ${JSON.stringify(seen)}`);
+  assertTrue(seen.withExplainer > 0, 'at least one slip carried an explainer result');
+  // The tripwire itself must fire: a planted figure no source supports is caught.
+  assertThrows(() => scan([...slipStrings(sample.model), 'आपको ₹987654 मिलेगा'], sample.allow, 'planted'), 'a planted unsourced figure must be caught');
 });
 
 // ===== render =====

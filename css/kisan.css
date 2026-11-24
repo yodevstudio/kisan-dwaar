@@ -976,3 +976,79 @@ img, svg { max-width: 100%; height: auto; }
   .print-only { display: block; }
   .print-page-break { page-break-after: always; }
 }
+
+/* ===== Preparation slip (मेरी तैयारी पर्ची) =====
+   One A4 page, printed from #print-area by js/app.js's
+   printPreparationSlip(). Black on white only: nothing is carried by colour.
+   The verdict is an icon + a word inside a box, solid-bordered for ELIGIBLE
+   and dashed for NEED_MORE_INFO, so the two stay distinguishable on a
+   black-and-white printer. Same self-hosted Inter / Noto Sans Devanagari
+   stack as the rest of the site. */
+@page slip { size: A4; margin: 9mm 14mm; }
+
+@media print {
+  body { background: #FFFFFF; }
+  .print-slip {
+    page: slip;
+    color: #000000;
+    background: #FFFFFF;
+    font-size: 10pt;
+    line-height: 1.45;
+  }
+  .print-slip .slip-line { margin: 0; overflow-wrap: anywhere; }
+  .print-slip .slip-en { font-family: var(--font-latin); line-height: 1.4; font-size: 9.5pt; }
+  .print-slip .slip-title { font-size: 11pt; font-weight: 700; letter-spacing: 0.02em; }
+  .print-slip .slip-scheme { font-size: 17pt; font-weight: 700; line-height: 1.3; color: #000000; }
+  .print-slip .slip-scheme.slip-en { font-size: 12pt; }
+  .print-slip .slip-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 3mm;
+    margin: 2mm 0 2mm;
+    padding: 1.5mm 4mm;
+    font-size: 13pt;
+    font-weight: 700;
+    border: 0.8mm solid #000000;
+  }
+  .print-slip.slip-need_more_info .slip-verdict { border-style: dashed; }
+  .print-slip .slip-verdict-icon { font-size: 15pt; }
+  .print-slip .slip-section { margin-top: 3mm; break-inside: avoid; }
+  .print-slip .slip-heading {
+    margin: 0 0 1mm;
+    padding-bottom: 0.5mm;
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #000000;
+    border-bottom: 0.4mm solid #000000;
+  }
+  .print-slip .slip-list { margin: 0; padding: 0; list-style: none; }
+  .print-slip .slip-list li { margin: 0 0 1mm; break-inside: avoid; }
+  .print-slip .slip-strong .slip-line { font-weight: 700; }
+  .print-slip .slip-checklist li { position: relative; padding-left: 6mm; }
+  .print-slip .slip-checklist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.2mm;
+    width: 3.2mm;
+    height: 3.2mm;
+    border: 0.4mm solid #000000;
+  }
+  /* Hindi with English beneath every line roughly doubles the text, so the
+     two-language slip tightens spacing (never below 8.5pt) to stay on one page. */
+  .print-slip.slip-two-lang { font-size: 9pt; line-height: 1.3; }
+  .print-slip.slip-two-lang .slip-en { font-size: 8.5pt; line-height: 1.25; }
+  .print-slip.slip-two-lang .slip-scheme { font-size: 15pt; }
+  .print-slip.slip-two-lang .slip-scheme.slip-en { font-size: 11pt; }
+  .print-slip.slip-two-lang .slip-verdict { font-size: 12pt; margin: 0.5mm 0; padding: 0.8mm 3mm; }
+  .print-slip.slip-two-lang .slip-section { margin-top: 1.5mm; }
+  .print-slip.slip-two-lang .slip-heading { font-size: 9.5pt; }
+  .print-slip.slip-two-lang .slip-list li { margin-bottom: 0.5mm; }
+  .print-slip.slip-two-lang .slip-footer { margin-top: 3mm; font-size: 8.5pt; }
+  .print-slip .slip-footer {
+    margin-top: 4mm;
+    padding-top: 1.5mm;
+    border-top: 0.4mm solid #000000;
+    font-size: 9pt;
+  }
+}
