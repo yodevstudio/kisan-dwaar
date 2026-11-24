@@ -1,0 +1,45 @@
+{
+  "from": "2026.11.24-1",
+  "to": "2026.11.24-2",
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "scheme_id": "RJ_TARBANDI",
+      "changed_fields": [
+        "dataset_version",
+        "last_verified",
+        "next_review_due",
+        "eligibility",
+        "subsidy_rule"
+      ]
+    },
+    {
+      "scheme_id": "RJ_DRIP_SPRINKLER",
+      "changed_fields": [
+        "dataset_version",
+        "last_verified",
+        "next_review_due",
+        "subsidy_rule",
+        "documents"
+      ]
+    },
+    {
+      "scheme_id": "RJ_FARM_POND",
+      "changed_fields": [
+        "dataset_version",
+        "last_verified",
+        "next_review_due"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMAY_GRAMIN",
+      "changed_fields": [
+        "dataset_version",
+        "last_verified",
+        "next_review_due",
+        "eligibility"
+      ]
+    }
+  ]
+}

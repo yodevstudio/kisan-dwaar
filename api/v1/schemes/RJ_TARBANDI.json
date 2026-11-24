@@ -9,13 +9,13 @@
     "नीलगाय"
   ],
   "department": "Agriculture",
-  "dataset_version": "2026.08.22-2",
+  "dataset_version": "2026.11.24-1",
   "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
   "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
   "source_type": "html_page",
-  "last_verified": "2026-08-22",
+  "last_verified": "2026-11-24",
   "verification_interval_days": 90,
-  "next_review_due": "2026-11-20",
+  "next_review_due": "2027-02-22",
   "verified_by": "manual",
   "eligibility": {
     "all_of": [
@@ -23,27 +23,19 @@
         "slot": "occupation",
         "op": "eq",
         "value": "farmer"
+      },
+      {
+        "slot": "group_farmer_count",
+        "op": "gte",
+        "value": 3
+      },
+      {
+        "slot": "group_landholding_hectares",
+        "op": "gte",
+        "value": 5
       }
     ],
-    "any_of": [
-      {
-        "slot": "landholding_hectares",
-        "op": "gte",
-        "value": 0.5
-      },
-      [
-        {
-          "slot": "group_farmer_count",
-          "op": "gte",
-          "value": 3
-        },
-        {
-          "slot": "group_landholding_hectares",
-          "op": "gte",
-          "value": 5
-        }
-      ]
-    ],
+    "any_of": [],
     "none_of": []
   },
   "benefit": {
@@ -108,7 +100,7 @@
     "source_quote_hi": "तारबंदी हेतु पेरीफरी (परिधि) कृषकों को लागत का 50 प्रतिशत अथवा अधिकतम राशि रू- 40,000/- जो भी कम हो, प्रति कृषक 400 रनिंग मीटर तक अनुदान अनुज्ञेय है। सभी श्रेणी के कृषकों को लक्षित कर सामुदायिक आधार पर, जिसमें कम से कम 5 हैक्टेयर कृषि भूमि तथा 3 कृषकों का समूह होना आवश्यक है।",
     "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
     "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — flat 50% / max ₹40,000 confirmed as currently published, with no category-based percentage variation. The previous dataset's 50-70% / ₹40,000-56,000 range is no longer published on the current page.",
-    "last_verified": "2026-08-22"
+    "last_verified": "2026-11-24"
   },
   "documents": [
     {

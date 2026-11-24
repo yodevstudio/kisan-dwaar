@@ -1,6 +1,6 @@
 {
-  "registry_version": "2026.11.24-1",
-  "generated_at": "2026-11-24T17:27:41.974Z",
+  "registry_version": "2026.11.24-2",
+  "generated_at": "2026-11-24T17:59:54.068Z",
   "scheme_count": 12,
   "agriculture_count": 6,
   "related_welfare_count": 6,
@@ -17,8 +17,8 @@
       ],
       "department": "Agriculture",
       "scheme_group": "agriculture",
-      "dataset_version": "2026.08.22-2",
-      "last_verified": "2026-08-22",
+      "dataset_version": "2026.11.24-1",
+      "last_verified": "2026-11-24",
       "has_subsidy_rule": true,
       "url": "schemes/RJ_TARBANDI.json"
     },
@@ -34,8 +34,8 @@
       ],
       "department": "Agriculture Department (Horticulture Division), Rajasthan / कृषि विभाग (उद्यान शाखा)",
       "scheme_group": "agriculture",
-      "dataset_version": "2026.08.22-2",
-      "last_verified": "2026-08-22",
+      "dataset_version": "2026.11.24-1",
+      "last_verified": "2026-11-24",
       "has_subsidy_rule": true,
       "url": "schemes/RJ_DRIP_SPRINKLER.json"
     },
@@ -50,8 +50,8 @@
       ],
       "department": "Agriculture Department (Agriculture Extension Division), Rajasthan / कृषि विभाग (कृषि विस्तार शाखा)",
       "scheme_group": "agriculture",
-      "dataset_version": "2026.08.14-3",
-      "last_verified": "2026-08-14",
+      "dataset_version": "2026.11.24-1",
+      "last_verified": "2026-11-24",
       "has_subsidy_rule": false,
       "url": "schemes/RJ_FARM_POND.json"
     },
@@ -150,8 +150,8 @@
       ],
       "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
       "scheme_group": "related_welfare",
-      "dataset_version": "2026.11.24-1",
-      "last_verified": "2026-08-14",
+      "dataset_version": "2026.11.24-2",
+      "last_verified": "2026-11-24",
       "has_subsidy_rule": false,
       "url": "schemes/RJ_PMAY_GRAMIN.json"
     },

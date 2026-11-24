@@ -10,13 +10,13 @@
       "नीलगाय"
     ],
     "department": "Agriculture",
-    "dataset_version": "2026.08.22-2",
+    "dataset_version": "2026.11.24-1",
     "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
     "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
     "source_type": "html_page",
-    "last_verified": "2026-08-22",
+    "last_verified": "2026-11-24",
     "verification_interval_days": 90,
-    "next_review_due": "2026-11-20",
+    "next_review_due": "2027-02-22",
     "verified_by": "manual",
     "eligibility": {
       "all_of": [
@@ -24,27 +24,19 @@
           "slot": "occupation",
           "op": "eq",
           "value": "farmer"
+        },
+        {
+          "slot": "group_farmer_count",
+          "op": "gte",
+          "value": 3
+        },
+        {
+          "slot": "group_landholding_hectares",
+          "op": "gte",
+          "value": 5
         }
       ],
-      "any_of": [
-        {
-          "slot": "landholding_hectares",
-          "op": "gte",
-          "value": 0.5
-        },
-        [
-          {
-            "slot": "group_farmer_count",
-            "op": "gte",
-            "value": 3
-          },
-          {
-            "slot": "group_landholding_hectares",
-            "op": "gte",
-            "value": 5
-          }
-        ]
-      ],
+      "any_of": [],
       "none_of": []
     },
     "benefit": {
@@ -109,7 +101,7 @@
       "source_quote_hi": "तारबंदी हेतु पेरीफरी (परिधि) कृषकों को लागत का 50 प्रतिशत अथवा अधिकतम राशि रू- 40,000/- जो भी कम हो, प्रति कृषक 400 रनिंग मीटर तक अनुदान अनुज्ञेय है। सभी श्रेणी के कृषकों को लक्षित कर सामुदायिक आधार पर, जिसमें कम से कम 5 हैक्टेयर कृषि भूमि तथा 3 कृषकों का समूह होना आवश्यक है।",
       "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/fieldfencing.html",
       "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — flat 50% / max ₹40,000 confirmed as currently published, with no category-based percentage variation. The previous dataset's 50-70% / ₹40,000-56,000 range is no longer published on the current page.",
-      "last_verified": "2026-08-22"
+      "last_verified": "2026-11-24"
     },
     "documents": [
       {
@@ -183,13 +175,13 @@
       "टपक सिंचाई"
     ],
     "department": "Agriculture Department (Horticulture Division), Rajasthan / कृषि विभाग (उद्यान शाखा)",
-    "dataset_version": "2026.08.22-2",
+    "dataset_version": "2026.11.24-1",
     "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
     "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
     "source_type": "html_page",
-    "last_verified": "2026-08-22",
+    "last_verified": "2026-11-24",
     "verification_interval_days": 90,
-    "next_review_due": "2026-11-20",
+    "next_review_due": "2027-02-22",
     "verified_by": "manual",
     "eligibility": {
       "all_of": [
@@ -279,7 +271,7 @@
       "source_quote_hi": "सामान्य कृषकों को 50 प्रतिशत तथा लघु, सीमान्त कृषकों को 70 प्रतिशत अनुदान देय है। समस्त श्रैणी के कृषकों को ड्रिप संयंत्र पर अधिकतम 5 हैक्टेयर क्षेत्रफल तक अनुदान देय है। कम से कम 0.2 हैक्टेयर सिंचित कृषि योग्य भूमि हो।",
       "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/dripirrigation.html",
       "source_page_note": "Manually verified by opening the live page directly on 2026-08-22 — 50% (general category) / 70% (small and marginal) confirmed as currently published, capped at 5 hectares per farmer for all categories, no published per-hectare rupee ceiling. The general-category key is stored as \"other\" to match the value data/slots.json's existing landholding_category slot already uses for this category, rather than adding a duplicate option.",
-      "last_verified": "2026-08-22"
+      "last_verified": "2026-11-24"
     },
     "documents": [
       {
@@ -292,21 +284,12 @@
         "where_to_get_en": "Tehsil (Revenue Department)"
       },
       {
-        "doc_id": "JAN_AADHAAR",
-        "label_hi": "जन आधार कार्ड",
-        "icon": "id-card",
-        "where_to_get_hi": "ई-मित्र",
-        "sample_image": "assets/docs/jan_aadhaar.svg",
-        "label_en": "Jan Aadhaar Card",
-        "where_to_get_en": "e-Mitra"
-      },
-      {
         "doc_id": "AADHAAR",
-        "label_hi": "आधार कार्ड",
+        "label_hi": "आधार कार्ड / जन आधार कार्ड",
         "icon": "id-card",
         "where_to_get_hi": "ई-मित्र / आधार सेवा केंद्र",
         "sample_image": "assets/docs/aadhaar.svg",
-        "label_en": "Aadhaar Card",
+        "label_en": "Aadhaar Card / Jan Aadhaar Card",
         "where_to_get_en": "e-Mitra / Aadhaar Seva Kendra"
       },
       {
@@ -370,13 +353,13 @@
       "वर्षा जल संग्रहण खेत"
     ],
     "department": "Agriculture Department (Agriculture Extension Division), Rajasthan / कृषि विभाग (कृषि विस्तार शाखा)",
-    "dataset_version": "2026.08.14-3",
+    "dataset_version": "2026.11.24-1",
     "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/farmpound.html",
     "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
     "source_type": "html_page",
-    "last_verified": "2026-08-14",
+    "last_verified": "2026-11-24",
     "verification_interval_days": 90,
-    "next_review_due": "2026-11-12",
+    "next_review_due": "2027-02-22",
     "verified_by": "manual",
     "eligibility": {
       "all_of": [
@@ -1050,13 +1033,13 @@
       "पक्का घर योजना"
     ],
     "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
-    "dataset_version": "2026.11.24-1",
+    "dataset_version": "2026.11.24-2",
     "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/nov/doc20241119437801.pdf",
     "source_url_secondary": "https://rural.nic.in/en/press-release/applications-under-new-phase-pradhan-mantri-awas-yojana-gramin",
     "source_type": "text_pdf",
-    "last_verified": "2026-08-14",
+    "last_verified": "2026-11-24",
     "verification_interval_days": 90,
-    "next_review_due": "2026-11-12",
+    "next_review_due": "2027-02-22",
     "verified_by": "manual",
     "eligibility": {
       "all_of": [
@@ -1096,7 +1079,7 @@
         {
           "slot": "irrigated_land_acres",
           "op": "gte",
-          "value": 3.5
+          "value": 2.51
         }
       ]
     },

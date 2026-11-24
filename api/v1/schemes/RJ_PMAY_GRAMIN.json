@@ -8,13 +8,13 @@
     "पक्का घर योजना"
   ],
   "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
-  "dataset_version": "2026.11.24-1",
+  "dataset_version": "2026.11.24-2",
   "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/nov/doc20241119437801.pdf",
   "source_url_secondary": "https://rural.nic.in/en/press-release/applications-under-new-phase-pradhan-mantri-awas-yojana-gramin",
   "source_type": "text_pdf",
-  "last_verified": "2026-08-14",
+  "last_verified": "2026-11-24",
   "verification_interval_days": 90,
-  "next_review_due": "2026-11-12",
+  "next_review_due": "2027-02-22",
   "verified_by": "manual",
   "eligibility": {
     "all_of": [
@@ -54,7 +54,7 @@
       {
         "slot": "irrigated_land_acres",
         "op": "gte",
-        "value": 3.5
+        "value": 2.51
       }
     ]
   },

@@ -8,13 +8,13 @@
     "वर्षा जल संग्रहण खेत"
   ],
   "department": "Agriculture Department (Agriculture Extension Division), Rajasthan / कृषि विभाग (कृषि विस्तार शाखा)",
-  "dataset_version": "2026.08.14-3",
+  "dataset_version": "2026.11.24-1",
   "source_url": "https://rajkisan.rajasthan.gov.in/WebsiteNew/farmpound.html",
   "source_url_secondary": "https://jansoochna.rajasthan.gov.in/",
   "source_type": "html_page",
-  "last_verified": "2026-08-14",
+  "last_verified": "2026-11-24",
   "verification_interval_days": 90,
-  "next_review_due": "2026-11-12",
+  "next_review_due": "2027-02-22",
   "verified_by": "manual",
   "eligibility": {
     "all_of": [
