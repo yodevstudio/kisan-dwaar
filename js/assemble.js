@@ -158,7 +158,9 @@ function fillTemplate(template, values) {
 function getBenefitText(scheme) {
   const benefit = scheme.benefit || {};
   if (typeof benefit.amount_inr === 'number') return `₹${benefit.amount_inr}`;
-  if (benefit.amount_text_hi) return benefit.amount_text_hi;
+  // Templates already end the sentence after {{benefit_text}}, so a full
+  // stop at the end of the source text would print twice ("…है।।").
+  if (benefit.amount_text_hi) return benefit.amount_text_hi.replace(/[।.\s]+$/u, '');
   return null;
 }
 
@@ -279,7 +281,7 @@ export function assemble(verdict, scheme, evaluation) {
 function getBenefitTextEn(scheme) {
   const benefit = scheme.benefit || {};
   if (typeof benefit.amount_inr === 'number') return `₹${benefit.amount_inr}`;
-  if (benefit.amount_text_en) return benefit.amount_text_en;
+  if (benefit.amount_text_en) return benefit.amount_text_en.replace(/[।.\s]+$/u, '');
   return null;
 }
 

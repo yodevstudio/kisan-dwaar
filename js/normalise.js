@@ -1,9 +1,9 @@
+import { resolvePath } from './paths.js';
 const LEXICON_STORAGE_KEY = 'kisan.lexicon.v1';
 
 // JS \b relies on \w (ASCII only) and never matches inside Devanagari text,
 // so word boundaries here are detected manually against the actual script range.
 const WORD_CHAR_CLASS = '\\u0900-\\u097F0-9A-Za-z-';
-const NOT_WORD_CHAR = new RegExp(`^[^${WORD_CHAR_CLASS}]$`);
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -83,7 +83,8 @@ export function normalise(text, lexicon) {
 }
 
 export async function loadLexicon() {
-  const response = await fetch('data/lexicon.json');
+  const response = await fetch(resolvePath('data/lexicon.json'));
+  if (!response.ok) throw new Error(`data/lexicon.json: HTTP ${response.status}`);
   const lexicon = await response.json();
   localStorage.setItem(LEXICON_STORAGE_KEY, JSON.stringify(lexicon));
   return lexicon;

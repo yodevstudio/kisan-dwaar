@@ -61,6 +61,11 @@ const STRINGS = {
   'nav.about': { hi: 'परिचय', en: 'About' },
   'nav.employee': { hi: 'कर्मचारी कॉर्नर', en: 'Employee Corner' },
   'nav.aria_label': { hi: 'मुख्य नेविगेशन', en: 'Main navigation' },
+  'nav.menu': { hi: 'मेन्यू', en: 'Menu' },
+  'nav.menu_open': { hi: 'मेन्यू खोलें', en: 'Open menu' },
+  'nav.menu_close': { hi: 'मेन्यू बंद करें', en: 'Close menu' },
+  'nav.skip': { hi: 'मुख्य सामग्री पर जाएं', en: 'Skip to main content' },
+  'nav.home_logo': { hi: 'किसान द्वार — मुख्य पृष्ठ', en: 'KISAN DWAAR — Home' },
 
   'lang.switch_to_en': { hi: 'Switch to English', en: 'Switch to English' },
   'lang.switch_to_hi': { hi: 'हिंदी में बदलें', en: 'हिंदी में बदलें' },
@@ -70,7 +75,7 @@ const STRINGS = {
   'index.query_label': { hi: 'अपना सवाल टाइप करें', en: 'Type your question' },
   'index.query_placeholder': { hi: 'अपना सवाल टाइप करें…', en: 'Type your question…' },
   'index.send': { hi: 'भेजें', en: 'Send' },
-  'index.discover_btn': { hi: 'सभी योजनाएं देखें', en: 'See all schemes' },
+  'index.discover_btn': { hi: 'छह सवालों से पात्रता जांचें', en: 'Check eligibility in six questions' },
   'index.chat_aria_label': { hi: 'बातचीत', en: 'Conversation' },
 
   // T7: portal home (index.html) — hero, service cards, agriculture-scheme
@@ -78,11 +83,13 @@ const STRINGS = {
   // pages/check/ (index.chat_aria_label above stays there, unrenamed —
   // the key name is just an identifier, js/app.js doesn't care which page
   // hosts it).
+  'home.hero_title': { hi: 'छह सवाल। एक जवाब। एक अगला कदम।', en: 'Six questions. One answer. One next step.' },
+  'home.hero_trust': { hi: 'हर आँकड़ा स्रोत और जाँच-तिथि सहित — या बताया ही नहीं जाता।', en: 'Every figure comes with its source and verification date — or it is not stated at all.' },
   'home.hero_lead': {
     hi: 'राजस्थान की कृषि योजनाओं के लिए एक नागरिक-केंद्रित प्रवेश द्वार — बिना खाता बनाए, बिना लॉग-इन किए।',
     en: "A citizen-centred gateway to Rajasthan's agriculture schemes — no account, no login.",
   },
-  'home.hero_primary': { hi: 'मेरी पात्रता जांचें', en: 'Check my eligibility' },
+  'home.hero_primary': { hi: 'छह सवालों से पात्रता जांचें', en: 'Check eligibility in six questions' },
   'home.hero_secondary': { hi: 'सभी योजनाएं देखें', en: 'See all schemes' },
   'home.services_title': { hi: 'सेवाएं', en: 'Services' },
   'home.service_check_title': { hi: 'पात्रता जांचें', en: 'Check eligibility' },
@@ -148,8 +155,10 @@ const STRINGS = {
   // sentence is the actual link, not restated a second time nearby.
   'chat.no_scheme_found_before': { hi: 'दिए गए विवरण के अनुसार, फिलहाल कोई योजना आपके लिए उपयुक्त नहीं लग रही। नज़दीकी ', en: 'Based on the details given, no scheme currently looks suitable for you. Ask at your nearest ' },
   'chat.no_scheme_found_after': { hi: ' पर पूरी जानकारी के लिए पूछें।', en: ' for full information.' },
-  'chat.need_info_intro': { hi: 'इनके लिए थोड़ी और जानकारी चाहिए — किसी एक का नाम टाइप करके पूछें:', en: 'These need a bit more information — type one\'s name to ask about it:' },
-  'chat.unknown_query': { hi: 'मेरे पास इसकी पक्की जानकारी नहीं है। "सभी योजनाएं देखें" दबाएं, या नज़दीकी ई-मित्र से पूछें।', en: 'I don\'t have confirmed information on this. Press "See all schemes", or ask at your nearest e-Mitra.' },
+  'chat.need_info_intro': { hi: 'इनके लिए थोड़ी और जानकारी चाहिए — आगे बढ़ने के लिए किसी योजना पर टैप करें:', en: 'These need a bit more information — tap a scheme to continue:' },
+  'chat.unknown_query': { hi: 'मेरे पास इसकी पक्की जानकारी नहीं है। "छह सवालों से पात्रता जांचें" दबाएं, या नज़दीकी ई-मित्र से पूछें।', en: 'I don\'t have confirmed information on this. Press "Check eligibility in six questions", or ask at your nearest e-Mitra.' },
+  'chat.understood': { hi: 'आपने बताया', en: 'You told me' },
+  'chat.number_invalid': { hi: 'कृपया 0 या उससे बड़ी कोई संख्या लिखें।', en: 'Please enter a number, 0 or more.' },
   'chat.samples_intro': { hi: 'कुछ उदाहरण, आज़माने के लिए:', en: 'Some examples to try:' },
   'chat.checking_eligibility_for': { hi: '{{scheme}} की पात्रता जांचते हैं।', en: "Checking eligibility for {{scheme}}." },
 
@@ -168,8 +177,8 @@ const STRINGS = {
   'chat.audit_listen': { hi: 'सुनें', en: 'Listen' },
   'chat.audit_print': { hi: 'प्रिंट करें', en: 'Print' },
   'chat.greeting': {
-    hi: 'नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। आप अपना सवाल टाइप कर सकते हैं, या "सभी योजनाएं देखें" दबा सकते हैं।',
-    en: 'Hello! I am KISAN DWAAR — for Rajasthan\'s agriculture schemes. You can type your question, or press "See all schemes".',
+    hi: 'नमस्ते! मैं किसान द्वार हूं — राजस्थान की कृषि योजनाओं के लिए। ऊपर "छह सवालों से पात्रता जांचें" दबाएं, या नीचे किसी योजना का नाम लिखकर सीधे पूछें।',
+    en: 'Hello! I am KISAN DWAAR — for Rajasthan\'s agriculture schemes. Press "Check eligibility in six questions" above, or ask about a scheme by name below.',
   },
 
   'schemes.title': { hi: 'सभी योजनाएं — किसान द्वार', en: 'All Schemes — KISAN DWAAR' },
@@ -198,6 +207,8 @@ const STRINGS = {
     hi: 'किसी योजना का नाम सीधे टाइप करके भी पूछ सकते हैं — जैसे "तारबंदी योजना चाहिए"।',
     en: 'You can also type a scheme name directly — like "I need the fencing scheme".',
   },
+  'check.start_sub': { hi: 'कोई खाता नहीं · कोई लॉग-इन नहीं · कोई फ़ॉर्म नहीं', en: 'No account · No login · No form' },
+  'check.restart': { hi: 'नई जांच शुरू करें', en: 'Start a new check' },
   'check.sidebar_documents_link': { hi: 'ज़रूरी दस्तावेज़ों की सूची पहले से देखें', en: 'See the document checklist in advance' },
 
   'documents.title': { hi: 'दस्तावेज़ — किसान द्वार', en: 'Documents — KISAN DWAAR' },

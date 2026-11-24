@@ -1,6 +1,6 @@
 {
-  "registry_version": "2026.08.25-3",
-  "generated_at": "2026-08-25T16:16:36.663Z",
+  "registry_version": "2026.11.24-1",
+  "generated_at": "2026-11-24T17:27:41.974Z",
   "scheme_count": 12,
   "agriculture_count": 6,
   "related_welfare_count": 6,
@@ -66,7 +66,7 @@
       ],
       "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department",
       "scheme_group": "agriculture",
-      "dataset_version": "2026.08.14-3",
+      "dataset_version": "2026.11.24-1",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
       "url": "schemes/RJ_PMKISAN.json"
@@ -150,7 +150,7 @@
       ],
       "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
       "scheme_group": "related_welfare",
-      "dataset_version": "2026.08.14-3",
+      "dataset_version": "2026.11.24-1",
       "last_verified": "2026-08-14",
       "has_subsidy_rule": false,
       "url": "schemes/RJ_PMAY_GRAMIN.json"

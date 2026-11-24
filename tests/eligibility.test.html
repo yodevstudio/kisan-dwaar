@@ -57,7 +57,9 @@ import {
   findNearMissGap,
 } from '../js/assemble.js';
 import { normalise } from '../js/normalise.js';
-import { route } from '../js/router.js';
+import { route, RAJASTHAN_DISTRICT_PAIRS, RAJASTHAN_DISTRICTS } from '../js/router.js';
+import { mergePublishedRecords } from '../js/registry-source.js';
+import { parseRatePolicyVocabulary } from '../tools/validate-data-core.mjs';
 import { findAmountPolicyViolations } from '../js/amount-policy.js';
 import { explain, assertDerivedFromSourced } from '../js/explainer.js';
 
@@ -525,6 +527,97 @@ await test('regression: every data/schemes.json record evaluates and assembles c
       assertDerivedFromSourced(explanation, scheme, slots);
     }
   }
+});
+
+// ===== pre-pitch fixes (24 Nov 2026) =====
+// Each test below pins a defect found and fixed on 24 Nov 2026, so it
+// cannot come back unnoticed.
+
+await test('districts: 41 rows, each English label paired with its own Hindi value', () => {
+  assertEqual(RAJASTHAN_DISTRICT_PAIRS.length, 41, 'district count');
+  const map = new Map(RAJASTHAN_DISTRICT_PAIRS);
+  assertEqual(map.get('Ajmer'), 'अजमेर', 'Ajmer');
+  assertEqual(map.get('Jodhpur'), 'जोधपुर', 'Jodhpur');
+  assertEqual(map.get('Sawai Madhopur'), 'सवाई माधोपुर', 'Sawai Madhopur');
+  assertEqual(map.get('Balotra'), 'बालोतरा', 'Balotra');
+  assertEqual(new Set(RAJASTHAN_DISTRICTS).size, 41, 'Hindi values unique');
+  assertEqual([...RAJASTHAN_DISTRICTS].sort(), [...map.values()].sort(), 'Hindi list matches the pairs');
+});
+
+await test('route: English district in free text resolves to the matching Hindi district', () => {
+  const r = route('I am a farmer from Ajmer', []);
+  assertEqual(r.slots.district, 'अजमेर');
+});
+
+await test('route: a scheme name is not read as a fact about the citizen', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const a = route(normalise('PM Kisan', lexicon).normalised, schemes);
+  assertEqual(a.scheme_ids, ['RJ_PMKISAN']);
+  assertEqual(a.slots.occupation, undefined, '"PM Kisan" must not set occupation');
+  const b = route(normalise('मैं किसान हूँ, पीएम किसान चाहिए', lexicon).normalised, schemes);
+  assertEqual(b.slots.occupation, 'farmer', 'self-description still read');
+});
+
+await test('route: English "Which scheme is for me?" starts discovery', async () => {
+  const lexicon = await (await fetch('../data/lexicon.json')).json();
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const r = route(normalise('Which scheme is for me?', lexicon).normalised, schemes);
+  assertEqual(r.intent, 'discover');
+});
+
+await test('RJ_PMKISAN: a marginal farmer (< 1 ha) is eligible; a landless one is not', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const pmk = schemes.find((x) => x.scheme_id === 'RJ_PMKISAN');
+  const base = { occupation: 'farmer', employment_sector: 'none', is_income_tax_payer: false, pension_monthly_inr: { min: 0, max: 0 } };
+  assertEqual(evaluate({ ...base, landholding_hectares: { min: 0.01, max: 0.19 } }, pmk).verdict, 'ELIGIBLE', 'marginal');
+  assertEqual(evaluate({ ...base, landholding_hectares: { min: 0, max: 0 } }, pmk).verdict, 'NOT_ELIGIBLE', 'landless');
+});
+
+await test('slots catalogue: no answer option straddles a threshold a scheme actually uses', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const catalog = await (await fetch('../data/slots.json')).json();
+  const checked = ['landholding_hectares', 'irrigated_land_acres', 'age', 'pension_monthly_inr'];
+  const conds = [];
+  const walk = (node) => {
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (node && typeof node === 'object') {
+      if (node.slot && (node.op === 'gte' || node.op === 'lte')) conds.push(node);
+      Object.values(node).forEach(walk);
+    }
+  };
+  schemes.forEach((sc) => walk(sc.eligibility));
+  for (const c of conds.filter((x) => checked.includes(x.slot))) {
+    const def = catalog.slots.find((d) => d.slot === c.slot);
+    for (const opt of def.options.filter((o) => o.value && typeof o.value === 'object')) {
+      const mini = { eligibility: { all_of: [c], any_of: [], none_of: [] } };
+      const v = evaluate({ [c.slot]: opt.value }, mini).verdict;
+      assertTrue(v !== 'NEED_MORE_INFO', `${c.slot} option "${opt.label_hi}" straddles ${c.op} ${c.value}`);
+    }
+  }
+});
+
+await test('assemble: sourced benefit text ending in a full stop is not double-punctuated', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const tar = schemes.find((x) => x.scheme_id === 'RJ_TARBANDI');
+  const ev = evaluate({ occupation: 'farmer', landholding_hectares: { min: 1.01, max: 2 } }, tar);
+  assertEqual(ev.verdict, 'ELIGIBLE');
+  const out = assemble('ELIGIBLE', tar, ev);
+  assertTrue(!out.text_hi.includes('।।') && !out.text_hi.includes('..'), `got: ${out.text_hi}`);
+});
+
+await test('registry merge: one CMS publish overrides one scheme and keeps the other eleven', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const vocab = parseRatePolicyVocabulary(await (await fetch('../docs/DATA_SPEC.md')).text());
+  const pmk = schemes.find((x) => x.scheme_id === 'RJ_PMKISAN');
+  const published = { ...pmk, dataset_version: '2099.01.01-1' };
+  const merged = mergePublishedRecords(schemes, [published], vocab);
+  assertEqual(merged.length, schemes.length, 'no scheme dropped');
+  assertEqual(merged.find((x) => x.scheme_id === 'RJ_PMKISAN').dataset_version, '2099.01.01-1');
+  const broken = { ...pmk, dataset_version: '2099.01.01-2', source_url: '' };
+  assertEqual(mergePublishedRecords(schemes, [broken], vocab), null, 'invalid record ignored');
+  const older = { ...pmk, dataset_version: '2000.01.01-1' };
+  assertEqual(mergePublishedRecords(schemes, [older], vocab), null, 'older record ignored');
 });
 
 // ===== render =====

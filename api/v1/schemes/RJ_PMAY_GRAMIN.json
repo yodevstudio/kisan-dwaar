@@ -8,7 +8,7 @@
     "पक्का घर योजना"
   ],
   "department": "Union Ministry of Rural Development (Central Sector Scheme), implemented in Rajasthan via Rural Development Department",
-  "dataset_version": "2026.08.14-3",
+  "dataset_version": "2026.11.24-1",
   "source_url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/nov/doc20241119437801.pdf",
   "source_url_secondary": "https://rural.nic.in/en/press-release/applications-under-new-phase-pradhan-mantri-awas-yojana-gramin",
   "source_type": "text_pdf",
@@ -61,10 +61,10 @@
   "benefit": {
     "type": "one_time_cash",
     "amount_inr": 120000,
-    "amount_text_hi": "मैदानी क्षेत्रों में ₹1.20 लाख; पूर्वोत्तर राज्यों व पहाड़ी/दुर्गम क्षेत्रों (हिमाचल, उत्तराखंड, जम्मू-कश्मीर, लद्दाख) में ₹1.30 लाख — इकाई सहायता (राजस्थान मैदानी राज्य होने से सामान्यतः ₹1.20 लाख लागू)। इसके अतिरिक्त शौचालय निर्माण हेतु ₹12,000 तक व मनरेगा के तहत 95 दिन अकुशल श्रम रोजगार (₹90.95/दिन मजदूरी दर) का प्रावधान",
+    "amount_text_hi": "मैदानी क्षेत्रों में ₹1.20 लाख; पूर्वोत्तर राज्यों व पहाड़ी/दुर्गम क्षेत्रों (हिमाचल, उत्तराखंड, जम्मू-कश्मीर, लद्दाख) में ₹1.30 लाख — इकाई सहायता (राजस्थान मैदानी राज्य होने से सामान्यतः ₹1.20 लाख लागू)। इसके अतिरिक्त शौचालय निर्माण हेतु ₹12,000 तक व मनरेगा के तहत 95 दिन अकुशल श्रम रोजगार का प्रावधान",
     "rate_policy": "VARIES_BY_CATEGORY_DO_NOT_COLLAPSE",
-    "note": "राजस्थान एक मैदानी राज्य है, इसलिए सामान्यतः ₹1.20 लाख की दर लागू होती है — पहाड़ी दर केवल उल्लेखित विशेष राज्यों के लिए है। पात्रता SECC 2011 डेटा के स्वतः-बहिष्करण मानदंडों (KCC सीमा, सरकारी नौकरी, आयकर, सिंचित भूमि आदि) पर आधारित है।",
-    "amount_text_en": "₹1.20 lakh in plain areas; ₹1.30 lakh in North-Eastern states and hilly/difficult areas (Himachal, Uttarakhand, Jammu & Kashmir, Ladakh) — unit assistance (as a plains state, Rajasthan generally gets ₹1.20 lakh). In addition, up to ₹12,000 is provided for toilet construction, and 95 days of unskilled labour employment under MGNREGA (wage rate ₹90.95/day)."
+    "note": "राजस्थान एक मैदानी राज्य है, इसलिए सामान्यतः ₹1.20 लाख की दर लागू होती है — पहाड़ी दर केवल उल्लेखित विशेष राज्यों के लिए है। पात्रता SECC 2011 डेटा के स्वतः-बहिष्करण मानदंडों (KCC सीमा, सरकारी नौकरी, आयकर, सिंचित भूमि आदि) पर आधारित है। सुधार (2026-11-24): पहले के पाठ में '₹90.95/दिन मजदूरी दर' लिखा था — स्रोत PDF में यह आँकड़ा ग्रामीण राजमिस्त्री प्रशिक्षण (Rural Mason Training) से जुड़ा है, मनरेगा मजदूरी से नहीं, इसलिए हटा दिया गया।",
+    "amount_text_en": "₹1.20 lakh in plain areas; ₹1.30 lakh in North-Eastern states and hilly/difficult areas (Himachal, Uttarakhand, Jammu & Kashmir, Ladakh) — unit assistance (as a plains state, Rajasthan generally gets ₹1.20 lakh). In addition, up to ₹12,000 is provided for toilet construction, and 95 days of unskilled labour employment under MGNREGA."
   },
   "documents": [
     {

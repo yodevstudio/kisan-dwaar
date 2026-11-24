@@ -23,6 +23,18 @@ function containsPhrase(text, phrase) {
   return indexOfPhrase(text, phrase) !== -1;
 }
 
+// Blanks out every whole-phrase occurrence of each phrase (longest first),
+// using the same word-boundary rule as indexOfPhrase.
+function stripPhrases(text, phrases) {
+  return [...new Set(phrases)]
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length)
+    .reduce((acc, phrase) => acc.replace(
+      new RegExp(`(?<![${WORD_CHAR_CLASS}])${escapeRegExp(phrase)}(?![${WORD_CHAR_CLASS}])`, 'gi'),
+      ' ',
+    ), text);
+}
+
 // Phrases a citizen uses to ask "what am I entitled to" rather than name a
 // specific scheme — hand-picked, not a generalised classifier, same
 // discipline as the lexicon: only phrases we're confident are genuine.
@@ -45,6 +57,14 @@ export const DISCOVERY_PHRASES = [
   'koi yojana',
   'mere layak',
   'benefit',
+  // The lexicon rewrites "scheme" to "योजना" before routing, so the English
+  // question "which scheme is for me?" arrives here as "which योजना ...".
+  'which योजना',
+  'which schemes',
+  'schemes for me',
+  'am i eligible',
+  'kaun si yojana',
+  'kya mil sakta',
 ];
 
 function isDiscoveryQuery(text) {
@@ -170,46 +190,74 @@ function extractOccupation(text) {
   return extractLastMatch(text, OCCUPATION_TERMS);
 }
 
-// Long-stable 33-district set (pre-2023 reorganisation). Rajasthan's
-// district boundaries were reorganised in 2023 and partially reverted in
-// 2024 — update this list if the state finalises a new district map.
-// Exported so app.js's discovery flow can build district_select options
-// from this same list, not a second copy.
-export const RAJASTHAN_DISTRICTS = [
-  'अजमेर', 'अलवर', 'बांसवाड़ा', 'बारां', 'बाड़मेर', 'भरतपुर', 'भीलवाड़ा', 'बीकानेर', 'बूंदी',
-  'चित्तौड़गढ़', 'चूरू', 'दौसा', 'धौलपुर', 'डूंगरपुर', 'हनुमानगढ़', 'जयपुर', 'जैसलमेर', 'जालौर',
-  'झालावाड़', 'झुंझुनू', 'जोधपुर', 'करौली', 'कोटा', 'नागौर', 'पाली', 'प्रतापगढ़', 'राजसमंद',
-  'सवाई माधोपुर', 'सीकर', 'सिरोही', 'श्रीगंगानगर', 'टोंक', 'उदयपुर',
-].sort((a, b) => b.length - a.length);
-
-// K8: additive only — alphabetical order, English transliteration of the
-// same 33 districts. NOT index-aligned with RAJASTHAN_DISTRICTS above (that
-// export is deliberately length-sorted for longest-match-first elsewhere),
-// so DISTRICT_HI_EN_PAIRS below zips this against its own alphabetical
-// Hindi list instead of against RAJASTHAN_DISTRICTS by position.
-export const RAJASTHAN_DISTRICTS_EN = [
-  'Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi',
-  'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore',
-  'Jhalawar', 'Jhunjhunu', 'Jodhpur', 'Karauli', 'Kota', 'Nagaur', 'Pali', 'Pratapgarh', 'Rajsamand',
-  'Sawai Madhopur', 'Sikar', 'Sirohi', 'Sri Ganganagar', 'Tonk', 'Udaipur',
+// Rajasthan's 41 districts — the 33 long-standing districts plus the 8
+// created in 2023 and retained when the state dissolved the other nine in
+// December 2024 (Board of Revenue district list dated 29-01-2025). One
+// paired list is the single source: English label and Hindi canonical
+// value can never drift out of alignment, because they are the same row.
+// District is never read by any eligibility condition in this dataset —
+// it is only echoed back — so this list changes no verdict.
+export const RAJASTHAN_DISTRICT_PAIRS = [
+  ['Ajmer', 'अजमेर'],
+  ['Alwar', 'अलवर'],
+  ['Balotra', 'बालोतरा'],
+  ['Banswara', 'बांसवाड़ा'],
+  ['Baran', 'बारां'],
+  ['Barmer', 'बाड़मेर'],
+  ['Beawar', 'ब्यावर'],
+  ['Bharatpur', 'भरतपुर'],
+  ['Bhilwara', 'भीलवाड़ा'],
+  ['Bikaner', 'बीकानेर'],
+  ['Bundi', 'बूंदी'],
+  ['Chittorgarh', 'चित्तौड़गढ़'],
+  ['Churu', 'चूरू'],
+  ['Dausa', 'दौसा'],
+  ['Deeg', 'डीग'],
+  ['Dholpur', 'धौलपुर'],
+  ['Didwana-Kuchaman', 'डीडवाना-कुचामन'],
+  ['Dungarpur', 'डूंगरपुर'],
+  ['Hanumangarh', 'हनुमानगढ़'],
+  ['Jaipur', 'जयपुर'],
+  ['Jaisalmer', 'जैसलमेर'],
+  ['Jalore', 'जालौर'],
+  ['Jhalawar', 'झालावाड़'],
+  ['Jhunjhunu', 'झुंझुनू'],
+  ['Jodhpur', 'जोधपुर'],
+  ['Karauli', 'करौली'],
+  ['Khairthal-Tijara', 'खैरथल-तिजारा'],
+  ['Kota', 'कोटा'],
+  ['Kotputli-Behror', 'कोटपूतली-बहरोड़'],
+  ['Nagaur', 'नागौर'],
+  ['Pali', 'पाली'],
+  ['Phalodi', 'फलौदी'],
+  ['Pratapgarh', 'प्रतापगढ़'],
+  ['Rajsamand', 'राजसमंद'],
+  ['Salumber', 'सलूम्बर'],
+  ['Sawai Madhopur', 'सवाई माधोपुर'],
+  ['Sikar', 'सीकर'],
+  ['Sirohi', 'सिरोही'],
+  ['Sri Ganganagar', 'श्रीगंगानगर'],
+  ['Tonk', 'टोंक'],
+  ['Udaipur', 'उदयपुर'],
 ];
 
-// Alphabetical Hindi order, index-aligned with RAJASTHAN_DISTRICTS_EN —
-// kept separate from RAJASTHAN_DISTRICTS above purely so this pairing
-// can't be broken by that export's own length-sort.
-const RAJASTHAN_DISTRICTS_HI_ALPHA = [
-  'अजमेर', 'अलवर', 'बांसवाड़ा', 'बारां', 'बाड़मेर', 'भरतपुर', 'भीलवाड़ा', 'बीकानेर', 'बूंदी',
-  'चित्तौड़गढ़', 'चूरू', 'दौसा', 'धौलपुर', 'डूंगरपुर', 'हनुमानगढ़', 'जयपुर', 'जैसलमेर', 'जालौर',
-  'झालावाड़', 'झुंझुनू', 'जोधपुर', 'करौली', 'कोटा', 'नागौर', 'पाली', 'प्रतापगढ़', 'राजसमंद',
-  'सवाई माधोपुर', 'सीकर', 'सिरोही', 'श्रीगंगानगर', 'टोंक', 'उदयपुर',
-];
+// Hindi canonical values, longest first so longest-match-first extraction
+// prefers "सवाई माधोपुर" over any shorter name it might contain.
+export const RAJASTHAN_DISTRICTS = RAJASTHAN_DISTRICT_PAIRS
+  .map(([, hi]) => hi)
+  .sort((a, b) => b.length - a.length);
+
+// English transliterations, alphabetical. Kept as an export for existing
+// callers; pair lookups go through RAJASTHAN_DISTRICT_PAIRS, never by index
+// against RAJASTHAN_DISTRICTS (which is length-sorted).
+export const RAJASTHAN_DISTRICTS_EN = RAJASTHAN_DISTRICT_PAIRS.map(([en]) => en);
 
 // T3: English district names resolve to the same Hindi canonical value the
 // Hindi terms already resolve to, same extractLastMatch mechanism.
 function extractDistrict(text) {
   const terms = [
     ...RAJASTHAN_DISTRICTS.map((d) => [d, d]),
-    ...RAJASTHAN_DISTRICTS_EN.map((d, i) => [d, RAJASTHAN_DISTRICTS_HI_ALPHA[i]]),
+    ...RAJASTHAN_DISTRICT_PAIRS.map(([en, hi]) => [en, hi]),
   ];
   return extractLastMatch(text, terms);
 }
@@ -232,12 +280,16 @@ function extractSlots(text) {
 export function route(normalisedText, schemes) {
   const text = normalisedText || '';
   const list = schemes || [];
-  const slots = extractSlots(text);
-
   const scored = list
     .map((scheme) => ({ scheme, ...scoreScheme(text, scheme) }))
     .filter((s) => s.score > 0)
     .sort((a, b) => b.score - a.score);
+
+  // Facts about the citizen are read from what remains after the matched
+  // scheme names are removed, so a scheme's own name never becomes a claim
+  // about the person: "पीएम किसान" or "किसान क्रेडिट कार्ड" names a scheme,
+  // it does not tell us the citizen is a farmer.
+  const slots = extractSlots(stripPhrases(text, scored.flatMap((s) => s.matched)));
 
   let confidence = 0;
   let top = [];

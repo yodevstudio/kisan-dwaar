@@ -45,22 +45,38 @@ async function init() {
     return;
   }
 
-  // Counted from the data, never hard-coded: today this is the count of
-  // source_type === 'scanned_pdf' records with no subsidy_rule — the 🔴
-  // badge exactly. If that's ever non-zero, this line updates on its own.
-  const unreadableCount = schemes.filter((s) => !s.subsidy_rule && s.source_type === 'scanned_pdf').length;
+  // Counted from the data, never hard-coded. The headline leads with what
+  // the registry did — every source's eligibility rule, written as prose in
+  // the original, is now a structured rule — and states the scanned count
+  // honestly in context: none of the 12 registry sources is a scanned
+  // image, while the Department's own scanned circulars (EVIDENCE_LEDGER A3)
+  // are not yet in the registry at all.
+  const total = schemes.length;
+  const calculable = schemes.filter((s) => s.subsidy_rule).length;
+  const scannedInRegistry = schemes.filter((s) => s.source_type === 'scanned_pdf').length;
 
   const render = () => {
     const lang = getLang();
     const cls = lang === 'hi' ? 'hi' : '';
 
-    document.getElementById('intro-line').textContent = lang === 'en'
-      ? `${unreadableCount} of these ${schemes.length} source documents are scanned images no software can read — where a rule was extracted from one anyway, it was transcribed by hand.`
-      : `इन ${schemes.length} स्रोत दस्तावेज़ों में से ${unreadableCount} ऐसी स्कैन की गई तस्वीरें हैं जिन्हें कोई सॉफ़्टवेयर पढ़ नहीं सकता — जहाँ ऐसे दस्तावेज़ से कोई नियम निकाला गया, वह हाथ से ट्रांसक्राइब किया गया।`;
+    const intro = document.getElementById('intro-line');
+    intro.innerHTML = '';
+    intro.appendChild(el('strong', '', lang === 'en'
+      ? `Each of these ${total} official sources states its eligibility rule as sentences a person has to read. The registry turns every one of them into a structured rule a machine can check — and for ${calculable}, the subsidy calculation too.`
+      : `इन ${total} आधिकारिक स्रोतों में से हर एक अपना पात्रता नियम वाक्यों में लिखता है, जिसे किसी इंसान को पढ़कर समझना पड़ता है। रजिस्ट्री ने इन सभी को ऐसे संरचित नियम में बदला है जिसे मशीन जांच सके — और ${calculable} में अनुदान की गणना भी।`));
+    intro.appendChild(document.createElement('br'));
+    intro.appendChild(document.createTextNode(lang === 'en'
+      ? `Scanned images among these sources: ${scannedInRegistry}. The Department also publishes circulars as scanned images that no software can read; none of those is in the registry yet — each would have to be transcribed by hand and verified first.`
+      : `इन स्रोतों में स्कैन की गई तस्वीरें: ${scannedInRegistry}। विभाग कुछ परिपत्र स्कैन की गई तस्वीर के रूप में भी प्रकाशित करता है, जिन्हें कोई सॉफ़्टवेयर पढ़ नहीं सकता; ऐसा कोई परिपत्र अभी रजिस्ट्री में नहीं है — हर एक को पहले हाथ से ट्रांसक्राइब और सत्यापित करना होगा।`));
 
     listEl.innerHTML = '';
+    // Same agriculture / related-welfare split the schemes page uses.
+    [['agriculture', 'schemes.agriculture_heading'], ['related_welfare', 'schemes.related_welfare_heading']].forEach(([group, headingKey]) => {
+    const rows = schemes.filter((s) => s.scheme_group === group);
+    if (rows.length === 0) return;
+    listEl.appendChild(el('h2', cls, `${t(headingKey)} (${rows.length})`));
     const grid = el('div', 'card-grid');
-    schemes
+    rows
       .slice()
       .sort((a, b) => (a.last_verified < b.last_verified ? 1 : a.last_verified > b.last_verified ? -1 : 0))
       .forEach((scheme) => {
@@ -84,18 +100,17 @@ async function init() {
 
         card.appendChild(el('p', 'citation', `${t('chat.verified_on')}: ${scheme.last_verified}`));
 
-        if (scheme.subsidy_rule) {
-          card.appendChild(el('p', `citation ${cls}`.trim(), t('notices.linked_scheme')));
-          const schemeLink = document.createElement('a');
-          schemeLink.className = `button ${cls}`.trim();
-          schemeLink.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
-          schemeLink.textContent = t('schemes.check_eligibility');
-          card.appendChild(schemeLink);
-        }
+        card.appendChild(el('p', `citation ${cls}`.trim(), t('notices.linked_scheme')));
+        const schemeLink = document.createElement('a');
+        schemeLink.className = `button card-action ${cls}`.trim();
+        schemeLink.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
+        schemeLink.textContent = t('schemes.check_eligibility');
+        card.appendChild(schemeLink);
 
         grid.appendChild(card);
       });
     listEl.appendChild(grid);
+    });
   };
 
   render();

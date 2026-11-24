@@ -19,15 +19,27 @@ function renderCard(scheme, cls, lang) {
   head.appendChild(iconSpan('scheme'));
   head.appendChild(el('span', 'answer-headline', nameFor(scheme)));
   card.appendChild(head);
-  card.appendChild(el('p', '', scheme.department));
+  card.appendChild(el('p', 'card-dept', scheme.department));
   const keywords = lang === 'en' && scheme.keywords_en ? scheme.keywords_en : scheme.keywords_hi;
   if (keywords && keywords.length) {
     card.appendChild(el('p', 'citation', keywords.join(' · ')));
   }
-  card.appendChild(el('p', 'citation', `${t('chat.source')}: ${scheme.source_url} · ${t('chat.verified_on')}: ${scheme.last_verified}`));
+  // Source as a real link, verification date on its own line — the two
+  // provenance values every claim on this site rests on.
+  const sourceP = el('p', 'citation');
+  sourceP.appendChild(document.createTextNode(`${t('chat.source')}: `));
+  const sourceLink = document.createElement('a');
+  sourceLink.href = scheme.source_url;
+  sourceLink.target = '_blank';
+  sourceLink.rel = 'noopener noreferrer';
+  sourceLink.className = 'source-link';
+  sourceLink.textContent = scheme.source_url;
+  sourceP.appendChild(sourceLink);
+  sourceP.appendChild(el('span', 'verified-date', `${t('chat.verified_on')}: ${scheme.last_verified}`));
+  card.appendChild(sourceP);
 
   const link = document.createElement('a');
-  link.className = `button ${cls}`.trim();
+  link.className = `button card-action ${cls}`.trim();
   link.href = `${resolvePath('pages/check/index.html')}?scheme=${encodeURIComponent(scheme.scheme_id)}`;
   link.textContent = t('schemes.check_eligibility');
   card.appendChild(link);

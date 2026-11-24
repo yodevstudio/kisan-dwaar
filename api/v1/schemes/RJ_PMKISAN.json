@@ -8,7 +8,7 @@
     "किसान सालाना 6000"
   ],
   "department": "Union Ministry of Agriculture & Farmers Welfare (Central Sector Scheme), implemented in Rajasthan via Agriculture Department",
-  "dataset_version": "2026.08.14-3",
+  "dataset_version": "2026.11.24-1",
   "source_url": "https://pmkisan.gov.in/",
   "source_url_secondary": "https://rajkisan.rajasthan.gov.in/",
   "source_type": "html_page",
@@ -26,7 +26,7 @@
       {
         "slot": "landholding_hectares",
         "op": "gte",
-        "value": 1
+        "value": 0.01
       }
     ],
     "any_of": [],
@@ -68,7 +68,7 @@
     "amount_inr": 6000,
     "amount_text_hi": "₹6,000 प्रति वर्ष, तीन बराबर किश्तों (₹2,000 प्रत्येक) में सीधे बैंक खाते में — केंद्र सरकार की 100% वित्तपोषित योजना। इसके अतिरिक्त राजस्थान सरकार की मुख्यमंत्री किसान सम्मान निधि योजना के तहत राज्यस्तर पर ₹2,000-3,000 प्रति वर्ष अतिरिक्त सहायता की घोषणा हुई है (कुल ~₹9,000 तक) — यह राज्य-टॉप-अप राशि केवल समाचार स्रोतों से मिली है, आधिकारिक कृषि विभाग पेज से पुष्टि नहीं हो सकी, अतः अलग से मैन्युअली सत्यापित करें",
     "rate_policy": "CENTRAL_SCHEME_RATE_SEE_SOURCE",
-    "note": "मूल ₹6,000/वर्ष राशि आधिकारिक pmkisan.gov.in व PIB दस्तावेज़ से पूर्णतः सत्यापित है। राज्य टॉप-अप राशि (मुख्यमंत्री किसान सम्मान निधि योजना) पत्रिका व Zee Business समाचारों में है परंतु आधिकारिक rajkisan.rajasthan.gov.in पेज पर सीधे नहीं मिली — इसलिए amount_inr में केवल केंद्रीय राशि (सत्यापित) रखी है।",
+    "note": "मूल ₹6,000/वर्ष राशि आधिकारिक pmkisan.gov.in व PIB दस्तावेज़ से पूर्णतः सत्यापित है। राज्य टॉप-अप राशि (मुख्यमंत्री किसान सम्मान निधि योजना) पत्रिका व Zee Business समाचारों में है परंतु आधिकारिक rajkisan.rajasthan.gov.in पेज पर सीधे नहीं मिली — इसलिए amount_inr में केवल केंद्रीय राशि (सत्यापित) रखी है। भूमि-शर्त सुधार (2026-11-24): पहले के रिकॉर्ड में न्यूनतम 1 हेक्टेयर की शर्त थी, जो गलत थी — PIB प्रेस विज्ञप्ति (31 मई 2019, https://www.pib.gov.in/PressReleasePage.aspx?PRID=1573023) के अनुसार योजना 'भूमि-धारिता के आकार की परवाह किए बिना' सभी पात्र भूमिधारक कृषक परिवारों पर लागू है, इसलिए अब किसी भी कृषि-भूमि (0 से अधिक) वाला किसान इस शर्त को पूरा करता है।",
     "amount_text_en": "₹6,000 per year, in three equal instalments (₹2,000 each) directly to the bank account — a 100% centrally-funded scheme. In addition, the Rajasthan government has announced an extra state-level ₹2,000–3,000 per year under the Mukhyamantri Kisan Samman Nidhi Yojana (up to ~₹9,000 total) — this state top-up figure comes only from news sources, could not be confirmed from the official Agriculture Department page, so verify it separately."
   },
   "documents": [

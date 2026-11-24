@@ -1,6 +1,6 @@
 import { resolvePath } from './paths.js';
 import { normalise } from './normalise.js';
-import { route, RAJASTHAN_DISTRICTS, RAJASTHAN_DISTRICTS_EN } from './router.js';
+import { route, RAJASTHAN_DISTRICT_PAIRS } from './router.js';
 import { evaluate, evaluateAll, formatRangeValue, parseBounds } from './eligibility.js';
 import { assemble, assembleEn, explainGap, explainGapEn, labelFor, labelForEn } from './assemble.js';
 import { explain, assertDerivedFromSourced } from './explainer.js';
@@ -190,16 +190,31 @@ function addNumberPrompt(unit, required, onSubmit) {
   input.min = '0';
   input.step = 'any';
   if (unit) input.placeholder = unit;
+  const error = el('p', langClass('input-error'));
+  error.setAttribute('role', 'alert');
+  error.hidden = true;
   const done = () => {
     const raw = input.value.trim();
+    // A required answer can't be skipped by pressing OK on an empty box, and
+    // a negative, non-numeric or non-finite value is refused here, before
+    // it can ever reach explainer.js arithmetic.
+    const num = Number(raw);
+    if ((raw === '' && required) || (raw !== '' && (!Number.isFinite(num) || num < 0))) {
+      error.textContent = t('chat.number_invalid');
+      error.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+      return;
+    }
     wrap.querySelectorAll('input,button').forEach((n) => { n.disabled = true; });
+    error.hidden = true;
     if (raw === '') {
       addUserBubble(t('chat.skipped'));
       onSubmit(undefined);
       return;
     }
     addUserBubble(unit ? `${raw} ${unit}` : raw);
-    onSubmit(Number(raw));
+    onSubmit(num);
   };
   const submit = el('button', langClass('chip'), t('chat.ok'));
   submit.type = 'button';
@@ -217,8 +232,10 @@ function addNumberPrompt(unit, required, onSubmit) {
     });
     wrap.appendChild(skip);
   }
+  wrap.appendChild(error);
   chatEl.appendChild(wrap);
   scrollToBottom();
+  input.focus({ preventScroll: true });
 }
 
 function findSlotDef(slotName) {
@@ -237,16 +254,17 @@ function unitFor(def) {
 // discovery-flow wording every scheme's eligibility conditions share.
 // district_select carries no inline options — data/slots.json's own note on
 // that slot says it's "populated from the Rajasthan district list in
-// router.js", so RAJASTHAN_DISTRICTS is the single source for these chips,
-// the same list router.js itself matches typed district names against.
-// RAJASTHAN_DISTRICTS_EN is index-aligned with it for the English label
-// only — the stored slot *value* stays the Hindi name regardless of UI
-// language, since no eligibility condition in this dataset reads district
-// at all; it only needs to be echoed back consistently.
+// router.js", so RAJASTHAN_DISTRICT_PAIRS is the single source for these
+// chips, the same list router.js itself matches typed district names
+// against. Each row pairs the English label with its Hindi value, so the
+// two can never be mismatched by position — the stored slot *value* stays
+// the Hindi name regardless of UI language, since no eligibility condition
+// in this dataset reads district at all; it only needs to be echoed back
+// consistently.
 function optionsForCatalogSlot(def) {
   if (Array.isArray(def.options)) return def.options;
   if (def.type === 'district_select') {
-    const paired = RAJASTHAN_DISTRICTS.map((d, i) => ({ value: d, label_hi: d, label_en: RAJASTHAN_DISTRICTS_EN[i] }));
+    const paired = RAJASTHAN_DISTRICT_PAIRS.map(([en, hi]) => ({ value: hi, label_hi: hi, label_en: en }));
     return paired
       .sort((a, b) => labelForOption(a).localeCompare(labelForOption(b), getLang() === 'en' ? 'en' : 'hi'))
       .concat([{ value: null, label_hi: 'पता नहीं', label_en: "Don't know" }]);
@@ -591,11 +609,38 @@ function printAuditCard(scheme, evaluation, output) {
   window.print();
 }
 
-function renderVerdictCard(scheme, evaluation, output) {
+// The source line is the provenance the whole product rests on, so it is a
+// real link (opens the official page) and the verification date sits on its
+// own line where it can never be wrapped under or covered by anything else.
+function buildCitationLine(url, lastVerified) {
+  const p = el('p', langClass('citation'));
+  p.appendChild(document.createTextNode(`${t('chat.source')}: `));
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.className = 'source-link';
+  a.textContent = url;
+  p.appendChild(a);
+  p.appendChild(el('span', 'verified-date', `${t('chat.verified_on')}: ${lastVerified}`));
+  return p;
+}
+
+// A long answer card used to be scrolled to its *bottom*, which pushed its
+// own verdict line off the top of the screen. Bring the start of the card
+// into view instead and move focus there, so a screen reader announces the
+// verdict first.
+function revealCard(card) {
+  card.setAttribute('tabindex', '-1');
+  card.scrollIntoView({ block: 'start', behavior: 'auto' });
+  card.focus({ preventScroll: true });
+}
+
+function renderVerdictCard(scheme, evaluation, output, opts = {}) {
   track('trackVerdictIssued', evaluation.verdict);
   track('trackSchemeSurfaced', scheme.scheme_id);
   const { icon, word, cls } = verdictIcon(evaluation.verdict);
-  const card = el('div', langClass(`card ${cls}`));
+  const card = el('div', langClass(`card verdict-card ${cls}`));
   const head = el('div', 'card-head');
   head.appendChild(el('span', 'card-icon', icon));
   head.appendChild(el('span', 'card-word', word));
@@ -616,7 +661,7 @@ function renderVerdictCard(scheme, evaluation, output) {
   }
 
   if (output.citation) {
-    card.appendChild(el('p', 'citation', `${t('chat.source')}: ${output.citation.url} · ${t('chat.verified_on')}: ${output.citation.last_verified}`));
+    card.appendChild(buildCitationLine(output.citation.url, output.citation.last_verified));
   }
 
   if (evaluation.verdict === 'ELIGIBLE' && scheme.subsidy_rule) {
@@ -646,7 +691,8 @@ function renderVerdictCard(scheme, evaluation, output) {
   card.appendChild(auditDetails);
 
   chatEl.appendChild(card);
-  scrollToBottom();
+  if (opts.scroll !== false) revealCard(card);
+  return card;
 }
 
 async function resolveScheme(scheme) {
@@ -787,7 +833,7 @@ function renderExplainerResult(scheme, output) {
   }
 
   if (output.citation && output.citation.source_url) {
-    card.appendChild(el('p', 'citation', `${t('chat.source')}: ${output.citation.source_url} · ${t('chat.verified_on')}: ${output.citation.last_verified}`));
+    card.appendChild(buildCitationLine(output.citation.source_url, output.citation.last_verified));
     if (rule.source_quote_hi) {
       const quoteLabel = lang === 'en' ? t('chat.original_hindi_text') : '';
       card.appendChild(el('p', 'source-quote', `${quoteLabel ? quoteLabel + ': ' : ''}"${rule.source_quote_hi}"`));
@@ -795,7 +841,7 @@ function renderExplainerResult(scheme, output) {
   }
 
   chatEl.appendChild(card);
-  scrollToBottom();
+  revealCard(card);
 }
 
 async function runExplainer(scheme) {
@@ -856,46 +902,81 @@ async function runDiscovery() {
     return;
   }
 
+  let firstResult = null;
   if (eligible.length > 0) {
-    addBotBubble(eligibleCountIntro(eligible.length));
+    firstResult = addBotBubble(eligibleCountIntro(eligible.length));
     const grouped = splitByGroup(eligible);
     if (grouped.agriculture.length > 0) {
       addBotBubble(t('schemes.agriculture_heading'));
       for (const { scheme, evaluation } of grouped.agriculture) {
         const output = assembleForLang('ELIGIBLE', scheme, evaluation);
-        renderVerdictCard(scheme, evaluation, output);
+        renderVerdictCard(scheme, evaluation, output, { scroll: false });
       }
     }
     if (grouped.relatedWelfare.length > 0) {
       addBotBubble(t('schemes.related_welfare_heading'));
       for (const { scheme, evaluation } of grouped.relatedWelfare) {
         const output = assembleForLang('ELIGIBLE', scheme, evaluation);
-        renderVerdictCard(scheme, evaluation, output);
+        renderVerdictCard(scheme, evaluation, output, { scroll: false });
       }
     }
   }
 
   if (needInfo.length > 0) {
-    addBotBubble(t('chat.need_info_intro'));
+    const intro = addBotBubble(t('chat.need_info_intro'));
+    if (!firstResult) firstResult = intro;
     const grouped = splitByGroup(needInfo);
+    // Each scheme that still needs an answer is a button that continues
+    // straight into its own follow-up questions — not a name the citizen
+    // has to retype.
     const renderGroup = (rows, headingKey) => {
       if (rows.length === 0) return;
       chatEl.appendChild(el('p', langClass('doc-list-title'), t(headingKey)));
-      const list = el('ul', langClass('doc-list'));
+      const wrap = el('div', 'chips');
       rows.forEach(({ scheme }) => {
         track('trackSchemeSurfaced', scheme.scheme_id);
-        list.appendChild(el('li', '', schemeNameFor(scheme)));
+        const btn = el('button', langClass('chip'), schemeNameFor(scheme));
+        btn.type = 'button';
+        btn.addEventListener('click', () => {
+          btn.disabled = true;
+          addUserBubble(schemeNameFor(scheme));
+          resolveScheme(scheme);
+        });
+        wrap.appendChild(btn);
       });
-      chatEl.appendChild(list);
+      chatEl.appendChild(wrap);
     };
     renderGroup(grouped.agriculture, 'schemes.agriculture_heading');
     renderGroup(grouped.relatedWelfare, 'schemes.related_welfare_heading');
-    scrollToBottom();
   }
+  if (firstResult) firstResult.scrollIntoView({ block: 'start', behavior: 'auto' });
+}
+
+// Values that router.js extracted from typed text are slot values like any
+// tapped answer, so they go into state.slots — otherwise a citizen who types
+// "मैं जोधपुर से 35 साल का किसान हूँ" is asked their occupation all over
+// again. What was understood is echoed back as one line, so a wrong reading
+// is visible, not silent.
+function absorbTypedSlots(slots) {
+  const entries = Object.entries(slots || {}).filter(([, v]) => v !== null && v !== undefined);
+  if (entries.length === 0) return false;
+  entries.forEach(([slot, value]) => { state.slots[slot] = value; });
+  const parts = entries.map(([slot, value]) => {
+    if (slot === 'age') return getLang() === 'en' ? `${value} years` : `${value} साल`;
+    if (slot === 'district') {
+      const pair = RAJASTHAN_DISTRICT_PAIRS.find(([, hi]) => hi === value);
+      return getLang() === 'en' && pair ? pair[0] : value;
+    }
+    return formatSlotValue(slot, value);
+  }).filter(Boolean);
+  if (parts.length) addBotBubble(`${t('chat.understood')}: ${parts.join(' · ')}`);
+  return true;
 }
 
 async function handleRouteResult(result) {
-  if (result.intent === 'discover') {
+  const describedThemselves = absorbTypedSlots(result.slots);
+  if (result.intent === 'discover' || (result.intent === 'unknown' && describedThemselves)) {
+    discoverBtnEl.disabled = true;
     await runDiscovery();
   } else if (result.intent === 'scheme_query') {
     for (const id of result.scheme_ids) {
@@ -919,13 +1000,14 @@ async function routeQuery(text) {
 function renderSampleChips(samples) {
   const shown = samples.slice(0, FALLBACK_SAMPLE_COUNT);
   addBotBubble(t('chat.samples_intro'));
-  addChips(shown.map((s) => ({ value: s.query_hi, label_hi: s.query_hi })), (query) => {
+  addChips(shown.map((s) => ({ value: getLang() === 'en' && s.query_en ? s.query_en : s.query_hi, label_hi: s.query_hi, label_en: s.query_en })), (query) => {
     routeQuery(query);
   });
 }
 
 async function loadJSON(relativePath) {
   const response = await fetch(resolvePath(relativePath));
+  if (!response.ok) throw new Error(`${relativePath}: HTTP ${response.status}`);
   return response.json();
 }
 
@@ -981,6 +1063,11 @@ async function init() {
   if (requestedScheme) {
     addBotBubble(t('chat.checking_eligibility_for').replace('{{scheme}}', schemeNameFor(requestedScheme)));
     resolveScheme(requestedScheme);
+  } else if (new URLSearchParams(location.search).get('start') === '1') {
+    // The home page's primary button links here with ?start=1, so one tap
+    // from the front page lands directly on the first of the six questions.
+    discoverBtnEl.disabled = true;
+    runDiscovery();
   } else {
     addBotBubble(t('chat.greeting'));
     renderSampleChips(samplesDoc.samples || []);
@@ -994,6 +1081,16 @@ async function init() {
     addUserBubble(text);
     routeQuery(text);
   });
+
+  const restartBtnEl = document.getElementById('restart-btn');
+  if (restartBtnEl) {
+    // A fresh page is the only reset that is guaranteed complete: no slot,
+    // pending question or half-answered prompt from the previous citizen
+    // can survive it. Drops ?scheme= too, so the next check starts blank.
+    restartBtnEl.addEventListener('click', () => {
+      location.assign(location.pathname);
+    });
+  }
 
   discoverBtnEl.addEventListener('click', () => {
     discoverBtnEl.disabled = true;

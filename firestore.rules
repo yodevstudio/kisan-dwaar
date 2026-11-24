@@ -41,17 +41,18 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // S5: the CMS. Any authenticated user, not a specific admin role —
-    // this project has no custom-claims/role system (that would need a
-    // deployed Cloud Function to assign roles, which nothing here does),
-    // so "logged in" is the only gate today. Real staff-only access
-    // control is a documented gap, not a silent one — see D10/SECURITY.md.
+    // S5: the CMS. Writing is limited to named staff accounts (isStaff()
+    // below), not to anyone who can sign in with a Google account — the
+    // citizen portal reads cms_published, so an open write here would let
+    // any signed-in stranger change what every citizen is told. A full
+    // role system (custom claims assigned by a deployed function) is the
+    // production path; until then the allowlist is the gate.
     //
-    // Drafts are a shared workspace, not per-user: any authenticated
-    // co-author can pick up or edit any scheme's draft, since a rule
-    // often needs a second pair of eyes before publish.
+    // Drafts are a shared workspace among staff: any staff co-author can
+    // pick up or edit any scheme's draft, since a rule often needs a
+    // second pair of eyes before publish.
     match /cms_drafts/{schemeId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if isStaff();
     }
 
     // T4: read is public — js/registry-source.js's boot-sequence fallback
@@ -67,15 +68,24 @@ service cloud.firestore {
     // audit trail.
     match /cms_published/{schemeId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff()
+                   && request.resource.data.data.scheme_id == schemeId;
 
       match /versions/{versionId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth != null;
+        allow read: if isStaff();
+        allow create: if isStaff();
         allow update, delete: if false;
       }
     }
   }
+}
+
+// Staff allowlist for CMS writes. Add an officer by adding their verified
+// sign-in email here and redeploying the rules.
+function isStaff() {
+  return request.auth != null
+         && request.auth.token.email_verified == true
+         && request.auth.token.email in ['yogendra.yoji@gmail.com'];
 }
 
 function isValidCounterShape(data) {

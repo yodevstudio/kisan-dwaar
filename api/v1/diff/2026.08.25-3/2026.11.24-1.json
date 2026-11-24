@@ -1,0 +1,23 @@
+{
+  "from": "2026.08.25-3",
+  "to": "2026.11.24-1",
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "scheme_id": "RJ_PMKISAN",
+      "changed_fields": [
+        "dataset_version",
+        "eligibility",
+        "benefit"
+      ]
+    },
+    {
+      "scheme_id": "RJ_PMAY_GRAMIN",
+      "changed_fields": [
+        "dataset_version",
+        "benefit"
+      ]
+    }
+  ]
+}

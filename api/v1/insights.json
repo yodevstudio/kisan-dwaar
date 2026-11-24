@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-25T16:16:36.879Z",
+  "generated_at": "2026-11-24T17:49:02.879Z",
   "methodology_note_hi": "यह पृष्ठ किसी नागरिक के डेटा से नहीं, बल्कि योजना-नियमों व प्रश्न-सूची (data/slots.json) के अपने मानों से बनता है। हर आँकड़ा js/eligibility.js — वही इंजन जो पोर्टल पर असली सवाल-जवाब चलाता है — को चलाकर निकाला गया है।",
   "methodology_note_en": "This page is built not from any citizen data, but from the scheme rules and question catalogue (data/slots.json) own values. Every figure is derived by running js/eligibility.js — the same engine that runs real question-answering on the portal.",
   "scheme_count": 12,
@@ -17,10 +17,10 @@
         "group_farmer_count",
         "group_landholding_hectares"
       ],
-      "profiles_tested": 368,
-      "eligible_profiles": 8,
-      "not_eligible_profiles": 355,
-      "need_more_info_profiles": 5,
+      "profiles_tested": 644,
+      "eligible_profiles": 12,
+      "not_eligible_profiles": 628,
+      "need_more_info_profiles": 4,
       "reachable": true
     },
     {
@@ -32,10 +32,10 @@
         "occupation",
         "landholding_hectares"
       ],
-      "profiles_tested": 92,
-      "eligible_profiles": 2,
-      "not_eligible_profiles": 89,
-      "need_more_info_profiles": 1,
+      "profiles_tested": 161,
+      "eligible_profiles": 5,
+      "not_eligible_profiles": 156,
+      "need_more_info_profiles": 0,
       "reachable": true
     },
     {
@@ -47,10 +47,10 @@
         "occupation",
         "landholding_hectares"
       ],
-      "profiles_tested": 92,
-      "eligible_profiles": 2,
-      "not_eligible_profiles": 89,
-      "need_more_info_profiles": 1,
+      "profiles_tested": 161,
+      "eligible_profiles": 4,
+      "not_eligible_profiles": 157,
+      "need_more_info_profiles": 0,
       "reachable": true
     },
     {
@@ -65,10 +65,10 @@
         "is_income_tax_payer",
         "pension_monthly_inr"
       ],
-      "profiles_tested": 3864,
-      "eligible_profiles": 8,
-      "not_eligible_profiles": 3840,
-      "need_more_info_profiles": 16,
+      "profiles_tested": 6762,
+      "eligible_profiles": 48,
+      "not_eligible_profiles": 6714,
+      "need_more_info_profiles": 0,
       "reachable": true
     },
     {
@@ -114,10 +114,10 @@
         "age",
         "other_social_security_pension_recipient"
       ],
-      "profiles_tested": 4140,
-      "eligible_profiles": 6,
-      "not_eligible_profiles": 4132,
-      "need_more_info_profiles": 2,
+      "profiles_tested": 4968,
+      "eligible_profiles": 10,
+      "not_eligible_profiles": 4958,
+      "need_more_info_profiles": 0,
       "reachable": true
     },
     {
@@ -130,9 +130,9 @@
         "willing_to_do_unskilled_manual_work",
         "age"
       ],
-      "profiles_tested": 20,
-      "eligible_profiles": 5,
-      "not_eligible_profiles": 15,
+      "profiles_tested": 24,
+      "eligible_profiles": 6,
+      "not_eligible_profiles": 18,
       "need_more_info_profiles": 0,
       "reachable": true
     },
@@ -150,10 +150,10 @@
         "owns_non_agri_enterprise",
         "irrigated_land_acres"
       ],
-      "profiles_tested": 448,
-      "eligible_profiles": 6,
-      "not_eligible_profiles": 436,
-      "need_more_info_profiles": 6,
+      "profiles_tested": 672,
+      "eligible_profiles": 12,
+      "not_eligible_profiles": 660,
+      "need_more_info_profiles": 0,
       "reachable": true
     },
     {
@@ -195,9 +195,9 @@
         "household_poor_declaration",
         "household_has_lpg_connection"
       ],
-      "profiles_tested": 60,
-      "eligible_profiles": 5,
-      "not_eligible_profiles": 55,
+      "profiles_tested": 72,
+      "eligible_profiles": 6,
+      "not_eligible_profiles": 66,
       "need_more_info_profiles": 0,
       "reachable": true
     }
@@ -206,118 +206,123 @@
   "slot_block_ranking": [
     {
       "slot": "occupation",
-      "times_blocking": 9106,
-      "share": 0.2775204193587712
+      "times_blocking": 13696,
+      "share": 0.30068717205646667
     },
     {
       "slot": "gender",
-      "times_blocking": 5552,
-      "share": 0.16920638790686335
+      "times_blocking": 6662,
+      "share": 0.14626007157127488
     },
     {
       "slot": "age",
-      "times_blocking": 4968,
-      "share": 0.15140802145556503
+      "times_blocking": 5794,
+      "share": 0.1272036707721355
     },
     {
       "slot": "is_income_tax_payer",
-      "times_blocking": 2156,
-      "share": 0.0657076679263684
-    },
-    {
-      "slot": "has_regular_income_source",
-      "times_blocking": 2070,
-      "share": 0.06308667560648543
-    },
-    {
-      "slot": "other_social_security_pension_recipient",
-      "times_blocking": 2070,
-      "share": 0.06308667560648543
+      "times_blocking": 3717,
+      "share": 0.08160442600276625
     },
     {
       "slot": "employment_sector",
-      "times_blocking": 1720,
-      "share": 0.05241984639765939
+      "times_blocking": 2994,
+      "share": 0.06573141012975038
     },
     {
-      "slot": "landholding_category",
-      "times_blocking": 1380,
-      "share": 0.04205778373765696
+      "slot": "has_regular_income_source",
+      "times_blocking": 2484,
+      "share": 0.054534676941315946
+    },
+    {
+      "slot": "other_social_security_pension_recipient",
+      "times_blocking": 2484,
+      "share": 0.054534676941315946
     },
     {
       "slot": "pension_monthly_inr",
-      "times_blocking": 1288,
-      "share": 0.039253931488479825
+      "times_blocking": 2254,
+      "share": 0.04948516981712003
+    },
+    {
+      "slot": "landholding_category",
+      "times_blocking": 1656,
+      "share": 0.03635645129421063
     },
     {
       "slot": "landholding_hectares",
-      "times_blocking": 1103,
-      "share": 0.0336157503352432
+      "times_blocking": 1445,
+      "share": 0.031724077367230895
     },
     {
       "slot": "owns_pucca_house",
-      "times_blocking": 224,
-      "share": 0.006826770693648665
+      "times_blocking": 336,
+      "share": 0.007376671277086215
     },
     {
       "slot": "owns_non_agri_enterprise",
-      "times_blocking": 224,
-      "share": 0.006826770693648665
+      "times_blocking": 336,
+      "share": 0.007376671277086215
     },
     {
       "slot": "monthly_income",
-      "times_blocking": 224,
-      "share": 0.006826770693648665
+      "times_blocking": 336,
+      "share": 0.007376671277086215
     },
     {
       "slot": "kcc_limit_inr",
-      "times_blocking": 224,
-      "share": 0.006826770693648665
+      "times_blocking": 336,
+      "share": 0.007376671277086215
     },
     {
       "slot": "group_landholding_hectares",
-      "times_blocking": 178,
-      "share": 0.0054248445690601
+      "times_blocking": 316,
+      "share": 0.006937583701069178
     },
     {
       "slot": "group_farmer_count",
-      "times_blocking": 178,
-      "share": 0.0054248445690601
+      "times_blocking": 316,
+      "share": 0.006937583701069178
+    },
+    {
+      "slot": "irrigated_land_acres",
+      "times_blocking": 224,
+      "share": 0.0049177808513908095
     },
     {
       "slot": "farmer_loan_status",
       "times_blocking": 44,
-      "share": 0.0013409728148238449
+      "share": 0.0009659926672374805
     },
     {
       "slot": "household_has_lpg_connection",
-      "times_blocking": 30,
-      "share": 0.0009142996464708034
+      "times_blocking": 36,
+      "share": 0.0007903576368306659
     },
     {
       "slot": "household_poor_declaration",
-      "times_blocking": 30,
-      "share": 0.0009142996464708034
+      "times_blocking": 36,
+      "share": 0.0007903576368306659
     },
     {
       "slot": "group_type",
       "times_blocking": 19,
-      "share": 0.0005790564427648421
+      "share": 0.00041713319721618477
     },
     {
       "slot": "willing_to_do_unskilled_manual_work",
-      "times_blocking": 10,
-      "share": 0.00030476654882360114
+      "times_blocking": 12,
+      "share": 0.00026345254561022194
     },
     {
       "slot": "residence_type",
-      "times_blocking": 10,
-      "share": 0.00030476654882360114
+      "times_blocking": 12,
+      "share": 0.00026345254561022194
     },
     {
       "slot": "ration_card_category",
       "times_blocking": 4,
-      "share": 0.00012190661952944045
+      "share": 0.00008781751520340732
     }
   ],
   "headline_profile_analysis": {
@@ -326,10 +331,10 @@
       "age",
       "gender"
     ],
-    "total_profiles": 345,
+    "total_profiles": 414,
     "definitely_zero_eligible_profiles": 0,
-    "already_eligible_for_some_profiles": 60,
-    "still_undetermined_profiles": 285,
+    "already_eligible_for_some_profiles": 72,
+    "still_undetermined_profiles": 342,
     "occupations_always_zero_eligible": []
   }
 }

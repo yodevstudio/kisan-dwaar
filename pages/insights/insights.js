@@ -66,7 +66,9 @@ function renderSlotRanking(container, ranking) {
     head.appendChild(el('span', 'citation', `${Math.round(entry.share * 1000) / 10}%`));
     row.appendChild(head);
     const bar = el('div', 'insight-bar');
-    const seg = el('span', 'insight-bar-segment insight-bar-not-eligible', '');
+    // A share of how often a question decides the outcome is a neutral
+    // statistic, not a refusal — so it is not drawn in --halt red.
+    const seg = el('span', 'insight-bar-segment insight-bar-ranking', '');
     seg.style.width = `${pct(entry.share, maxShare)}%`;
     bar.appendChild(seg);
     row.appendChild(bar);

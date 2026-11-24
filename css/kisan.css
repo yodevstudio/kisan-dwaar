@@ -142,6 +142,25 @@ button, .button {
   cursor: pointer;
 }
 
+/* Link-styled buttons and chips centre their label inside the 64px box and
+   never carry a link underline. */
+a.button, a.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* The 64px floor is for things a thumb aims at; a checkbox or radio is
+   given a large label instead of being stretched into a 64px block. */
+input[type="checkbox"], input[type="radio"] {
+  min-width: 0;
+  min-height: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
 /* ===== Focus =====
    Visible on every interactive element, never suppressed with outline:none. */
 :focus-visible {
@@ -705,6 +724,7 @@ img, svg { max-width: 100%; height: auto; }
 .insight-bar-segment { height: 100%; }
 .insight-bar-eligible { background: var(--verdict); }
 .insight-bar-not-eligible { background: var(--halt); }
+.insight-bar-ranking { background: var(--field); }
 .insight-bar-need-info { background: rgba(20, 24, 31, 0.25); }
 
 .stat-grid {
@@ -823,6 +843,132 @@ img, svg { max-width: 100%; height: auto; }
    populates it with one scheme's verdict + audit panel (js/app.js's
    printAuditCard) — same mechanism, same stylesheet, either caller. */
 .print-only { display: none; }
+
+/* ===== Pre-pitch polish (24 Nov 2026) =====
+   Layout and legibility only. Same six colour tokens; no new type scale. */
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -100px;
+  z-index: 100;
+  padding: 12px 16px;
+  background: var(--paper);
+  color: var(--field);
+  border: 3px solid var(--attention);
+  border-radius: 8px;
+  font-weight: 700;
+}
+.skip-link:focus { top: 8px; }
+
+.site-header { justify-content: flex-start; }
+.site-logo { display: inline-flex; flex: none; border-radius: 10px; }
+.site-logo img { display: block; width: 44px; height: 44px; border-radius: 10px; }
+
+/* Navigation: one row on desktop, a single menu button below 900px. */
+.site-nav { align-items: center; }
+.site-nav-list { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.site-nav-bar { display: flex; align-items: center; gap: 8px; margin-left: auto; order: 2; }
+.site-nav-list { order: 1; }
+.site-nav-menu-btn { display: none; }
+.site-nav .lang-toggle-btn.site-nav-lang-toggle { margin-left: 0; margin-right: 0; }
+@media (max-width: 899px) {
+  .site-nav { flex-direction: column; align-items: stretch; padding: 8px 12px; }
+  .site-nav-bar { order: 0; margin-left: 0; justify-content: space-between; }
+  .site-nav-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-height: var(--touch-target);
+    background: transparent;
+    border: 2px solid rgba(246, 242, 233, 0.5);
+    color: var(--paper);
+    font-weight: 700;
+    text-align: left;
+  }
+  .site-nav .lang-toggle-btn.site-nav-lang-toggle { min-height: var(--touch-target); min-width: var(--touch-target); }
+  .site-nav-list { display: none; flex-direction: column; padding: 8px 0 4px; }
+  .site-nav-list.is-open { display: flex; }
+  .site-nav-list .site-nav-link { padding: 14px 12px; font-size: 18px; }
+}
+
+/* Home hero: the first thing a farmer reads says what this is. */
+.hero { padding: 32px 0 24px; }
+.hero-title {
+  font-size: 40px;
+  line-height: 1.25;
+  color: var(--field);
+  margin: 0 0 12px;
+}
+.hero-lead { font-size: 22px; line-height: 1.5; margin: 0 auto 12px; max-width: 760px; }
+.hero-trust { color: var(--verdict); font-weight: 700; font-size: 18px; margin: 0 0 20px; }
+@media (max-width: 599px) {
+  .hero { padding: 16px 0 12px; }
+  .hero-title { font-size: 30px; }
+  .hero-lead { font-size: 18px; }
+  .hero-actions .button, .hero-actions .chip { width: 100%; }
+}
+
+/* Check page: one primary action that starts the six-question flow. */
+.start-panel { margin: 16px 0 4px; }
+.start-panel .button { width: 100%; font-size: 1.1rem; font-weight: 700; }
+.start-sub { text-align: center; margin: 8px 0 0; font-size: 16px; opacity: 0.85; }
+.restart-row { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+
+/* Cards: white surface on paper, equal height in a row, action pinned to
+   the bottom with real space above it. */
+.card:not(.bg-verdict):not(.bg-attention):not(.bg-halt) { background: #FFFFFF; }
+.card + .card { margin-top: 16px; }
+.card-grid > .card + .card, .stack > .card + .card, .two-col > .card + .card { margin-top: 0; }
+.card-grid { align-items: stretch; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+@media (max-width: 719px) { .card-grid { grid-template-columns: 1fr; } }
+.card-grid > .card { display: flex; flex-direction: column; }
+.card-grid > .card > p { margin: 0 0 8px; }
+.card-action { margin-top: auto; align-self: flex-start; }
+.card-grid > .card > .citation:last-of-type { margin-bottom: 16px; }
+.card-dept { font-size: 16px; opacity: 0.85; }
+
+/* Provenance: the source is a link that wraps anywhere instead of
+   overflowing, and the verification date always gets its own line. */
+.source-link { overflow-wrap: anywhere; word-break: normal; }
+.verified-date { display: block; margin-top: 2px; font-weight: 700; }
+
+.input-error { flex-basis: 100%; margin: 4px 0 0; color: var(--halt); font-weight: 700; }
+
+/* Coloured cards elsewhere (status, analytics, operator): every heading,
+   link and summary inside them takes the paper colour, so nothing is ever
+   dark green on green. */
+.card.bg-verdict :is(h1, h2, h3, .answer-headline, a, summary),
+.card.bg-attention :is(h1, h2, h3, .answer-headline, a, summary),
+.card.bg-halt :is(h1, h2, h3, .answer-headline, a, summary) { color: var(--paper); }
+.card.bg-verdict .term-warning,
+.card.bg-attention .term-warning {
+  color: var(--paper);
+  background: var(--halt);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* Chat verdict cards: the verdict is a solid coloured band with an icon
+   and a word; the explanation underneath sits on white at normal weight,
+   so a long answer stays readable. */
+.card.verdict-card { background: #FFFFFF; color: var(--ink); font-weight: 400; padding-top: 0; overflow: hidden; }
+.card.verdict-card.bg-verdict { border-color: var(--verdict); }
+.card.verdict-card.bg-attention { border-color: var(--attention); }
+.card.verdict-card.bg-halt { border-color: var(--halt); }
+.card.verdict-card > .card-head {
+  margin: 0 -20px 16px;
+  padding: 12px 20px;
+  color: var(--paper);
+  font-size: 1.1rem;
+}
+.card.verdict-card.bg-verdict > .card-head { background: var(--verdict); }
+.card.verdict-card.bg-attention > .card-head { background: var(--attention); }
+.card.verdict-card.bg-halt > .card-head { background: var(--halt); }
+.card.verdict-card :is(.answer-headline, summary) { color: var(--field); }
+.card.verdict-card a { color: var(--field); }
+.card.verdict-card .audit-panel { background: var(--paper); }
 
 @media print {
   .no-print { display: none !important; }

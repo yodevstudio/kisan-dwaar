@@ -270,7 +270,12 @@ function renderBenefit() {
     if (record.benefit.rate_policy === rp) opt.selected = true;
     rpSelect.appendChild(opt);
   });
-  rpSelect.addEventListener('change', () => { record.benefit.rate_policy = rpSelect.value; });
+  rpSelect.addEventListener('change', () => {
+    // The empty option means "amount_inr is fixed" — the field is then
+    // omitted, not stored as '', which validateBenefit() would reject.
+    if (rpSelect.value) record.benefit.rate_policy = rpSelect.value;
+    else delete record.benefit.rate_policy;
+  });
   rpWrap.appendChild(rpSelect);
   container.appendChild(rpWrap);
 
@@ -611,6 +616,21 @@ async function init() {
   slotsDoc = slotsData;
   ratePolicyValues = parseRatePolicyVocabulary(specText);
 
+  // Condition rows point their slot field at list="slot-options"; this is
+  // that list — every catalogued slot, so an officer picks a real slot
+  // name instead of typing one from memory.
+  if (!document.getElementById('slot-options')) {
+    const datalist = document.createElement('datalist');
+    datalist.id = 'slot-options';
+    slotsDoc.slots.forEach((def) => {
+      const opt = document.createElement('option');
+      opt.value = def.slot;
+      if (def.question_hi) opt.label = def.question_hi;
+      datalist.appendChild(opt);
+    });
+    document.body.appendChild(datalist);
+  }
+
   const sessionGate = document.getElementById('session-gate');
   const cmsBody = document.getElementById('cms-body');
 
@@ -638,7 +658,9 @@ async function init() {
   });
 
   document.getElementById('toggle-subsidy-rule-btn').addEventListener('click', () => {
-    if (record.subsidy_rule) record.subsidy_rule = null;
+    // Removed entirely, not set to null: validateScheme() treats a present
+    // subsidy_rule as one to validate, so null would block every publish.
+    if (record.subsidy_rule) delete record.subsidy_rule;
     else ensureSubsidyRule();
     document.getElementById('form-subsidy-rule').style.display = record.subsidy_rule ? '' : 'none';
     if (record.subsidy_rule) renderSubsidyRule();

@@ -61,12 +61,12 @@ async function loadCounters() {
   const totals = new Map();
   snap.forEach((docSnap) => {
     const d = docSnap.data();
-    const key = `${d.event_type} ${d.discriminator}`;
+    const key = `${d.event_type}\u0000${d.discriminator}`;
     totals.set(key, (totals.get(key) || 0) + d.count);
   });
   const byEventType = new Map();
   for (const [key, count] of totals) {
-    const [eventType, discriminator] = key.split(' ');
+    const [eventType, discriminator] = key.split('\u0000');
     if (!byEventType.has(eventType)) byEventType.set(eventType, new Map());
     byEventType.get(eventType).set(discriminator, count);
   }
@@ -105,7 +105,7 @@ function renderFunnel(byEventType) {
   host.innerHTML = '';
   const pageViews = byEventType.get('page_view') || new Map();
   const verdicts = byEventType.get('verdict_issued') || new Map();
-  const started = [...pageViews].filter(([disc]) => disc.includes('pages_check')).reduce((a, [, c]) => a + c, 0);
+  const started = [...pageViews].filter(([disc]) => disc.includes('pages/check') || disc.includes('pages_check')).reduce((a, [, c]) => a + c, 0);
   const completed = sumMap(verdicts);
   host.appendChild(el('p', 'result-line', `शुरू (पात्रता जांच पेज पर पहुंचे): ${started}`));
   host.appendChild(el('p', 'result-line', `पूर्ण (कोई भी निर्णय जारी हुआ): ${completed}`));

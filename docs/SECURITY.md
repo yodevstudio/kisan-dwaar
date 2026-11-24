@@ -37,7 +37,7 @@ If and when sandbox access is granted, the target standard is **Jan Aadhaar Inte
 
 ### 1.3 Authorization — what "logged in" grants
 
-There is no role or claims system. `firestore.rules` and `storage.rules` distinguish exactly two states: **unauthenticated** and **authenticated as some uid**. There is no admin, staff, or operator role recognised by any security rule — see §6.1 for why this is a stated gap, not a silent one.
+There is no role or claims system. `storage.rules` distinguishes exactly two states: **unauthenticated** and **authenticated as some uid**. `firestore.rules` adds one more for the CMS only: **staff**, an explicit allowlist of verified sign-in emails (`isStaff()`), because the citizen portal reads what the CMS publishes. See §6.1 for what a real role system would replace it with.
 
 ---
 
@@ -93,9 +93,11 @@ No auth requirement — matching a citizen with no account and no intention of e
 
 **`cms_drafts/{schemeId}`** and **`cms_published/{schemeId}` (+ `versions/{versionId}`)** — the S5 rule-authoring store.
 ```
-allow read, write: if request.auth != null;
+cms_drafts:     allow read, write: if isStaff();
+cms_published:  allow read: if true;
+                allow write: if isStaff() && request.resource.data.data.scheme_id == schemeId;
 ```
-Any authenticated user, not a specific role — flagged explicitly in the rule file's own comment as **"a documented gap, not a silent one — see D10/SECURITY.md,"** which this document answers in §6.1. Version history under `cms_published/{id}/versions/{id}` follows the same append-only pattern as the upload audit trail: `create` and `read` are allowed, `update`/`delete` are unconditionally refused.
+Writes are limited to the staff allowlist, not to any signed-in account: the citizen portal reads `cms_published`, so an open write would let any stranger with a Google account change what citizens are told. On the read side, `js/registry-source.js` treats each published record as an override of the committed record with the same `scheme_id`, and applies it only if it passes the same `validateScheme()` that gates `tools/build-registry.mjs` — an invalid record is ignored, and publishing one scheme never removes the others. Version history under `cms_published/{id}/versions/{id}` follows the same append-only pattern as the upload audit trail: `create` and `read` are allowed, `update`/`delete` are unconditionally refused.
 
 ### 2.3 What "publish" means here
 
@@ -150,7 +152,7 @@ Stated here deliberately, per this project's own discipline of recording a `null
 
 ### 6.1 CMS access control is not role-based
 
-`firestore.rules`' own comment on `cms_drafts`/`cms_published` states it directly: *"Any authenticated user, not a specific admin role — this project has no custom-claims/role system (that would need a deployed Cloud Function to assign roles, which nothing here does), so 'logged in' is the only gate today."* Any citizen who completes the same Google Sign-In flow described in §1.1 can read or write any scheme's draft. This is acceptable for a judged prototype with no real editorial stakes, and is not acceptable for a production rule-authoring surface — §7.1 states what closing this gap would require.
+Until 24 Nov 2026 the CMS rules allowed any authenticated user to write, and that was named here as a known gap. They now allow only an explicit allowlist of verified staff emails (`isStaff()` in `firestore.rules`). An allowlist is a stopgap, not a role system: adding an officer means editing and redeploying the rules, and there is no separation between drafting and publishing rights. §7.1 states what a production role system requires.
 
 ### 6.2 Jan Aadhaar adapter is designed, not built
 

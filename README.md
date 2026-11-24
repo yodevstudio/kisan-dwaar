@@ -2,7 +2,7 @@
 
 <img src="logo.jpg" width="150" align="right" alt="Kisan Dwaar Logo">
 
-**This is a challenge-submission prototype built by YoDevStudio for the Rajasthan Innovation Challenge. It is not a deployed government service, it does not impersonate the Department of Agriculture or any Rajasthan government entity, and no real citizen data is processed anywhere in it.** Every page carries this disclosure in the interface itself, not only here (`CONTEXT.md` constraint 7).
+**This is a challenge-submission prototype built by YoDevStudio for the Rajasthan Innovation Challenge. It is not a deployed government service, it does not impersonate the Department of Agriculture or any Rajasthan government entity, and no real citizen data is processed anywhere in it.** Every page carries this disclosure in the interface itself, not only here ([`docs/ENGINEERING.md`](docs/ENGINEERING.md) constraint 7).
 
 ## Rajasthan Innovation Challenge — Final Submission
 
@@ -19,7 +19,7 @@
 **Live:** <https://yodevstudio.github.io/kisan-dwaar/>
 **Mirror:** <https://kisan-dwaar.netlify.app/>
 
-**Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → farmer, and when asked for landholding pick **1 से 2 हेक्टेयर / 1 to 2 hectares** (this clears Tarbandi's 0.5-hectare threshold cleanly — a smaller "up to 1 hectare" answer is a real landholding size the engine correctly won't guess about, since it straddles the threshold rather than resolving it) → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
+**Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → farmer, and when asked for landholding pick **1 – 2 हेक्टेयर / 1 – 2 hectares** (clears Tarbandi's 0.5-hectare threshold; the landholding options are cut at the 0.2, 0.3 and 0.5-hectare thresholds the agriculture schemes actually use, so every option resolves to a clear answer rather than "need more information") → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
 
 That path takes a citizen from the home page to a specific scheme's specific subsidy figure, with the source URL and verification date attached — with no account, no login, and no form submitted anywhere along the way.
 
@@ -58,9 +58,9 @@ A 🟡 row is a real gap, stated as one rather than left to be discovered — th
 
 | Parameter | Document |
 |---|---|
-| Approach to problem solving | [`CONTEXT.md`](CONTEXT.md) · [`docs/DPI.md`](docs/DPI.md) |
+| Approach to problem solving | [`docs/ENGINEERING.md`](docs/ENGINEERING.md) · [`docs/DPI.md`](docs/DPI.md) · [`docs/EVIDENCE_LEDGER.md`](docs/EVIDENCE_LEDGER.md) |
 | Business use case | [`docs/BUSINESS_CASE.md`](docs/BUSINESS_CASE.md) |
-| Solution technical feasibility | [`docs/SECURITY.md`](docs/SECURITY.md) · [`CONTEXT.md`](CONTEXT.md) |
+| Solution technical feasibility | [`docs/SECURITY.md`](docs/SECURITY.md) · [`docs/ENGINEERING.md`](docs/ENGINEERING.md) · [`docs/DATA_SPEC.md`](docs/DATA_SPEC.md) |
 | Product roadmap | [`docs/ROADMAP.md`](docs/ROADMAP.md) |
 | Team ability and culture | [`docs/TEAM.md`](docs/TEAM.md) |
 | Addressable market | [`docs/MARKET.md`](docs/MARKET.md) |
@@ -76,7 +76,7 @@ Everything a reviewer might want, in one place, each linked once:
 
 | Document | What it's for |
 |---|---|
-| [`CONTEXT.md`](CONTEXT.md) | Engineering context and hard constraints — the architecture, the two guards, the design tokens, the rules this project holds itself to |
+| [`docs/ENGINEERING.md`](docs/ENGINEERING.md) | Engineering context and hard constraints — the architecture, the two guards, the design tokens, the rules this project holds itself to |
 | [`docs/EVIDENCE_LEDGER.md`](docs/EVIDENCE_LEDGER.md) | Every claim made about the Department's own portals, and exactly what backs each one — observed, reported, or about our own system |
 | [`docs/DATA_SPEC.md`](docs/DATA_SPEC.md) | The scheme record schema every entry in `data/schemes.json` must satisfy |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | Authentication, storage and Firestore rules, retention, analytics privacy, and what production on Department infrastructure would change |
@@ -88,7 +88,6 @@ Everything a reviewer might want, in one place, each linked once:
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | The three-phase adoption path, each phase independently valuable and independently abandonable |
 | [`docs/FINANCIAL_PROPOSAL.md`](docs/FINANCIAL_PROPOSAL.md) | The economics, structured as sourced figures and costed ranges, not a single quoted price |
 | [`docs/audit-evidence/K14_HARDENING_AUDIT.md`](docs/audit-evidence/K14_HARDENING_AUDIT.md) | Measured page-weight and hardening pass this project ran on its own interface |
-| [`docs/BUILD_GUIDE_V2.md`](docs/BUILD_GUIDE_V2.md) | The committed build schedule this submission was built against, cited elsewhere as the basis for hours-invested estimates |
 
 ---
 
@@ -149,7 +148,7 @@ The registry holds **12 schemes** today (`data/schemes.json`, `api/v1/index.json
 
 Every record carries a `source_url` and a `last_verified` date, and a `verification_interval_days` field that sets a re-check cadence rather than leaving verification open-ended: **11 schemes** sit on a 90-day cycle, and the remaining **1 scheme** — the rural-employment wage rate, which the source revises more often — sits on a 30-day cycle. `next_review_due`, computed from that interval, is a real field a Department official's dashboard already reads to flag anything overdue (Table A's analytics row). Of the 12 records, 2 are sourced from `text_pdf` circulars — machine-extractable, but still requiring a human to locate and read them — and none today are sourced from a scanned raster image; `source_type` is the field that would flag one if a future scheme is.
 
-Where a rule genuinely cannot be confirmed, the field stays `null` with a `rate_policy` explaining why, rather than a guessed figure — `CONTEXT.md` constraint 3, applied identically to every record.
+Where a rule genuinely cannot be confirmed, the field stays `null` with a `rate_policy` explaining why, rather than a guessed figure — [`docs/ENGINEERING.md`](docs/ENGINEERING.md) constraint 3, applied identically to every record.
 
 ---
 
@@ -236,7 +235,7 @@ Stated as limitations, not glossed over:
 - The dialect vocabulary (`data/lexicon.json`) is a hand-built starting set proving the normalisation mechanism works dialect-agnostically; it is not systematically verified or native-speaker field-tested.
 - Virus scanning on uploaded documents is a documented design hook, not running code — no scanning service is wired up in this prototype.
 - The scheduled auto-deletion Cloud Function that enforces the 30-day retention policy server-side is written but not deployed — it requires Firebase's paid Blaze plan, a billing decision outside this codebase's scope.
-- CMS access control gates on being signed in, not on holding a specific staff role — any authenticated user can read or write any scheme's draft, a documented gap named in `docs/SECURITY.md` §6.1.
+- CMS access control is an allowlist of named staff accounts in `firestore.rules`, not a role system — adding an officer means editing and redeploying the rules (`docs/SECURITY.md` §6.1).
 - There is no dedicated upload page yet in the citizen-facing ten-page portal itself; today's upload paths are a developer demo screen and the extension-worker operator tool.
 - Guard 1 (the template guard) is a substring tripwire over concatenated allowlist text, not a formal proof — stated in full above, under "The two guards."
 - Several figures in `docs/BUSINESS_CASE.md`, `docs/MARKET.md`, and `docs/FINANCIAL_PROPOSAL.md` still carry an explicit `[NEEDS SOURCE]` marker where this project has not independently confirmed a figure against its primary document — marked rather than quoted as settled.

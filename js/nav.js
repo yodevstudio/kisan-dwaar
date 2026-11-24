@@ -35,23 +35,98 @@ function isCurrentPage(itemPath) {
   return here === target.replace(/index\.html$/, '');
 }
 
+// Shared page chrome every page gets from the one renderNav() call it
+// already makes: the favicon, a skip link to the main content, and the
+// project's own mark beside the page title. The mark is YoDevStudio's own
+// logo — never a state emblem or departmental seal (CONTEXT.md §7).
+function renderChrome() {
+  if (!document.querySelector('link[rel="icon"]')) {
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.type = 'image/png';
+    icon.href = resolvePath('assets/favicon.png');
+    document.head.appendChild(icon);
+  }
+  const main = document.querySelector('main');
+  if (main && !main.id) main.id = 'main';
+  if (main && !document.querySelector('.skip-link')) {
+    const skip = document.createElement('a');
+    skip.className = 'skip-link';
+    skip.href = `#${main.id}`;
+    skip.textContent = t('nav.skip');
+    window.addEventListener('kisan:langchange', () => { skip.textContent = t('nav.skip'); });
+    document.body.insertBefore(skip, document.body.firstChild);
+  }
+  const header = document.querySelector('.site-header');
+  if (header && !header.querySelector('.site-logo')) {
+    const home = document.createElement('a');
+    home.className = 'site-logo';
+    home.href = resolvePath('index.html');
+    home.setAttribute('aria-label', t('nav.home_logo'));
+    const img = document.createElement('img');
+    img.src = resolvePath('logo.jpg');
+    img.alt = '';
+    img.width = 44;
+    img.height = 44;
+    home.appendChild(img);
+    header.insertBefore(home, header.firstChild);
+  }
+}
+
 export function renderNav(containerId = 'site-nav') {
   const container = document.getElementById(containerId);
   if (!container) return;
+  renderChrome();
 
+  // Below 900px the nine links collapse behind one menu button, so a phone
+  // shows the page's own content in the first screen instead of three rows
+  // of navigation. The language toggle stays outside the menu — a citizen
+  // should never have to open a menu to find their language.
+  let open = false;
   const render = () => {
     container.innerHTML = '';
     const nav = document.createElement('nav');
     nav.className = 'site-nav';
     nav.setAttribute('aria-label', t('nav.aria_label'));
+
+    const current = NAV_ITEMS.find((item) => isCurrentPage(item.path));
+    const bar = document.createElement('div');
+    bar.className = 'site-nav-bar';
+    const menuBtn = document.createElement('button');
+    menuBtn.type = 'button';
+    menuBtn.className = getLang() === 'hi' ? 'hi site-nav-menu-btn' : 'site-nav-menu-btn';
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-controls', 'site-nav-list');
+    menuBtn.setAttribute('aria-label', open ? t('nav.menu_close') : t('nav.menu_open'));
+    menuBtn.textContent = `${open ? '✕' : '☰'}  ${current ? t(current.key) : t('nav.menu')}`;
+    bar.appendChild(menuBtn);
+
+    const list = document.createElement('div');
+    list.id = 'site-nav-list';
+    list.className = open ? 'site-nav-list is-open' : 'site-nav-list';
     NAV_ITEMS.forEach((item) => {
       const a = document.createElement('a');
       a.href = resolvePath(item.path);
       a.textContent = t(item.key);
       a.className = getLang() === 'hi' ? 'hi site-nav-link' : 'site-nav-link';
       if (isCurrentPage(item.path)) a.setAttribute('aria-current', 'page');
-      nav.appendChild(a);
+      list.appendChild(a);
     });
+
+    const setOpen = (value, focusTarget) => {
+      open = value;
+      render();
+      const target = focusTarget === 'first'
+        ? container.querySelector('.site-nav-list a')
+        : container.querySelector('.site-nav-menu-btn');
+      if (target) target.focus();
+    };
+    menuBtn.addEventListener('click', () => setOpen(!open, open ? 'button' : 'first'));
+    list.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) { e.preventDefault(); setOpen(false, 'button'); }
+    });
+    nav.appendChild(bar);
+    nav.appendChild(list);
     // Built inline rather than via i18n.js's renderLangToggle: this
     // whole render() already re-runs on every langchange (it rebuilds the
     // entire nav), so delegating to a second self-re-rendering helper
@@ -64,7 +139,7 @@ export function renderNav(containerId = 'site-nav') {
     btn.setAttribute('aria-label', lang === 'hi' ? t('lang.switch_to_en') : t('lang.switch_to_hi'));
     btn.textContent = lang === 'hi' ? 'EN' : 'हिं';
     btn.addEventListener('click', () => setLang(lang === 'hi' ? 'en' : 'hi'));
-    nav.appendChild(btn);
+    bar.appendChild(btn);
     container.appendChild(nav);
   };
 
