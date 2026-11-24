@@ -19,7 +19,7 @@
 **Live:** <https://yodevstudio.github.io/kisan-dwaar/>
 **Mirror:** <https://kisan-dwaar.netlify.app/>
 
-**Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → farmer, and when asked for landholding pick **1 – 2 हेक्टेयर / 1 – 2 hectares** (clears Tarbandi's 0.5-hectare threshold; the landholding options are cut at the 0.2, 0.3 and 0.5-hectare thresholds the agriculture schemes actually use, so every option resolves to a clear answer rather than "need more information") → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
+**Demo path:** पात्रता जांचें (Check eligibility) → तारबंदी योजना (Tarbandi) → farmer, and when asked about the group pick **3 या ज़्यादा / 3 or more** farmers and **5 हेक्टेयर या ज़्यादा / 5 hectares or more** of land (Tarbandi's page supports only the community route, with at least 3 farmers and 5 hectares; the group answer options are cut at exactly those two thresholds, so every option resolves to a clear answer rather than "need more information") → अनुदान राशि जानें (Calculate subsidy) → स्रोत (View source).
 
 That path takes a citizen from the home page to a specific scheme's specific subsidy figure, with the source URL and verification date attached — with no account, no login, and no form submitted anywhere along the way.
 
