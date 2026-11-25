@@ -97,7 +97,7 @@ Everything a reviewer might want, in one place, each linked once:
 ┌─────────────────────── STATIC CORE ───────────────────────┐
 │  Deployed to TWO origins (Pages primary, Netlify mirror)  │
 │  Zero dependencies · no build step · no framework · no CDN │
-│  Works offline after first load · nothing to 502            │
+│  Runs in the browser once loaded · nothing to 502           │
 │                                                            │
 │  portal shell · chat-shaped discovery · eligibility engine │
 │  subsidy explainer · document checklist · registry API     │

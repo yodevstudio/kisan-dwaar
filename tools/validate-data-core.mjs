@@ -57,7 +57,29 @@ export function validateCondition(entry, label, errors) {
   }
   if (!isNonEmptyString(entry.slot)) errors.push(`${label}.slot: required non-empty string`);
   if (!isNonEmptyString(entry.op)) errors.push(`${label}.op: required non-empty string`);
+  else if (!CONDITION_OPS.includes(entry.op)) errors.push(`${label}.op: "${entry.op}" is not one of ${CONDITION_OPS.join(', ')}`);
   if (!('value' in entry)) errors.push(`${label}.value: required`);
+  else if (entry.op === 'in' && !Array.isArray(entry.value)) errors.push(`${label}.value: "in" needs an array`);
+  else if ((entry.op === 'gte' || entry.op === 'lte') && (typeof entry.value !== 'number' || !Number.isFinite(entry.value))) {
+    errors.push(`${label}.value: "${entry.op}" needs a finite number`);
+  }
+}
+
+// The operators js/eligibility.js evaluates; anything else would throw at
+// a citizen's verdict instead of failing here, at validation time.
+export const CONDITION_OPS = ['eq', 'in', 'gte', 'lte', 'between'];
+
+// A real calendar date, not merely the YYYY-MM-DD shape (rejects 2026-02-30).
+export function isRealDate(s) {
+  if (!DATE_RE.test(s || '')) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+// Source links a citizen is sent to must be ordinary https pages — never
+// javascript:, data: or plain http.
+export function isSafeSourceUrl(u) {
+  return typeof u === 'string' && /^https:\/\/[^\s]+$/i.test(u);
 }
 
 export function validateEligibility(eligibility, errors) {
@@ -76,6 +98,10 @@ export function validateEligibility(eligibility, errors) {
     }
     eligibility[key].forEach((entry, i) => validateCondition(entry, `eligibility.${key}[${i}]`, errors));
   }
+  // An empty rule would make every citizen eligible. Fail closed.
+  const total = ['all_of', 'any_of', 'none_of']
+    .reduce((n, key) => n + (Array.isArray(eligibility[key]) ? eligibility[key].length : 0), 0);
+  if (total === 0) errors.push('eligibility: at least one condition is required (an empty rule would admit everyone)');
 }
 
 // §1: amount_inr is a number ONLY when a single fixed figure is published;
@@ -141,6 +167,10 @@ export function validateTerm(term, label, errors) {
       if (!hasFlatPercent && !hasPercentByCategory) {
         errors.push(`${label}: requires "percent" (number) or "percent_by" + "percent_selector_slot"`);
       }
+      const percents = hasFlatPercent ? [term.percent] : (hasPercentByCategory ? Object.values(term.percent_by) : []);
+      if (percents.some((p) => typeof p !== 'number' || p < 0 || p > 100)) {
+        errors.push(`${label}: every percent must be a number from 0 to 100`);
+      }
       validateCostBasis(term.cost_basis, `${label}.cost_basis`, errors);
       break;
     }
@@ -155,7 +185,7 @@ export function validateTerm(term, label, errors) {
       break;
     }
     case 'flat_cap': {
-      if (typeof term.amount_inr !== 'number') errors.push(`${label}.amount_inr: required number for flat_cap`);
+      if (typeof term.amount_inr !== 'number' || !(term.amount_inr >= 0)) errors.push(`${label}.amount_inr: required non-negative number for flat_cap`);
       break;
     }
   }
@@ -197,7 +227,7 @@ export function validateSubsidyRule(rule, errors) {
       errors.push('subsidy_rule.unit_caps: must be an object');
     } else {
       for (const [slot, cap] of Object.entries(rule.unit_caps)) {
-        if (!isPlainObject(cap) || typeof cap.max !== 'number' || !isNonEmptyString(cap.label_hi)) {
+        if (!isPlainObject(cap) || typeof cap.max !== 'number' || !(cap.max > 0) || !isNonEmptyString(cap.label_hi)) {
           errors.push(`subsidy_rule.unit_caps.${slot}: requires numeric "max" and non-empty "label_hi"`);
         }
       }
@@ -219,8 +249,8 @@ export function validateSubsidyRule(rule, errors) {
   if (!isNonEmptyString(rule.source_quote_hi)) {
     errors.push('subsidy_rule.source_quote_hi: required — transcribe the rule text verbatim (DATA_SPEC.md §2.3, §3)');
   }
-  if (!isNonEmptyString(rule.source_url)) errors.push('subsidy_rule.source_url: required');
-  if (!DATE_RE.test(rule.last_verified || '')) errors.push('subsidy_rule.last_verified: required, format YYYY-MM-DD');
+  if (!isSafeSourceUrl(rule.source_url)) errors.push('subsidy_rule.source_url: required https:// link');
+  if (!isRealDate(rule.last_verified)) errors.push('subsidy_rule.last_verified: required, a real date in YYYY-MM-DD');
 }
 
 export function validateScheme(scheme, ratePolicyValues) {
@@ -244,13 +274,13 @@ export function validateScheme(scheme, ratePolicyValues) {
     errors.push(`scheme_group: required, must be one of ${SCHEME_GROUPS.join(', ')}`);
   }
   if (!DATASET_VERSION_RE.test(scheme.dataset_version || '')) errors.push('dataset_version: required, format YYYY.MM.DD-N');
-  if (!isNonEmptyString(scheme.source_url)) errors.push('source_url: required non-empty string');
+  if (!isSafeSourceUrl(scheme.source_url)) errors.push('source_url: required https:// link');
   if (!SOURCE_TYPES.includes(scheme.source_type)) errors.push(`source_type: must be one of ${SOURCE_TYPES.join(', ')}`);
-  if (!DATE_RE.test(scheme.last_verified || '')) errors.push('last_verified: required, format YYYY-MM-DD');
+  if (!isRealDate(scheme.last_verified)) errors.push('last_verified: required, a real date in YYYY-MM-DD');
   if (typeof scheme.verification_interval_days !== 'number' || scheme.verification_interval_days <= 0) {
     errors.push('verification_interval_days: required positive number');
   }
-  if (!DATE_RE.test(scheme.next_review_due || '')) errors.push('next_review_due: required, format YYYY-MM-DD');
+  if (!isRealDate(scheme.next_review_due)) errors.push('next_review_due: required, a real date in YYYY-MM-DD');
   if (!isNonEmptyString(scheme.verified_by)) errors.push('verified_by: required non-empty string');
 
   validateEligibility(scheme.eligibility, errors);

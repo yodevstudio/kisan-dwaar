@@ -219,7 +219,7 @@ function addChips(options, onPick, primaryValues) {
   scrollToBottom();
 }
 
-function addNumberPrompt(unit, required, onSubmit) {
+function addNumberPrompt(unit, required, onSubmit, opts = {}) {
   const wrap = el('div', 'chips');
   const input = document.createElement('input');
   input.type = 'number';
@@ -236,8 +236,11 @@ function addNumberPrompt(unit, required, onSubmit) {
     // a negative, non-numeric or non-finite value is refused here, before
     // it can ever reach explainer.js arithmetic.
     const num = Number(raw);
-    if ((raw === '' && required) || (raw !== '' && (!Number.isFinite(num) || num < 0))) {
-      error.textContent = t('chat.number_invalid');
+    // Subsidy quantities and quotations (opts.positive) must be above zero:
+    // "0 metres" or "₹0" is not an answer the calculation can use.
+    const tooSmall = opts.positive ? num <= 0 : num < 0;
+    if ((raw === '' && required) || (raw !== '' && (!Number.isFinite(num) || tooSmall))) {
+      error.textContent = t(opts.positive ? 'chat.number_positive' : 'chat.number_invalid');
       error.hidden = false;
       input.setAttribute('aria-invalid', 'true');
       input.focus();
@@ -359,7 +362,7 @@ function askExplainerInput(input) {
         if (value !== undefined) state.slots[input.slot] = value;
         track('trackQuestionAnswered', input.slot);
         resolve(value);
-      });
+      }, { positive: true });
     }
   });
 }
@@ -941,15 +944,24 @@ async function runDiscovery() {
   if (firstResult) firstResult.scrollIntoView({ block: 'start', behavior: 'auto' });
 }
 
-// Values that router.js extracted from typed text are slot values like any
-// tapped answer, so they go into state.slots — otherwise a citizen who types
-// "मैं जोधपुर से 35 साल का किसान हूँ" is asked their occupation all over
-// again. What was understood is echoed back as one line, so a wrong reading
-// is visible, not silent.
-function absorbTypedSlots(slots) {
+// Values router.js extracts from typed text are only a reading of the
+// sentence — "मेरे पिता किसान हैं" or "I am not a farmer" still contains
+// the word farmer. So nothing typed becomes a fact until the citizen
+// confirms it: the reading is echoed back with हाँ / नहीं, and only a हाँ
+// puts those values into state.slots (so the citizen isn't asked again).
+// A नहीं discards them and the flow asks each question normally.
+function askYesNo() {
+  return new Promise((resolve) => {
+    addChips([
+      { value: true, label_hi: t('chat.yes_correct'), label_en: t('chat.yes_correct') },
+      { value: false, label_hi: t('chat.no_wrong'), label_en: t('chat.no_wrong') },
+    ], (v) => resolve(v === true));
+  });
+}
+
+async function absorbTypedSlots(slots) {
   const entries = Object.entries(slots || {}).filter(([, v]) => v !== null && v !== undefined);
   if (entries.length === 0) return false;
-  entries.forEach(([slot, value]) => { state.slots[slot] = value; });
   const parts = entries.map(([slot, value]) => {
     if (slot === 'age') return getLang() === 'en' ? `${value} years` : `${value} साल`;
     if (slot === 'district') {
@@ -958,12 +970,19 @@ function absorbTypedSlots(slots) {
     }
     return formatSlotValue(slot, value);
   }).filter(Boolean);
-  if (parts.length) addBotBubble(`${t('chat.understood')}: ${parts.join(' · ')}`);
+  if (parts.length === 0) return false;
+  addBotBubble(`${t('chat.understood')}: ${parts.join(' · ')} — ${t('chat.confirm_understood')}`);
+  const confirmed = await askYesNo();
+  if (!confirmed) {
+    addBotBubble(t('chat.understood_rejected'));
+    return false;
+  }
+  entries.forEach(([slot, value]) => { state.slots[slot] = value; });
   return true;
 }
 
 async function handleRouteResult(result) {
-  const describedThemselves = absorbTypedSlots(result.slots);
+  const describedThemselves = await absorbTypedSlots(result.slots);
   if (result.intent === 'discover' || (result.intent === 'unknown' && describedThemselves)) {
     discoverBtnEl.disabled = true;
     await runDiscovery();
@@ -1036,8 +1055,11 @@ async function init() {
   // reachable, later questions in this same conversation evaluate against
   // it; if it never resolves (offline, timeout, nothing newer), nothing
   // about this page changes or waits on it.
+  // An assessment is pinned to the registry it started on: a newer
+  // published registry is adopted only while nothing has been answered
+  // yet, never in the middle of someone's questions.
   checkForNewerRegistry(registry.dataset_version).then((upgraded) => {
-    if (upgraded) state.schemes = upgraded.schemes;
+    if (upgraded && Object.keys(state.slots).length === 0) state.schemes = upgraded.schemes;
   });
 
   applyComposerLabels();

@@ -59,10 +59,10 @@ import {
 import { normalise } from '../js/normalise.js';
 import { route, RAJASTHAN_DISTRICT_PAIRS, RAJASTHAN_DISTRICTS } from '../js/router.js';
 import { mergePublishedRecords } from '../js/registry-source.js';
-import { parseRatePolicyVocabulary } from '../tools/validate-data-core.mjs';
+import { parseRatePolicyVocabulary, validateScheme } from '../tools/validate-data-core.mjs';
 import { findAmountPolicyViolations } from '../js/amount-policy.js';
 import { explain, assertDerivedFromSourced } from '../js/explainer.js';
-import { buildSlipModel, slipStrings } from '../js/present.js';
+import { buildSlipModel, slipStrings, ruleLines } from '../js/present.js';
 
 const results = [];
 
@@ -707,6 +707,83 @@ await test('slip: no digit sequence on the slip is absent from the scheme record
   assertTrue(seen.withExplainer > 0, 'at least one slip carried an explainer result');
   // The tripwire itself must fire: a planted figure no source supports is caught.
   assertThrows(() => scan([...slipStrings(sample.model), 'आपको ₹987654 मिलेगा'], sample.allow, 'planted'), 'a planted unsourced figure must be caught');
+});
+
+// ===== pitch-day hardening (25 Nov 2026) =====
+
+await test('explainer: a quotation covering more than the unit cap never yields an exact amount', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const drip = schemes.find((x) => x.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const tar = schemes.find((x) => x.scheme_id === 'RJ_TARBANDI');
+  const a = explain(drip, { landholding_category: 'other', drip_area_hectares: 10, quoted_cost_inr: 200000 });
+  assertTrue(a.status !== 'OK', `drip 10 ha must not be OK, got ${a.status}`);
+  const b = explain(tar, { fencing_metres: 800, quoted_cost_inr: 60000 });
+  assertTrue(b.status !== 'OK', `fencing 800 m must not be OK, got ${b.status}`);
+  if (b.bound) assertEqual(b.bound.value.value, 40000, 'only the published ₹40,000 cap remains as the bound');
+});
+
+await test('explainer: zero, negative or non-finite inputs are never operands', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const tar = schemes.find((x) => x.scheme_id === 'RJ_TARBANDI');
+  for (const slots of [
+    { fencing_metres: 0, quoted_cost_inr: 60000 },
+    { fencing_metres: 100, quoted_cost_inr: -10000 },
+    { fencing_metres: NaN, quoted_cost_inr: 60000 },
+    { fencing_metres: 100, quoted_cost_inr: Infinity },
+  ]) {
+    const out = explain(tar, slots);
+    assertTrue(out.status !== 'OK', `${JSON.stringify(slots)} must not be OK`);
+    assertDerivedFromSourced(out, tar, slots);
+    const figures = [out.result, out.bound && out.bound.value].filter(Boolean).map((n) => n.value);
+    assertTrue(figures.every((v) => v >= 0), `no negative figure for ${JSON.stringify(slots)}`);
+  }
+});
+
+await test('explainer: the demo path still computes exactly (drip, marginal, 0.8 ha, ₹1,20,000 → ₹84,000)', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const drip = schemes.find((x) => x.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const slots = { landholding_category: 'marginal', drip_area_hectares: 0.8, quoted_cost_inr: 120000 };
+  const out = explain(drip, slots);
+  assertDerivedFromSourced(out, drip, slots);
+  assertEqual(out.status, 'OK');
+  assertEqual(out.result.value, 84000);
+});
+
+await test('validator: malformed records are rejected before they can reach a citizen', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const vocab = parseRatePolicyVocabulary(await (await fetch('../docs/DATA_SPEC.md')).text());
+  const base = schemes.find((x) => x.scheme_id === 'RJ_DRIP_SPRINKLER');
+  const bad = (patch) => validateScheme({ ...JSON.parse(JSON.stringify(base)), ...patch }, vocab).length > 0;
+  assertTrue(validateScheme(base, vocab).length === 0, 'committed record is valid');
+  assertTrue(bad({ eligibility: { all_of: [], any_of: [], none_of: [] } }), 'empty rule');
+  assertTrue(bad({ eligibility: { all_of: [{ slot: 'occupation', op: 'like', value: 'farmer' }], any_of: [], none_of: [] } }), 'unknown operator');
+  assertTrue(bad({ eligibility: { all_of: [{ slot: 'landholding_hectares', op: 'gte', value: '0.2' }], any_of: [], none_of: [] } }), 'non-numeric threshold');
+  assertTrue(bad({ source_url: 'javascript:alert(1)' }), 'unsafe source URL');
+  assertTrue(bad({ last_verified: '2026-02-30' }), 'impossible date');
+  const pct = JSON.parse(JSON.stringify(base));
+  pct.subsidy_rule.terms[0].percent_by.marginal = 170;
+  assertTrue(validateScheme(pct, vocab).length > 0, 'percent above 100');
+});
+
+await test('decision panel: rule lines are plain language, never internal slot ids', async () => {
+  const schemes = await (await fetch('../data/schemes.json')).json();
+  const slotsDoc = await (await fetch('../data/slots.json')).json();
+  const pmk = schemes.find((x) => x.scheme_id === 'RJ_PMKISAN');
+  const ev = evaluate({ occupation: 'farmer', landholding_hectares: { min: 0.01, max: 0.19 }, is_income_tax_payer: false }, pmk);
+  for (const lang of ['hi', 'en']) {
+    const lines = ruleLines(ev, lang, slotsDoc).join('\n');
+    for (const raw of ['occupation:', 'landholding_hectares', 'is_income_tax_payer', ' farmer,', 'दिया गया']) {
+      assertTrue(!lines.includes(raw), `${lang} rule lines contain "${raw}": ${lines}`);
+    }
+  }
+});
+
+await test('route: negation and third-person sentences still extract words — which is why the UI asks before adopting them', () => {
+  // The router reads words, not meaning; js/app.js absorbTypedSlots() only
+  // adopts these after the citizen taps हाँ. This pins the behaviour the
+  // confirmation step exists for.
+  assertEqual(route('मेरे पिता किसान हैं', []).slots.occupation, 'farmer');
+  assertEqual(route('I am not a farmer', []).slots.occupation, 'farmer');
 });
 
 // ===== render =====

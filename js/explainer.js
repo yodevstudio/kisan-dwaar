@@ -54,9 +54,27 @@ function applyOp(op, values) {
 // BEFORE any term uses them"). Reported as a plain input when the cap
 // doesn't bind — claiming a value is "derived from a cap" when the cap
 // never applied would be its own small dishonesty.
+// A quantity or rupee amount the citizen typed is usable only if it is a
+// finite number above zero. Zero metres, a negative quotation or NaN is
+// treated exactly like an answer not yet given — never as an operand.
+function usableAmount(v) {
+  return typeof v === 'number' && Number.isFinite(v) && v > 0;
+}
+
+// The unit-capped inputs (e.g. fencing_metres > 400) whose stated value is
+// above the rule's cap. When a percent term's cost comes from the
+// citizen's own quotation, that quotation prices every unit, including the
+// ones the rule doesn't pay for — and no rule publishes a per-unit cost to
+// split it by — so an exact percent-of-quotation figure would be wrong.
+function capsExceeded(slots, unitCaps) {
+  return Object.entries(unitCaps || {})
+    .filter(([slot, cap]) => cap && typeof cap.max === 'number' && usableAmount(slots[slot]) && slots[slot] > cap.max)
+    .map(([slot]) => slot);
+}
+
 function resolveUnitValue(slots, unitSlot, unitCaps) {
   const raw = slots ? slots[unitSlot] : undefined;
-  if (raw === undefined || raw === null) return null;
+  if (!usableAmount(raw)) return null;
   const rawNode = inputNumber(raw, unitSlot);
   const cap = unitCaps && unitCaps[unitSlot];
   if (!cap || typeof cap.max !== 'number' || raw <= cap.max) return rawNode;
@@ -81,7 +99,7 @@ function resolveSelected(table, selectorSlot, slots, path, missing) {
 function computeCostBasis(costBasis, slots, unitCaps, missing, basePath) {
   if (costBasis.kind === 'citizen_quotation') {
     const v = slots ? slots[costBasis.slot] : undefined;
-    if (v === undefined || v === null) {
+    if (!usableAmount(v)) {
       missing.push(costBasis.slot);
       return null;
     }
@@ -106,6 +124,7 @@ function computeCostBasis(costBasis, slots, unitCaps, missing, basePath) {
 function computeTerm(term, index, slots, unitCaps) {
   const basePath = ['subsidy_rule', 'terms', index];
   const missing = [];
+  let capExceeded = [];
   let valueNode = null;
 
   if (term.type === 'flat_cap') {
@@ -115,7 +134,8 @@ function computeTerm(term, index, slots, unitCaps) {
       ? ruleNumber(term.percent, [...basePath, 'percent'])
       : resolveSelected(term.percent_by, term.percent_selector_slot, slots, [...basePath, 'percent_by'], missing);
     const costNode = computeCostBasis(term.cost_basis, slots, unitCaps, missing, basePath);
-    if (percentNode && costNode) {
+    if (term.cost_basis.kind === 'citizen_quotation') capExceeded = capsExceeded(slots, unitCaps);
+    if (percentNode && costNode && capExceeded.length === 0) {
       const result = applyOp('percent_of', [percentNode.value, costNode.value]);
       valueNode = derivedNumber(result, 'percent_of', [percentNode, costNode]);
     }
@@ -137,7 +157,10 @@ function computeTerm(term, index, slots, unitCaps) {
   // through alongside label_hi. Never read by any arithmetic here or in
   // Guard 2 (assertDerivedFromSourced), so it carries none of that
   // guarantee's risk.
-  return { id: term.id, label_hi: term.label_hi, label_en: term.label_en, value: valueNode, missing: [...new Set(missing)] };
+  return {
+    id: term.id, label_hi: term.label_hi, label_en: term.label_en,
+    value: valueNode, missing: [...new Set(missing)], cap_exceeded: capExceeded,
+  };
 }
 
 // combine:'min'/'max' need every term to state an exact figure — that's
@@ -207,8 +230,18 @@ export function explain(scheme, slots) {
   }
 
   const terms = (rule.terms || []).map((term, i) => computeTerm(term, i, safeSlots, rule.unit_caps));
-  const { result, bound } = combineTerms(terms, rule.combine);
-  const missing_slots = [...new Set(terms.flatMap((t) => t.missing))];
+  let { result, bound } = combineTerms(terms, rule.combine);
+  // A required quantity the rule asks for (e.g. fencing_metres) that is
+  // missing, zero or negative means the amount is not settled even if no
+  // term multiplies by it — what is known stays a bound, never a firm figure.
+  const unsettledInputs = (rule.inputs || [])
+    .filter((inp) => inp.type === 'number' && inp.required && !usableAmount(safeSlots[inp.slot]))
+    .map((inp) => inp.slot);
+  if (result && unsettledInputs.length) {
+    bound = { type: rule.combine === 'min' ? 'upper' : 'lower', value: result };
+    result = null;
+  }
+  const missing_slots = [...new Set([...terms.flatMap((t) => t.missing), ...unsettledInputs])];
   const status = result ? 'OK' : bound ? 'PARTIAL' : 'NEED_MORE_INFO';
 
   return { status, result, bound, terms, missing_slots, citation: citationOf(rule) };

@@ -37,7 +37,7 @@ The services layer introduces credentials. None of them enter the repository.
 The architecture is two layers, and the boundary *is* the constraint.
 
 **Static core** — portal shell, chat-shaped discovery, `eligibility.js`, `assemble.js`, `explainer.js`, `router.js`, the document checklist, the registry under `api/v1/`, `/insights/`, the disclosure panel.
-Vanilla HTML + CSS + ES modules. **Zero dependencies, no build step, no framework, no CDN, and no service call — ever.** Works offline after first load. Deployed to two independent origins.
+Vanilla HTML + CSS + ES modules. **Zero dependencies, no build step, no framework, no CDN, and no service call — ever.** Once a page has loaded, discovery, eligibility and the explainer make no network call at all, so they keep working with the network off; reopening a page offline depends on the browser's own cache (a service worker is a Phase 2 option). Deployed to two independent origins.
 
 **Services layer** — authentication/session, document upload, anonymous analytics, application status, the CMS store.
 May use the configured stack (Firebase Auth · Firestore · Cloud Storage). **Every call has a timeout, a failure path, and a user-visible degradation that leaves the citizen still able to act.**
@@ -105,7 +105,7 @@ Six colours, one job each. **Colour is a semantic channel** — nothing is commu
 
 Served from **two independent origins**: GitHub Pages (primary) and Netlify (mirror). Both serve the full discovery → eligibility → explainer → registry path; the services layer talks to the same Firebase project from either.
 
-- **Never write an absolute path.** `fetch('/api/v1/index.json')` breaks on a project subpath. Use `js/paths.js`, which resolves against `document.baseURI`.
+- **Never write an absolute path.** `fetch('/api/v1/index.json')` breaks on a project subpath. Use `js/paths.js`, which resolves against its own `import.meta.url` (one level below the app root on either origin).
 - `.nojekyll` at the repo root.
 - The mirror is the resilience story: if one origin fails during evaluation, the core still demonstrates on the other URL.
 

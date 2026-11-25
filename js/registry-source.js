@@ -132,7 +132,10 @@ export async function checkForNewerRegistry(currentVersion) {
     SERVICES_TIMEOUT_MS,
   );
   if (!result || !Array.isArray(result.schemes) || result.schemes.length === 0) return null;
-  if (!isNewerVersion(result.dataset_version, currentVersion)) return null;
+  // No registry-wide version comparison here: a scheme published today can
+  // carry a version equal to, or older than, the newest *other* committed
+  // scheme and still be newer than its own committed record. The per-scheme
+  // comparison in mergePublishedRecords is the one that decides.
   const base = await loadSchemeRegistry().catch(() => null);
   if (!base) return null;
   const merged = await mergePublished(base.schemes, result.schemes);

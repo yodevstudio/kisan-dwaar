@@ -157,8 +157,17 @@ const STRINGS = {
   'chat.no_scheme_found_after': { hi: ' पर पूरी जानकारी के लिए पूछें।', en: ' for full information.' },
   'chat.need_info_intro': { hi: 'इनके लिए थोड़ी और जानकारी चाहिए — आगे बढ़ने के लिए किसी योजना पर टैप करें:', en: 'These need a bit more information — tap a scheme to continue:' },
   'chat.unknown_query': { hi: 'मेरे पास इसकी पक्की जानकारी नहीं है। "छह सवालों से पात्रता जांचें" दबाएं, या नज़दीकी ई-मित्र से पूछें।', en: 'I don\'t have confirmed information on this. Press "Check eligibility in six questions", or ask at your nearest e-Mitra.' },
-  'chat.understood': { hi: 'आपने बताया', en: 'You told me' },
+  'chat.understood': { hi: 'मैंने यह समझा', en: 'I understood' },
+  'chat.confirm_understood': { hi: 'क्या यह आपके बारे में सही है?', en: 'is this correct about you?' },
+  'chat.yes_correct': { hi: 'हाँ, सही है', en: 'Yes, correct' },
+  'chat.no_wrong': { hi: 'नहीं', en: 'No' },
+  'chat.understood_rejected': { hi: 'ठीक है — ये बातें मैं आपसे अलग से पूछूँगा।', en: "Okay — I'll ask you about these separately." },
   'chat.number_invalid': { hi: 'कृपया 0 या उससे बड़ी कोई संख्या लिखें।', en: 'Please enter a number, 0 or more.' },
+  'chat.number_positive': { hi: 'कृपया 0 से बड़ी कोई संख्या लिखें।', en: 'Please enter a number greater than 0.' },
+  'chat.cap_exceeded_note': {
+    hi: 'आपकी बताई मात्रा योजना की सीमा से अधिक है, और नियम प्रति-इकाई लागत प्रकाशित नहीं करता — इसलिए आपके कोटेशन से सटीक राशि नहीं निकाली जा सकती। सीमा तक के कोटेशन के साथ दोबारा जांचें, या ई-मित्र पर पुष्टि करें।',
+    en: 'The quantity you gave is above the scheme limit, and the rule publishes no per-unit cost — so an exact amount cannot be worked out from your quotation. Check again with a quotation for the limit, or confirm at e-Mitra.',
+  },
   'chat.samples_intro': { hi: 'कुछ उदाहरण, आज़माने के लिए:', en: 'Some examples to try:' },
   'chat.checking_eligibility_for': { hi: '{{scheme}} की पात्रता जांचते हैं।', en: "Checking eligibility for {{scheme}}." },
 
@@ -390,8 +399,8 @@ const STRINGS = {
   'about.static_core_word': { hi: 'स्थिर कोर', en: 'Static core' },
   'about.service_layer_word': { hi: 'सेवा-स्तर', en: 'Service layer' },
   'about.card3_body1': {
-    hi: '— पोर्टल, पात्रता इंजन, दस्तावेज़ चेकलिस्ट, रजिस्ट्री — शून्य निर्भरता, कोई बिल्ड-स्टेप नहीं, कोई सेवा-कॉल नहीं। पहली बार लोड होने के बाद ऑफ़लाइन भी काम करता है। दो स्वतंत्र origins पर तैनात है।',
-    en: '— the portal, eligibility engine, document checklist, registry — zero dependencies, no build step, no service call. Works offline after the first load. Deployed on two independent origins.',
+    hi: '— पोर्टल, पात्रता इंजन, दस्तावेज़ चेकलिस्ट, रजिस्ट्री — शून्य निर्भरता, कोई बिल्ड-स्टेप नहीं, कोई सेवा-कॉल नहीं। पेज एक बार खुल जाने के बाद पूरी पात्रता-जांच और अनुदान-गणना ब्राउज़र में ही चलती है — नेटवर्क बंद हो तब भी। दो स्वतंत्र origins पर तैनात है।',
+    en: '— the portal, eligibility engine, document checklist, registry — zero dependencies, no build step, no service call. Once a page has loaded, the whole eligibility check and subsidy calculation run inside the browser, even with the network off. Deployed on two independent origins.',
   },
   'about.card3_body2': {
     hi: '— लॉग-इन, दस्तावेज़ अपलोड, गुमनाम एनालिटिक्स, आवेदन स्थिति, नियम-लेखन उपकरण — वैकल्पिक, हमेशा degradable। यदि यह पूरी तरह बंद हो जाए, तब भी पात्रता जांच व दस्तावेज़ सूची काम करती रहती है।',

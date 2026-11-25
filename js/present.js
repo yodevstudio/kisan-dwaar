@@ -253,6 +253,9 @@ export function explainerTermEntries(rule, output, lang) {
   return output.terms.map((term, i) => {
     const heading = `${tIn('chat.condition', lang)} ${i + 1} — ${termLabel(term, lang)}`;
     if (term.value) return { heading, math: formatTermMath(term.value, lang), warning: null, missingInputs: [] };
+    if (term.cap_exceeded && term.cap_exceeded.length && term.missing.length === 0) {
+      return { heading, math: null, warning: `⚠ ${tIn('chat.cap_exceeded_note', lang)}`, missingInputs: [] };
+    }
     const missingInputs = term.missing.map((slot) => rule.inputs.find((inp) => inp.slot === slot)).filter(Boolean);
     const prompts = missingInputs.map((inp) => (lang === 'en' && inp.prompt_en ? inp.prompt_en : inp.prompt_hi));
     return { heading, math: null, warning: `⚠ ${prompts.join(' · ') || tIn('chat.need_more_info', lang)}`, missingInputs };
