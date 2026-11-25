@@ -17,7 +17,9 @@ import { EMITRA_PORTAL_URL } from './policy.js';
 // ===== slot values, as the audit panel shows them =====
 
 export function slotLabel(slot, lang) {
-  return lang === 'en' ? labelForEn(slot) : labelFor(slot);
+  if (lang !== 'en') return labelFor(slot);
+  const label = labelForEn(slot);
+  return label ? label.charAt(0).toUpperCase() + label.slice(1) : label;
 }
 
 function optionLabel(opt, lang) {
@@ -36,10 +38,15 @@ export function questionIn(def, lang) {
 // anything, just formats a value evaluate()'s clauses already carried.
 export function formatSlotValue(slot, value, lang, slotsDoc) {
   if (value === null || value === undefined) return null;
-  if (typeof value === 'object' && !Array.isArray(value) && ('min' in value || 'max' in value)) {
-    return formatRangeValue(value);
-  }
   const def = findSlotDef(slotsDoc, slot);
+  if (typeof value === 'object' && !Array.isArray(value) && ('min' in value || 'max' in value)) {
+    // A range the citizen picked as an answer chip is echoed as that chip's
+    // own label ("0.5 – 1 हेक्टेयर"), not as bare numbers.
+    const picked = def && Array.isArray(def.options)
+      ? def.options.find((o) => o.value && typeof o.value === 'object' && o.value.min === value.min && o.value.max === value.max)
+      : null;
+    return picked ? optionLabel(picked, lang) : formatRangeValue(value);
+  }
   if (def && Array.isArray(def.options)) {
     const opt = def.options.find((o) => o.value === value);
     if (opt) return optionLabel(opt, lang);
@@ -76,11 +83,54 @@ function clauseResultSuffixEn(clause) {
 }
 
 export function clauseLineEn(clause, slotsDoc) {
-  const label = slotLabel(clause.slot, 'en');
-  if (clause.result === 'unknown') return `${label}: not yet stated — ${clauseResultSuffixEn(clause)}`;
-  const requirement = isWildcardValue(clause.required) ? '(no specific condition)' : opLabelForEn(clause.op, clause.required);
-  const actualText = formatSlotValue(clause.slot, clause.actual, 'en', slotsDoc);
-  return `${label}: stated ${actualText}, ${requirement} — ${clauseResultSuffixEn(clause)}`;
+  return clauseLine(clause, 'en', slotsDoc);
+}
+
+// A rule value shown the way the citizen saw it as an answer option
+// ("किसान", not "farmer"), falling back to the raw value only when the
+// catalogue has no option for it.
+function requiredValueLabel(slot, value, lang, slotsDoc) {
+  const def = findSlotDef(slotsDoc, slot);
+  const opt = def && Array.isArray(def.options) ? def.options.find((o) => o.value === value) : null;
+  return opt ? `“${optionLabel(opt, lang)}”` : `“${value}”`;
+}
+
+function requirementText(clause, lang, slotsDoc) {
+  const { op, required: v, slot } = clause;
+  const en = lang === 'en';
+  if (isWildcardValue(v)) return en ? '(no specific condition)' : '(कोई विशेष शर्त नहीं)';
+  switch (op) {
+    case 'eq': return requiredValueLabel(slot, v, lang, slotsDoc);
+    case 'in': return (en ? 'one of ' : 'इनमें से एक: ') + v.map((x) => requiredValueLabel(slot, x, lang, slotsDoc)).join(', ');
+    case 'gte': return en ? `at least ${v}` : `कम से कम ${v}`;
+    case 'lte': return en ? `at most ${v}` : `अधिकतम ${v}`;
+    case 'between': {
+      const { min, max } = parseBounds(v);
+      return en ? `between ${min} and ${max}` : `${min} से ${max} के बीच`;
+    }
+    default: return en ? opLabelForEn(op, v) : '';
+  }
+}
+
+// One plain-language line per clause evaluate() checked, built from the
+// clause's own fields — slot label, the citizen's answer as they chose it,
+// the rule's threshold or required answer, and the result. No re-evaluation:
+// `clause.result` is what evaluate() decided.
+export function clauseLine(clause, lang, slotsDoc) {
+  const en = lang === 'en';
+  const label = slotLabel(clause.slot, lang);
+  const req = requirementText(clause, lang, slotsDoc);
+  const rule = clause.kind === 'exclusion'
+    ? (en ? `not available if ${req}` : `${req} होने पर योजना लागू नहीं`)
+    : (en ? `must be ${req}` : `${req} होना चाहिए`);
+  let mark;
+  if (clause.result === 'unknown') mark = en ? '❓ information needed' : '❓ जानकारी चाहिए';
+  else if (clause.kind === 'exclusion') mark = clause.result ? (en ? '❌ exclusion applies' : '❌ अपवर्जन लागू') : (en ? '✅ does not apply' : '✅ लागू नहीं होता');
+  else mark = clause.result ? (en ? '✅ condition met' : '✅ शर्त पूरी') : (en ? '❌ condition not met' : '❌ शर्त पूरी नहीं');
+  const stated = clause.actual === null || clause.actual === undefined
+    ? (en ? 'not yet stated' : 'अभी नहीं बताया')
+    : `${en ? 'you said' : 'आपने बताया'} “${formatSlotValue(clause.slot, clause.actual, lang, slotsDoc)}”`;
+  return `${label}: ${stated} · ${en ? 'rule' : 'नियम'}: ${rule} → ${mark}`;
 }
 
 // आपने बताया — every slot the citizen has answered that this scheme's
@@ -96,13 +146,12 @@ export function statedEntries(evaluation, lang, slotsDoc) {
   return [...seen].map(([slot, value]) => `${slotLabel(slot, lang)}: ${formatSlotValue(slot, value, lang, slotsDoc)}`);
 }
 
-// नियम क्या कहता है — every clause evaluate() actually checked. Hindi uses
-// evaluation.reasons verbatim; English is built from evaluation.clauses.
-// Both walk the same leaves in the same order, so index i is the same clause
-// in either language.
+// नियम क्या कहता है — every clause evaluate() actually checked, in plain
+// language in either UI language, built from evaluation.clauses.
+// evaluation.reasons (the engine's own terse form, with internal slot ids)
+// is unchanged and still what the engine's tests assert on.
 export function ruleLines(evaluation, lang, slotsDoc) {
-  if (lang === 'en') return evaluation.clauses.map((c) => clauseLineEn(c, slotsDoc));
-  return evaluation.reasons.slice();
+  return evaluation.clauses.map((c) => clauseLine(c, lang, slotsDoc));
 }
 
 // What is still unknown: each missing slot with its catalogue question.
@@ -215,7 +264,11 @@ export function explainerTermEntries(rule, output, lang) {
 export function explainerResultParts(rule, output, lang) {
   const parts = [];
   if (output.status === 'OK') {
-    parts.push({ cls: 'result-note', text: combinePhrase(rule.combine, lang) });
+    // "Whichever is lower" only means something when two or more
+    // conditions produced a figure; with one, it would just confuse.
+    if (output.terms.filter((term) => term.value).length > 1) {
+      parts.push({ cls: 'result-note', text: combinePhrase(rule.combine, lang) });
+    }
     const binding = findBindingTerm(output.terms, rule.combine, output.result.value);
     const suffix = binding ? ` ← ${termLabel(binding, lang)} ${tIn('chat.applied', lang)}` : '';
     parts.push({ cls: 'result-line', text: `${tIn('chat.you_will_get', lang)}: ${formatInr(output.result.value)}${suffix}` });

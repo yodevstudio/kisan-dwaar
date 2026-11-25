@@ -73,7 +73,7 @@ const STRINGS = {
   'index.title': { hi: 'किसान द्वार — KISAN DWAAR', en: 'KISAN DWAAR — किसान द्वार' },
   'index.h1': { hi: 'किसान द्वार', en: 'KISAN DWAAR' },
   'index.query_label': { hi: 'अपना सवाल टाइप करें', en: 'Type your question' },
-  'index.query_placeholder': { hi: 'अपना सवाल टाइप करें…', en: 'Type your question…' },
+  'index.query_placeholder': { hi: 'अपना सवाल टाइप करें…', en: 'Type a question…' },
   'index.send': { hi: 'भेजें', en: 'Send' },
   'index.discover_btn': { hi: 'छह सवालों से पात्रता जांचें', en: 'Check eligibility in six questions' },
   'index.chat_aria_label': { hi: 'बातचीत', en: 'Conversation' },

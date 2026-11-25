@@ -1,2 +1,10 @@
 [build]
   publish = "."
+
+# Serve every file exactly as committed. Netlify's post-processing was
+# rewriting relative links into root-absolute ones (e.g. pages/check's
+# "../documents/index.html" → "/pages/documents/"), which works only at
+# the domain root and breaks the "never write an absolute path" rule the
+# GitHub Pages mirror depends on.
+[build.processing]
+  skip_processing = true

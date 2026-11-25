@@ -10,8 +10,8 @@
   <header class="site-header">
     <h1 class="hi" data-i18n="employee.h1">कर्मचारी कॉर्नर</h1>
     <span class="badge hi" data-i18n="common.badge_staff">🔒 सेवा-स्तर · स्टाफ़ केवल</span>
-    <span id="lang-toggle"></span>
   </header>
+  <div id="site-nav"></div>
 
   <main class="container container-prose">
     <div class="card bg-attention hi">
@@ -37,13 +37,14 @@
 
   <script type="module">
     import { resolvePath } from '../../js/paths.js';
-    import { applyTranslations, renderLangToggle } from '../../js/i18n.js';
+    import { applyTranslations } from '../../js/i18n.js';
+    import { renderNav } from '../../js/nav.js';
     document.getElementById('cms-link').href = resolvePath('admin/cms/index.html');
     document.getElementById('operator-link').href = resolvePath('admin/operator/index.html');
     document.getElementById('session-link').href = resolvePath('services/session-demo.html');
     document.getElementById('analytics-link').href = resolvePath('services/analytics-dashboard.html');
     document.getElementById('home-link').href = resolvePath('index.html');
-    renderLangToggle();
+    renderNav();
     applyTranslations();
   </script>
 </body>

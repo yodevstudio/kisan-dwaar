@@ -7,7 +7,7 @@ import { explain, assertDerivedFromSourced } from './explainer.js';
 import { getLang, t } from './i18n.js';
 import {
   buildSlipModel,
-  clauseLineEn,
+  ruleLines,
   describeStatedInputs as describeStatedInputsIn,
   explainerResultParts,
   explainerTermEntries,
@@ -486,11 +486,7 @@ function buildRuleSection(evaluation) {
   const wrap = el('div', 'audit-section');
   wrap.appendChild(el('h4', langClass(''), t('chat.audit_rule')));
   const list = el('ul', 'doc-list');
-  if (getLang() === 'en') {
-    evaluation.clauses.forEach((c) => list.appendChild(el('li', '', clauseLineEn(c, state.slotsDoc))));
-  } else {
-    evaluation.reasons.forEach((r) => list.appendChild(el('li', 'hi', r)));
-  }
+  ruleLines(evaluation, getLang(), state.slotsDoc).forEach((line) => list.appendChild(el('li', langClass(''), line)));
   wrap.appendChild(list);
   return wrap;
 }
