@@ -543,6 +543,27 @@ img, svg { max-width: 100%; height: auto; }
 
 /* ===== S5: CMS ===== */
 .cms-layout { max-width: 900px; }
+.cms-layout [hidden] { display: none !important; }
+/* A select sizes to its longest option; the scheme names are long. */
+.cms-picker { width: 100%; max-width: 100%; margin-top: 8px; }
+.cms-layout h2, .cms-layout label { overflow-wrap: anywhere; }
+.cms-layout button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Inline status line (replaces alert()). Sticks to the bottom of the
+   viewport so a message from a button far down the form is still seen; the
+   border and the icon in the text, not colour, carry the meaning. */
+.cms-status {
+  position: sticky;
+  bottom: 0;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.cms-status:empty { display: none; }
 
 .cms-form-grid {
   display: grid;

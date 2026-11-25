@@ -11,6 +11,7 @@
     <h1 class="hi">ऑपरेटर मोड (S6)</h1>
     <span class="badge hi">🔒 सेवा-स्तर · एक्सटेंशन वर्कर / ई-मित्र</span>
   </header>
+  <div id="site-nav" class="no-print"></div>
 
   <main class="container operator-layout no-print">
     <div class="card hi">
@@ -34,8 +35,18 @@
     </div>
   </main>
 
+  <footer class="site-footer no-print">
+    <p class="hi disclosure" data-i18n="common.footer_disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
+  </footer>
+
   <div id="print-area" class="print-only"></div>
 
   <script type="module" src="./operator.js"></script>
+  <script type="module">
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    renderNav();
+    renderFooterStaffLink();
+  </script>
 </body>
 </html>

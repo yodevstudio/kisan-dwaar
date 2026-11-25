@@ -27,6 +27,23 @@ let record = defaultRecord();
 let testSlots = {};
 let slotsDoc = { core_sequence: [], slots: [] };
 let ratePolicyValues = [];
+let committedSchemes = [];
+let currentSession = null;
+// Read-only preview: a judge (or anyone) without a staff sign-in can still
+// load a committed scheme, edit it, Validate it and run the test citizen.
+// Everything here is local to the page — Save Draft, Publish and the
+// Firestore loaders stay disabled, and services/cms.js still refuses any
+// write without a session, so this flag only decides what the UI offers.
+let previewMode = false;
+
+// Inline replacement for alert(): one polite live region, so the message
+// is announced by a screen reader and stays on screen instead of being
+// dismissed by a modal. Messages carry their own icon and word — never
+// colour alone.
+function setStatus(message) {
+  const status = document.getElementById('cms-status');
+  if (status) status.textContent = message;
+}
 
 function defaultRecord() {
   return {
@@ -55,7 +72,10 @@ function labelledInput(labelText, value, onChange, type = 'text') {
   if (type !== 'textarea') input.type = type;
   input.className = 'hi';
   input.value = value ?? '';
-  input.addEventListener('input', () => onChange(input.value));
+  // The live preview re-runs on every edit so a changed rate shows its
+  // effect on the test citizen at once, not only after the next test-
+  // citizen keystroke. It only rewrites #live-preview, so focus is kept.
+  input.addEventListener('input', () => { onChange(input.value); renderLivePreview(); });
   wrap.appendChild(input);
   return wrap;
 }
@@ -598,6 +618,7 @@ async function runValidate() {
     return false;
   }
   const errors = validateScheme(record, ratePolicyValues);
+  renderLivePreview();
   if (errors.length === 0) {
     resultEl.appendChild(el('p', 'result-line', '✅ सभी जाँचें पास — यह registry-valid है।'));
     return true;
@@ -609,13 +630,77 @@ async function runValidate() {
   return false;
 }
 
+// Buttons that need a signed-in staff session. Visible but disabled in the
+// read-only preview, so a judge sees what the full tool offers.
+const STAFF_ONLY_BUTTON_IDS = ['save-draft-btn', 'publish-btn', 'load-draft-btn', 'load-published-btn', 'load-versions-btn'];
+
+function applyMode() {
+  const signedIn = !!currentSession;
+  document.getElementById('cms-body').style.display = (signedIn || previewMode) ? '' : 'none';
+  STAFF_ONLY_BUTTON_IDS.forEach((id) => { document.getElementById(id).disabled = !signedIn; });
+  document.getElementById('publish-locked-note').hidden = signedIn;
+  document.getElementById('preview-mode-note').hidden = signedIn || !previewMode;
+}
+
+function renderGate() {
+  const gate = document.getElementById('session-gate');
+  gate.innerHTML = '';
+  if (currentSession) {
+    gate.appendChild(el('p', 'hi', `✅ लॉग-इन है — uid: ${currentSession.uid}`));
+    return;
+  }
+  gate.appendChild(el('p', 'hi', 'S5 केवल लॉग-इन नागरिकों/स्टाफ़ के लिए है।'));
+  const chips = el('div', 'chips');
+  const loginBtn = el('button', 'button hi', t('common.login_google'));
+  loginBtn.type = 'button';
+  loginBtn.addEventListener('click', () => login());
+  chips.appendChild(loginBtn);
+  if (!previewMode) {
+    const previewBtn = el('button', 'chip hi', t('admin.cms.preview_btn'));
+    previewBtn.type = 'button';
+    previewBtn.id = 'preview-btn';
+    previewBtn.addEventListener('click', () => {
+      previewMode = true;
+      renderGate();
+      applyMode();
+      setStatus(t('admin.cms.preview_on'));
+      document.getElementById('scheme-picker').focus();
+    });
+    chips.appendChild(previewBtn);
+  }
+  gate.appendChild(chips);
+}
+
+function renderSchemePicker() {
+  const picker = document.getElementById('scheme-picker');
+  picker.innerHTML = '';
+  const placeholder = el('option', '', t('admin.cms.picker_placeholder'));
+  placeholder.value = '';
+  picker.appendChild(placeholder);
+  committedSchemes.forEach((scheme) => {
+    const opt = el('option', '', `${scheme.scheme_id} — ${scheme.name_hi}`);
+    opt.value = scheme.scheme_id;
+    picker.appendChild(opt);
+  });
+}
+
 async function init() {
-  const [slotsData, specText] = await Promise.all([
+  // data/schemes.json is the committed, static dataset — read here only to
+  // fill the picker, never written. A failure leaves the picker empty and
+  // says so; the form itself still works.
+  const schemesPromise = fetch(resolvePath('data/schemes.json'))
+    .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .catch((err) => { console.warn('cms: committed schemes unavailable:', err); return null; });
+  const [slotsData, specText, schemesData] = await Promise.all([
     fetch(resolvePath('data/slots.json')).then((r) => r.json()),
     fetch(resolvePath('docs/DATA_SPEC.md')).then((r) => r.text()),
+    schemesPromise,
   ]);
   slotsDoc = slotsData;
   ratePolicyValues = parseRatePolicyVocabulary(specText);
+  committedSchemes = Array.isArray(schemesData) ? schemesData : [];
+  renderSchemePicker();
+  if (!schemesData) setStatus('⚠ मौजूदा योजनाओं की सूची लोड नहीं हो सकी — पेज दोबारा खोलें; फ़ॉर्म हाथ से भरा जा सकता है।');
 
   // Condition rows point their slot field at list="slot-options"; this is
   // that list — every catalogued slot, so an officer picks a real slot
@@ -632,30 +717,33 @@ async function init() {
     document.body.appendChild(datalist);
   }
 
-  const sessionGate = document.getElementById('session-gate');
-  const cmsBody = document.getElementById('cms-body');
-
   onSessionChange((session) => {
-    sessionGate.innerHTML = '';
-    if (session) {
-      sessionGate.appendChild(el('p', 'hi', `✅ लॉग-इन है — uid: ${session.uid}`));
-      cmsBody.style.display = '';
-    } else {
-      sessionGate.appendChild(el('p', 'hi', 'S5 केवल लॉग-इन नागरिकों/स्टाफ़ के लिए है।'));
-      const btn = el('button', 'button hi', t('common.login_google'));
-      btn.type = 'button';
-      btn.addEventListener('click', () => login());
-      sessionGate.appendChild(btn);
-      cmsBody.style.display = 'none';
-    }
+    currentSession = session || null;
+    renderGate();
+    applyMode();
   });
+  window.addEventListener('kisan:langchange', () => { renderGate(); renderSchemePicker(); });
 
   renderAll();
 
   document.getElementById('new-btn').addEventListener('click', () => {
     record = defaultRecord();
     testSlots = {};
+    document.getElementById('scheme-picker').value = '';
     renderAll();
+  });
+
+  // Picking a committed scheme fills the same form a hand-typed ID would
+  // load into. The clone keeps edits away from the fetched dataset, so a
+  // second pick of the same scheme always starts from the committed values.
+  document.getElementById('scheme-picker').addEventListener('change', (e) => {
+    const picked = committedSchemes.find((s) => s.scheme_id === e.target.value);
+    if (!picked) return;
+    record = structuredClone(picked);
+    testSlots = {};
+    document.getElementById('scheme-id-input').value = picked.scheme_id;
+    renderAll();
+    setStatus(`✅ ${picked.scheme_id} फ़ॉर्म में भरी गई — committed data/schemes.json से।`);
   });
 
   document.getElementById('toggle-subsidy-rule-btn').addEventListener('click', () => {
@@ -683,59 +771,64 @@ async function init() {
   // and has no idea anything went wrong. Found exactly this way: testing
   // with no session produced a console-only unhandled rejection.
   document.getElementById('load-draft-btn').addEventListener('click', async () => {
+    if (!currentSession) return;
     const id = document.getElementById('scheme-id-input').value.trim();
-    if (!id) return;
+    if (!id) { setStatus('⚠ पहले योजना ID भरें या ऊपर सूची से योजना चुनें।'); return; }
     try {
       const draft = await loadDraft(id);
-      if (draft) { record = draft; testSlots = {}; renderAll(); }
-      else alert('इस scheme_id के लिए कोई ड्राफ़्ट नहीं मिला।');
+      if (draft) { record = draft; testSlots = {}; renderAll(); setStatus(`✅ ${id} का ड्राफ़्ट लोड हुआ।`); }
+      else setStatus('⚠ इस scheme_id के लिए कोई ड्राफ़्ट नहीं मिला।');
     } catch (err) {
-      alert(`ड्राफ़्ट लोड नहीं हो सका: ${err.message}`);
+      setStatus(`⚠ ड्राफ़्ट लोड नहीं हो सका: ${err.message}`);
     }
   });
 
   document.getElementById('load-published-btn').addEventListener('click', async () => {
+    if (!currentSession) return;
     const id = document.getElementById('scheme-id-input').value.trim();
-    if (!id) return;
+    if (!id) { setStatus('⚠ पहले योजना ID भरें या ऊपर सूची से योजना चुनें।'); return; }
     try {
       const published = await loadPublished(id);
-      if (published) { record = published; testSlots = {}; renderAll(); }
-      else alert('इस scheme_id का कोई प्रकाशित संस्करण नहीं मिला।');
+      if (published) { record = published; testSlots = {}; renderAll(); setStatus(`✅ ${id} का प्रकाशित संस्करण लोड हुआ।`); }
+      else setStatus('⚠ इस scheme_id का कोई प्रकाशित संस्करण नहीं मिला।');
     } catch (err) {
-      alert(`प्रकाशित संस्करण लोड नहीं हो सका: ${err.message}`);
+      setStatus(`⚠ प्रकाशित संस्करण लोड नहीं हो सका: ${err.message}`);
     }
   });
 
   document.getElementById('save-draft-btn').addEventListener('click', async () => {
-    if (!record.scheme_id) { alert('पहले scheme_id भरें।'); return; }
+    if (!currentSession) return;
+    if (!record.scheme_id) { setStatus('⚠ पहले scheme_id भरें।'); return; }
     try {
       await saveDraft(record.scheme_id, record);
-      alert('ड्राफ़्ट सहेजा गया।');
+      setStatus('✅ ड्राफ़्ट सहेजा गया।');
     } catch (err) {
-      alert(`ड्राफ़्ट सहेजा नहीं जा सका: ${err.message}`);
+      setStatus(`⚠ ड्राफ़्ट सहेजा नहीं जा सका: ${err.message}`);
     }
   });
 
   document.getElementById('publish-btn').addEventListener('click', async () => {
+    if (!currentSession) return;
     const ok = await runValidate();
-    if (!ok) { alert('प्रकाशित करने से पहले सभी जाँचें पास करनी होंगी।'); return; }
+    if (!ok) { setStatus('⚠ प्रकाशित करने से पहले सभी जाँचें पास करनी होंगी — त्रुटियाँ "जाँच व सहेजें" में दिखाई गई हैं।'); return; }
     try {
       const published = await publish(record.scheme_id, record);
       record.dataset_version = published.dataset_version;
       renderBasics();
-      alert(`प्रकाशित — dataset_version ${published.dataset_version}। अगला पेज-लोड इसे लाइव रजिस्ट्री से सीधे देख सकता है (js/registry-source.js), पर committed data/schemes.json में डेवलपर द्वारा जोड़े व कमिट किए बिना यह फ़ाइल-आधारित फ़ॉलबैक (सेवा-स्तर बंद होने पर) में नहीं दिखेगा — दोनों को मिलाना अब भी ज़रूरी है।`);
+      setStatus(`✅ प्रकाशित — dataset_version ${published.dataset_version}। अगला पेज-लोड इसे लाइव रजिस्ट्री से सीधे देख सकता है (js/registry-source.js), पर committed data/schemes.json में डेवलपर द्वारा जोड़े व कमिट किए बिना यह फ़ाइल-आधारित फ़ॉलबैक (सेवा-स्तर बंद होने पर) में नहीं दिखेगा — दोनों को मिलाना अब भी ज़रूरी है।`);
     } catch (err) {
-      alert(`प्रकाशित नहीं हो सका: ${err.message}`);
+      setStatus(`⚠ प्रकाशित नहीं हो सका: ${err.message}`);
     }
   });
 
   document.getElementById('load-versions-btn').addEventListener('click', async () => {
-    if (!record.scheme_id) { alert('पहले scheme_id भरें।'); return; }
+    if (!currentSession) return;
+    if (!record.scheme_id) { setStatus('⚠ पहले scheme_id भरें।'); return; }
     let versions;
     try {
       versions = await listVersions(record.scheme_id);
     } catch (err) {
-      alert(`इतिहास लोड नहीं हो सका: ${err.message}`);
+      setStatus(`⚠ इतिहास लोड नहीं हो सका: ${err.message}`);
       return;
     }
     const host = document.getElementById('version-history');

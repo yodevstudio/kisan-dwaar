@@ -128,6 +128,22 @@ function removeFarmer(id) {
   renderAll();
 }
 
+// assemble() throws when its own guard (assertNoUnsourcedNumber) finds a
+// figure it cannot trace to the dataset. One bad record must not blank the
+// whole farmer panel or the print run: that scheme shows a readable line
+// naming it, the rest render, and the detail goes to the console.
+function assembleText(scheme, evaluation) {
+  try {
+    return { text: assemble('ELIGIBLE', scheme, evaluation).text_hi, failed: false };
+  } catch (err) {
+    console.error(`operator: assemble() failed for ${scheme.scheme_id}:`, err);
+    return {
+      text: `⚠ इस योजना का विवरण अभी नहीं बन सका (${scheme.scheme_id}) — कृपया योजना का स्रोत पृष्ठ देखें या स्टाफ़ को बताएं।`,
+      failed: true,
+    };
+  }
+}
+
 function docLabel(doc) { return `${doc.label_hi} — ${doc.where_to_get_hi}`; }
 
 function renderUploadRow(container, farmer, doc) {
@@ -178,9 +194,9 @@ function renderResults(farmer) {
     const byDoc = new Map();
     eligible.forEach(({ scheme, evaluation }) => {
       const card = el('div', 'card bg-verdict hi');
-      const output = assemble('ELIGIBLE', scheme, evaluation);
+      const { text, failed } = assembleText(scheme, evaluation);
       card.appendChild(el('div', 'answer-headline', scheme.name_hi));
-      card.appendChild(el('p', '', output.text_hi));
+      card.appendChild(el('p', failed ? 'term-warning' : '', text));
       card.appendChild(el('p', 'citation', `स्रोत: ${scheme.source_url} · जाँचा गया: ${scheme.last_verified}`));
       wrap.appendChild(card);
       (scheme.documents || []).forEach((doc) => { if (!byDoc.has(doc.doc_id)) byDoc.set(doc.doc_id, doc); });
@@ -291,9 +307,8 @@ function buildPrintFarmer(farmer) {
     const byDoc = new Map();
     eligible.forEach(({ scheme, evaluation }) => {
       const p = el('p', '');
-      const output = assemble('ELIGIBLE', scheme, evaluation);
       p.appendChild(el('strong', '', scheme.name_hi));
-      p.appendChild(document.createTextNode(` — ${output.text_hi}`));
+      p.appendChild(document.createTextNode(` — ${assembleText(scheme, evaluation).text}`));
       section.appendChild(p);
       (scheme.documents || []).forEach((doc) => { if (!byDoc.has(doc.doc_id)) byDoc.set(doc.doc_id, doc); });
     });

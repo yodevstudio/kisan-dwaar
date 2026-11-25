@@ -11,11 +11,17 @@
     <h1 class="hi">नियम-लेखन उपकरण (S5)</h1>
     <span class="badge hi">🔒 सेवा-स्तर · admin/ केवल</span>
   </header>
+  <div id="site-nav"></div>
 
   <main class="container cms-layout">
     <div id="session-gate" class="card hi"><p>सेशन जाँच हो रही है…</p></div>
 
     <div id="cms-body" style="display:none;">
+      <p id="preview-mode-note" class="card hi bg-attention" hidden data-i18n="admin.cms.preview_note">ℹ️ पढ़ने-योग्य डेमो: योजना चुनकर बदलें, जाँचें (Validate) और परीक्षण नागरिक से परिणाम देखें। कुछ भी सहेजा या प्रकाशित नहीं होता।</p>
+      <div class="card hi">
+        <label class="hi" for="scheme-picker" data-i18n="admin.cms.picker_label">मौजूदा योजना चुनें (data/schemes.json की 12 योजनाएं)</label>
+        <select id="scheme-picker" class="hi cms-picker"></select>
+      </div>
       <div class="card hi">
         <label class="hi" for="scheme-id-input">योजना ID (scheme_id) — मौजूदा लोड करने या नई शुरू करने के लिए</label>
         <div class="chips">
@@ -70,8 +76,9 @@
         <div class="chips">
           <button id="validate-btn" type="button" class="button hi" data-i18n="admin.cms.validate">जाँचें (Validate)</button>
           <button id="save-draft-btn" type="button" class="button hi" data-i18n="admin.cms.save_draft">ड्राफ़्ट सहेजें</button>
-          <button id="publish-btn" type="button" class="button hi" data-i18n="admin.cms.publish">प्रकाशित करें</button>
+          <button id="publish-btn" type="button" class="button hi" data-i18n="admin.cms.publish" aria-describedby="publish-locked-note">प्रकाशित करें</button>
         </div>
+        <p id="publish-locked-note" class="citation hi" hidden data-i18n="admin.cms.publish_locked">प्रकाशन केवल लॉग-इन स्टाफ़ के लिए</p>
         <div id="validate-result"></div>
       </section>
 
@@ -88,8 +95,19 @@
         <div id="live-preview"></div>
       </section>
     </div>
+    <p id="cms-status" class="cms-status hi" aria-live="polite" aria-atomic="true"></p>
   </main>
 
+  <footer class="site-footer">
+    <p class="hi disclosure" data-i18n="common.footer_disclosure">प्रस्ताव प्रोटोटाइप — YoDevStudio</p>
+    <div id="site-footer-links"></div>
+  </footer>
+
   <script type="module" src="./cms-ui.js"></script>
+  <script type="module">
+    import { renderNav, renderFooterStaffLink } from '../../js/nav.js';
+    renderNav();
+    renderFooterStaffLink();
+  </script>
 </body>
 </html>
